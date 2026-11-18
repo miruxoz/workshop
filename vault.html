@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 보관함</title>
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>🗂 보관함 ♪ 내 비공개 깃허브 저장소에 모아둔 로그</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="vault.html" class="on">♡ 보관함 ♡</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- ===== 목록 ===== -->
+    <section class="win" id="listWin">
+      <div class="win-t pink"><span>🗂 보관함 <small id="total"></small></span><button class="btn mini white" id="reload">🔄 새로고침</button></div>
+      <div class="win-b">
+        <div class="vt-cats" id="cats"></div>
+        <div class="dtabs" id="types"></div>
+        <div class="empty" id="listEmpty">불러오는 중… ☕</div>
+        <div id="list"></div>
+        <div class="pager" id="pager"></div>
+      </div>
+    </section>
+
+    <!-- ===== 연결 설정 ===== -->
+    <section class="win" id="setWin">
+      <div class="win-t"><span>⚙ 깃허브 보관함 연결</span><button class="btn mini white" id="setToggle">펼치기</button></div>
+      <div class="win-b" id="setBody">
+        <div class="set-msg" id="setMsg">아직 연결되지 않았어요</div>
+        <div class="set-grid">
+          <label class="md-field"><span>깃허브 아이디 (owner)</span><input class="tx" id="cfgOwner" placeholder="예: okayletsgo555" autocomplete="off"></label>
+          <label class="md-field"><span>비공개 저장소 이름 (repo)</span><input class="tx" id="cfgRepo" placeholder="예: log-vault" autocomplete="off"></label>
+        </div>
+        <label class="md-field"><span>토큰 (이 브라우저에만 저장돼요)</span><input class="tx" id="cfgToken" type="password" placeholder="github_pat_…" autocomplete="off"></label>
+        <div class="row">
+          <button class="btn pink" id="cfgSave">🔗 연결 확인하고 저장</button>
+          <button class="btn white" id="cfgClear" style="flex:none">연결 끊기</button>
+        </div>
+        <ol class="set-help">
+          <li>깃허브에서 <b>New repository</b> → 이름(예: log-vault) → <b>Private</b> 선택 → 만들기</li>
+          <li>Settings → Developer settings → <b>Fine-grained tokens</b> → Generate new token</li>
+          <li>Repository access: <b>Only select repositories</b> → 방금 만든 저장소 하나만</li>
+          <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+          <li>만든 토큰을 위 칸에 붙여넣고 저장 (기기마다 한 번씩)</li>
+          <li>⚠️ 토큰은 코드나 저장소 파일에 절대 넣지 마세요. 공개 저장소는 연결되지 않게 막아뒀어요</li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+  <footer class="foot">보관함은 내 비공개 깃허브 저장소에만 저장돼요 ♡</footer>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/builtin-templates.js"></script>
+<script src="js/repo.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/log-style.js"></script>
+<script src="js/converter.js"></script>
+<script src="js/classify.js"></script>
+<script src="js/vault-page.js"></script>
+<script src="js/widget.js"></script>
+</body>
+</html>

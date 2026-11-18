@@ -1,0 +1,114 @@
+<!-- name: ① プロフ帳 (프로필 수첩) -->
+<div class="pf-st">
+  <input type="radio" name="pf-{{uid}}" id="pf-{{uid}}-1" checked>
+  <input type="radio" name="pf-{{uid}}" id="pf-{{uid}}-2">
+  <input type="radio" name="pf-{{uid}}" id="pf-{{uid}}-3">
+  <div class="pf-tabs">
+    <label for="pf-{{uid}}-1">じょうほう</label>
+    <label for="pf-{{uid}}-2">ステータス</label>
+    <label for="pf-{{uid}}-3">おまけ</label>
+  </div>
+  <div class="pf-book">
+    <div class="pf-ttl"><b>キョニャ♡プロフ</b><span>{{#turn}}<span class="pf-turn">{{turn}}</span>{{/turn}}{{date}} {{time}} {{weather}}</span></div>
+
+    <!-- じょうほう -->
+    <div class="pf-p pf-p1">
+      {{#location}}<div class="pf-q"><i>📍 場所</i><span>{{location}}</span></div>{{/location}}
+      {{#f.시점}}<div class="pf-q"><i>📖 視点</i><span>{{f.시점}}</span></div>{{/f.시점}}
+      {{#f.일정}}<div class="pf-q"><i>⛺ 予定</i><span>{{f.일정}}</span></div>{{/f.일정}}
+      {{#f.타겟}}<div class="pf-q"><i>💘 ターゲット</i><span>{{f.타겟}}</span></div>{{/f.타겟}}
+      {{#f.호감도}}<div class="pf-check"><i>💗 好感度</i> <em>☑ <span class="pf-emo">{{f.호감도}}</span></em></div>{{/f.호감도}}
+      {{#mission}}<div class="pf-free"><small>🚩 ミッション</small>{{mission}}</div>{{/mission}}
+    </div>
+
+    <!-- ステータス -->
+    <div class="pf-p pf-p2">
+      {{#members}}
+      <div class="pf-mem">
+        <div class="pf-row"><i>名前</i><span class="pf-nm">{{name}}</span></div>
+        <div class="pf-row"><i>気分</i><span class="pf-emo">{{#tags}}<span class="pf-tag">{{.}}</span>{{/tags}}</span></div>
+        <div class="pf-row"><i>いま</i><span>{{action}}</span></div>
+      </div>
+      {{/members}}
+      {{^members}}<div class="pf-none">きょうは だれも いないみたい…</div>{{/members}}
+    </div>
+
+    <!-- おまけ -->
+    <div class="pf-p pf-p3">
+      {{#tmi}}<div class="pf-free"><small>内緒だよ　ʕ⸝⸝ᴥ˶กʔ꜆꜄꜆꜄꜆</small>{{tmi}}</div>{{/tmi}}
+      {{#interview}}
+      <div class="pf-free pf-qa">
+        <small>💌 インタビュー</small>
+        <div class="pf-qa-q"><b>Q.</b> {{q}}</div>
+        <div class="pf-qa-a">{{#who}}<span class="pf-qa-who">{{who}}</span>{{/who}}<div class="pf-qa-ans">{{ja}}{{#ko}}<span class="pf-ko">({{ko}})</span>{{/ko}}</div></div>
+      </div>
+      {{/interview}}
+      {{#talk}}
+      <div class="pf-talk">
+        {{#who}}<div class="pf-talk-who">🗣️ {{who}}</div>{{/who}}
+        <div class="pf-bubble">{{say}}</div>
+      </div>
+      {{/talk}}
+      {{#notes}}<div class="pf-note">{{.}}</div>{{/notes}}
+    </div>
+  </div>
+</div>
+
+<style>
+/* ===== ① プロフ帳 ===== */
+.pf-st { --pk: #e58fae; --pk-line: #e8c3d1; --pk-bg: #fdf2f6; --pk-rule: #f6d6e2; --sky: #d9ecf7;
+  max-width: 360px; margin: 12px auto 28px; font-size: 11px; line-height: 1.6; color: #5a5a5a; word-break: keep-all; clear: both; }
+.pf-st * { box-sizing: border-box; }
+.pf-st input { display: none; }
+.pf-st .pf-tabs { display: flex; gap: 3px; padding: 0 10px; }
+.pf-st .pf-tabs label { flex: 1; text-align: center; padding: 4px 0 2px; cursor: pointer; font-size: 10.5px; color: #aaa;
+  background: var(--pk-bg); border: 1px solid var(--pk-line); border-bottom: 0; border-radius: 8px 8px 0 0; }
+.pf-st input:nth-of-type(1):checked ~ .pf-tabs label:nth-child(1),
+.pf-st input:nth-of-type(2):checked ~ .pf-tabs label:nth-child(2),
+.pf-st input:nth-of-type(3):checked ~ .pf-tabs label:nth-child(3) { background: #fff; color: #555; position: relative; top: 1px; }
+.pf-st .pf-p { display: none; }
+.pf-st input:nth-of-type(1):checked ~ .pf-book .pf-p1,
+.pf-st input:nth-of-type(2):checked ~ .pf-book .pf-p2,
+.pf-st input:nth-of-type(3):checked ~ .pf-book .pf-p3 { display: block; }
+.pf-st .pf-book { position: relative; background: #fff; border: 1px solid var(--pk-line); border-radius: 4px; padding: 14px 14px 14px 30px;
+  background-image: linear-gradient(90deg, transparent 22px, var(--pk-rule) 22px, var(--pk-rule) 23px, transparent 23px); }
+.pf-st .pf-book::before { content: ""; position: absolute; left: 7px; top: 12px; bottom: 12px; width: 9px;
+  background: radial-gradient(circle, #f3f0f2 3px, var(--pk-line) 3.5px, transparent 4.5px) 0 0 / 9px 22px repeat-y; }
+.pf-st .pf-ttl { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; justify-content: space-between; border-bottom: 2px solid var(--pk-rule); padding-bottom: 4px; margin-bottom: 8px; }
+.pf-st .pf-ttl b { font-weight: 400; font-size: 15px; color: var(--pk); letter-spacing: .08em; }
+.pf-st .pf-ttl > span { font-size: 10px; color: #aaa; }
+.pf-st .pf-turn { background: var(--sky); color: #222; padding: 0 6px; border-radius: 3px; font-size: 10px; margin-right: 4px; }
+/* 빈칸 줄: 알약이 줄 칸 가운데에 오게 */
+.pf-st .pf-q { display: flex; align-items: center; gap: 6px; min-height: 26px; border-bottom: 1px dashed #d9d9d9; margin-bottom: 4px; padding: 2px 0; }
+.pf-st .pf-q i, .pf-st .pf-check i { flex: none; font-style: normal; font-size: 10px; color: #c27d99; background: var(--pk-bg); border: 1px solid #f0c9d7; border-radius: 9px; padding: 0 7px; line-height: 1.7; }
+.pf-st .pf-q span { flex: 1; padding: 0 2px; }
+.pf-st .pf-check { display: flex; align-items: center; gap: 6px; min-height: 26px; margin: 4px 0 2px; }
+.pf-st .pf-check em { font-style: normal; color: var(--pk); }
+.pf-st .pf-emo, .pf-st .pf-tag { font-family: 'SysEmoji', inherit; }
+.pf-st .pf-free { margin-top: 12px; border: 1px solid #f0c9d7; border-radius: 6px; padding: 5px 8px; line-height: 20px;
+  background: repeating-linear-gradient(#fff 0 19px, #fbe8ef 19px 20px); }
+.pf-st .pf-free small { display: block; font-size: 9.5px; color: #c27d99; line-height: 1.5; margin-bottom: 1px; }
+.pf-st .pf-p1 .pf-free { margin-top: 8px; }
+.pf-st .pf-p3 > :first-child { margin-top: 0; }
+.pf-st .pf-mem { border: 1px dashed var(--pk-line); border-radius: 6px; padding: 5px 8px; margin-bottom: 6px; }
+.pf-st .pf-row { display: flex; gap: 6px; align-items: baseline; }
+.pf-st .pf-row i { font-style: normal; font-size: 9.5px; color: #aaa; flex: none; width: 34px; }
+.pf-st .pf-nm { color: var(--pk); }
+.pf-st .pf-tag + .pf-tag::before { content: " · "; color: #ccc; }
+.pf-st .pf-none { text-align: center; color: #bbb; padding: 20px 0; }
+/* 인터뷰: 이름 길이와 상관없이 이름은 위, 대답은 아래 */
+.pf-st .pf-qa-q { color: #555; }
+.pf-st .pf-qa b { font-weight: 400; color: var(--pk); }
+.pf-st .pf-qa-a { margin-top: 2px; }
+.pf-st .pf-qa-who { display: inline-block; font-size: 10px; line-height: 1.6; padding: 0 7px; background: var(--sky); border-radius: 9px; color: #444; }
+.pf-st .pf-qa-ans { padding-left: 2px; }
+.pf-st .pf-ko { display: block; color: #999; }
+/* 주변인 한마디: 이름은 위, 말은 말풍선 */
+.pf-st .pf-talk { margin-top: 14px; }
+.pf-st .pf-talk-who { font-size: 10px; color: #999; margin: 0 0 4px 4px; }
+.pf-st .pf-bubble { position: relative; display: inline-block; max-width: 100%; background: #fff; border: 1px solid #b3b3b3; border-radius: 12px; padding: 5px 10px; margin-top: 6px; }
+.pf-st .pf-bubble::before, .pf-st .pf-bubble::after { content: ""; position: absolute; left: 16px; border-style: solid; }
+.pf-st .pf-bubble::before { top: -8px; border-width: 0 6px 8px; border-color: transparent transparent #b3b3b3; }
+.pf-st .pf-bubble::after { top: -6px; left: 17px; border-width: 0 5px 7px; border-color: transparent transparent #fff; }
+.pf-st .pf-note { margin-top: 12px; text-align: center; color: #888; }
+</style>

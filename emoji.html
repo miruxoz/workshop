@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ GIF 이모지</title>
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>🖼 GIF 이모지 ♪ 누르면 text-emoji 코드가 복사돼요</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="vault.html">🗂 보관함</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html" class="on">♡ 이모지 ♡</a>
+  </nav>
+
+  <main class="main">
+    <section class="win">
+      <div class="win-t pink"><span>🖼 GIF 이모지 <small id="count"></small></span><button class="btn mini white" id="reload">🔄 폴더 다시 읽기</button></div>
+      <div class="win-b">
+        <div class="set-msg" id="msg"></div>
+        <div class="row">
+          <input class="tx" id="q" placeholder="🔍 이름으로 찾기" style="flex:1">
+          <select class="tx sel" id="fmt" style="flex:none">
+            <option value="tag">&lt;img class="text-emoji"&gt; 코드로 복사</option>
+            <option value="url">주소만 복사</option>
+          </select>
+        </div>
+        <div class="dtabs" id="groups"></div>
+        <div id="grid" class="emo-grid"></div>
+      </div>
+    </section>
+
+    <section class="win">
+      <div class="win-t"><span>📁 이모지 추가하는 방법</span><span></span></div>
+      <div class="win-b">
+        <ol class="set-help">
+          <li>사이트 저장소에 <b>emoji</b> 폴더를 만들어요</li>
+          <li>그 안에 <b>txt 파일</b>을 넣어요 — 파일 하나 = 분류 하나 (예: <code>하트.txt</code>, <code>리본.txt</code>)</li>
+          <li>한 줄에 이모지 하나: <code>주소만</code> / <code>이름 | 주소</code> / <code>&lt;img src="주소"&gt;</code> 아무 형식이나 OK</li>
+          <li><code># 제목</code> 으로 시작하는 줄은 소분류 제목이에요</li>
+          <li>깃허브에 올린 다음 위의 🔄 를 누르면 목록에 떠요 (깃허브 페이지 주소에서만 폴더를 읽을 수 있어요)</li>
+        </ol>
+        <div class="set-grid">
+          <label class="md-field"><span>저장소 직접 지정 (보통은 비워두세요)</span><input class="tx" id="repoOwner" placeholder="깃허브 아이디"></label>
+          <label class="md-field"><span>&nbsp;</span><input class="tx" id="repoName" placeholder="사이트 저장소 이름"></label>
+        </div>
+        <button class="btn white" id="repoSave">저장소 지정 저장</button>
+      </div>
+    </section>
+  </main>
+  <footer class="foot">GIF 주소는 저장소의 emoji/ 폴더에서 읽어와요 ♡</footer>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/repo.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/meta.js"></script>
+<script>
+  (function () {
+    const $ = id => document.getElementById(id);
+    let group = store.get('emo.group', '');
+    $('fmt').value = store.get('emo.fmt', 'tag');
+    $('fmt').onchange = () => store.set('emo.fmt', $('fmt').value);
+
+    function render() {
+      const all = Emoji.cached();
+      const groups = [...new Set(all.map(x => x.group))];
+      if (group && !groups.includes(group)) group = '';
+      $('count').textContent = all.length ? `(${all.length}개)` : '';
+      $('groups').innerHTML = all.length ? ['', ...groups].map(g =>
+        `<button class="dtab ${g === group ? 'on' : ''}" data-g="${esc(g)}">${g ? esc(g) : '✧ 전체'} <b>${all.filter(x => !g || x.group === g).length}</b></button>`).join('') : '';
+      const q = $('q').value.trim();
+      const list = all.filter(x => (!group || x.group === group) && (!q || (x.name + x.sub).includes(q)));
+      let html = '', sub = null;
+      list.forEach(x => {
+        const head = (group ? '' : x.group + ' · ') + (x.sub || '');
+        if (head !== sub && head) html += `<div style="grid-column:1/-1;font-family:var(--title-font);font-size:11px;color:var(--pink);margin-top:4px">${esc(head)}</div>`;
+        sub = head;
+        html += `<button class="emo-it" data-url="${esc(x.url)}"><img src="${esc(x.url)}" alt="" loading="lazy"><span>${esc(x.name || '')}</span></button>`;
+      });
+      $('grid').innerHTML = html || '<div class="empty" style="grid-column:1/-1">아직 이모지가 없어요 ♪<br><small>아래 방법대로 emoji 폴더에 txt 파일을 넣어 주세요</small></div>';
+    }
+
+    async function reload(show) {
+      const r = Repo.info();
+      if (!r) { $('msg').innerHTML = '지금은 깃허브 페이지 주소가 아니라서 폴더를 못 읽어요. 마지막으로 읽은 목록을 보여줄게요 ♪'; render(); return; }
+      $('msg').innerHTML = `📁 <b>${esc(r.owner)}/${esc(r.repo)}</b> 의 emoji 폴더를 읽는 중… ☕`;
+      try { const list = await Emoji.refresh(); $('msg').innerHTML = `📁 <b>${esc(r.owner)}/${esc(r.repo)}</b> / emoji 폴더에서 ${list.length}개를 읽었어요`; if (show) toast('🔄 다시 읽었어요'); }
+      catch (e) { $('msg').innerHTML = '⚠️ ' + esc(e.message); }
+      render();
+    }
+
+    $('groups').onclick = e => { const b = e.target.closest('[data-g]'); if (!b) return; group = b.dataset.g; store.set('emo.group', group); render(); };
+    $('q').oninput = render;
+    $('grid').onclick = async e => {
+      const b = e.target.closest('.emo-it'); if (!b) return;
+      const t = $('fmt').value === 'url' ? b.dataset.url : Emoji.tag(b.dataset.url);
+      toast(await copyText(t) ? '📋 복사했어요!' : '⚠️ 복사 실패');
+    };
+    $('reload').onclick = () => reload(true);
+    const rc = store.json('repo.cfg', {}) || {};
+    $('repoOwner').value = rc.owner || ''; $('repoName').value = rc.repo || '';
+    $('repoSave').onclick = () => {
+      const o = $('repoOwner').value.trim(), n = $('repoName').value.trim();
+      if (o && n) store.setJson('repo.cfg', { owner: o, repo: n }); else store.remove('repo.cfg');
+      toast('저장했어요'); reload(false);
+    };
+    render(); reload(false);
+  })();
+</script>
+<script src="js/widget.js"></script>
+</body>
+</html>

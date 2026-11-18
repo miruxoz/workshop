@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>キョニャ♡レポート 시안 v2</title>
+<!-- 동글동글 일본어 제목 폰트 후보 3종 (구글 폰트) -->
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@800&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Mona12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2") format("woff2"); }
+
+/* ============================================================
+   😀 감정 칸 전용: 기기 기본 이모지 폰트
+   이모지 글자(유니코드 범위)만 기기 이모지로, 나머지 글자는 Mona12 그대로
+   (폰에만 있는 새 이모지·피부색·합성 이모지까지 범위에 포함)
+   ============================================================ */
+@font-face {
+  font-family: "SysEmoji";
+  src: local("Apple Color Emoji"), local("AppleColorEmoji"),
+       local("Segoe UI Emoji"), local("SegoeUIEmoji"),
+       local("Noto Color Emoji"), local("NotoColorEmoji"),
+       local("Android Emoji"), local("Samsung Color Emoji"), local("SamsungColorEmoji");
+  unicode-range:
+    U+00A9, U+00AE, U+203C, U+2049, U+20E3, U+2122, U+2139, U+2194-2199, U+21A9-21AA,
+    U+231A-231B, U+2328, U+23CF, U+23E9-23F3, U+23F8-23FA, U+24C2, U+25AA-25AB, U+25B6, U+25C0, U+25FB-25FE,
+    U+2600-27BF, U+2934-2935, U+2B05-2B07, U+2B1B-2B1C, U+2B50, U+2B55, U+3030, U+303D, U+3297, U+3299,
+    U+200D, U+FE0E-FE0F,
+    U+1F000-1F02F, U+1F0A0-1F0FF, U+1F100-1F1FF, U+1F200-1F2FF,
+    U+1F300-1F5FF, U+1F600-1F64F, U+1F650-1F67F, U+1F680-1F6FF, U+1F700-1F77F, U+1F780-1F7FF,
+    U+1F800-1F8FF, U+1F900-1F9FF, U+1FA00-1FA6F, U+1FA70-1FAFF, U+1FB00-1FBFF,
+    U+E0020-E007F;
+}
+
+body { margin: 0; padding: 24px 12px; background: #f3f0f2; font-family: 'Mona12', sans-serif; color: #555; }
+.text-emoji { display: inline-block !important; float: none !important; clear: none !important; height: 1.2em; width: auto; vertical-align: middle; margin: 0 2px; }
+.wrap { display: flex; flex-wrap: wrap; gap: 36px; justify-content: center; align-items: flex-start; }
+.lbl { font-size: 13px; text-align: center; margin-bottom: 8px; color: #333; }
+.lbl small { display: block; font-size: 10px; color: #888; }
+
+/* ============================================================
+   🎀 キョニャ♡レポート  — 2000년대 일본 개인 블로그 톤
+   ============================================================ */
+.kr {
+  /* ▼ 색 — 여기만 고치면 전체가 바뀌어요 */
+  --pink: #f9dce6;  --pink-line: #f0b9cb;  --pink-deep: #e58fae;
+  --blue: #dcecf6;  --blue-line: #b7d3e6;
+  --lav: #ece6f3;   --butter: #fff6c9;    --mint: #dff2ea;
+  --ink: #5a5a5a;   --soft: #a3a3a3;      --line: #cfcfcf;
+  --title-font: 'Mochiy Pop One', 'M PLUS Rounded 1c', sans-serif;   /* 제목 폰트 */
+  position: relative; width: 360px; box-sizing: border-box; padding: 14px 30px 16px 12px;
+  font-size: 11px; line-height: 1.65; color: var(--ink);
+  background: #fff radial-gradient(#dedede 1px, transparent 1.2px) 0 0 / 10px 10px;
+  border: 1px solid var(--line);
+}
+.kr * { box-sizing: border-box; }
+.kr input { display: none; }
+/* 레이스 테두리 (위·아래) */
+.kr::before, .kr::after { content: ""; position: absolute; left: -1px; right: -1px; height: 7px;
+  background: radial-gradient(circle at 5px 0, #fff 4px, var(--pink-line) 4.5px, var(--pink-line) 5px, transparent 5.5px) 0 0 / 10px 7px repeat-x; }
+.kr::before { top: -7px; transform: scaleY(-1); }
+.kr::after { bottom: -7px; }
+
+/* 제목 */
+.kr .ttl { text-align: center; margin: 2px 0 10px 18px; }
+.kr .ttl h3 { margin: 0; font-family: var(--title-font); font-weight: 800; font-size: 22px; letter-spacing: .02em; color: var(--pink-deep);
+  -webkit-text-stroke: 1px #fff; paint-order: stroke fill;
+  text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 0 2px 0 #fff, 2px 0 0 #fff, 3px 3px 0 var(--blue-line); }
+.kr .ttl h3 span { color: #f4b3c8; }
+.kr .ttl .sub { display: inline-flex; gap: 4px; margin-top: 2px; font-size: 10px; }
+.kr .chip { display: inline-block; padding: 0 7px; background: #fff; border: 1px solid var(--line); border-radius: 2px; }
+.kr .chip.pk { background: var(--pink); border-color: var(--pink-line); }
+.kr .chip.bl { background: var(--blue); border-color: var(--blue-line); }
+.kr .chip.bt { background: var(--butter); border-color: #eadb93; }
+
+/* 겹친 카드 */
+.kr .stack { position: relative; height: 296px; }
+.kr .card { position: absolute; inset: 0; padding: 0 10px 8px; overflow: hidden; background: #fff; border: 1px solid var(--line);
+  box-shadow: 1px 2px 0 rgba(0,0,0,.05); transition: transform .25s; z-index: 1; }
+.kr .c1 { transform: rotate(-1.2deg); }
+.kr .c2 { transform: rotate(1.2deg) translate(3px, 5px); }
+.kr .c3 { transform: rotate(-.4deg) translate(6px, 10px); }
+.kr #k1:checked ~ .stack .c1, .kr #k2:checked ~ .stack .c2, .kr #k3:checked ~ .stack .c3 { z-index: 5; transform: none; }
+/* 마스킹 테이프 */
+.kr .tape { position: absolute; top: -1px; left: 50%; width: 56px; height: 13px; margin-left: -28px; transform: rotate(-2deg);
+  background: repeating-linear-gradient(90deg, rgba(249,220,230,.9) 0 5px, rgba(255,255,255,.9) 5px 10px); }
+/* 카드 머리띠 (줄무늬 + 세리프 영문) */
+.kr .band { display: flex; align-items: baseline; justify-content: center; gap: 5px; margin: 12px -10px 8px; padding: 1px 0;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, var(--pink) 3px 5px); border-top: 1px solid var(--pink-line); border-bottom: 1px solid var(--pink-line);
+  font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 14px; color: #b5b5b5;
+  text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff; }
+.kr .band small { font-family: 'Mona12'; font-style: normal; font-size: 9px; color: #b0b0b0; }
+.kr .band.bl { background: repeating-linear-gradient(0deg, transparent 0 3px, var(--blue) 3px 5px); border-color: var(--blue-line); }
+.kr .band.bt { background: repeating-linear-gradient(0deg, transparent 0 3px, var(--butter) 3px 5px); border-color: #eadb93; }
+
+/* 오른쪽 색인 */
+.kr .idx { position: absolute; right: -27px; top: 14px; z-index: 6; display: flex; flex-direction: column; gap: 3px; }
+.kr .idx label { writing-mode: vertical-rl; cursor: pointer; font-size: 10px; padding: 7px 3px; color: #999; border: 1px solid var(--line); border-left: 0; border-radius: 0 5px 5px 0; }
+.kr .idx label:nth-child(1) { background: var(--pink); } .kr .idx label:nth-child(2) { background: var(--blue); } .kr .idx label:nth-child(3) { background: var(--butter); }
+.kr #k1:checked ~ .stack .idx label[for=k1], .kr #k2:checked ~ .stack .idx label[for=k2], .kr #k3:checked ~ .stack .idx label[for=k3] { color: #555; padding-right: 6px; }
+.kr #k1:checked ~ .stack .idx label[for=k1]::after, .kr #k2:checked ~ .stack .idx label[for=k2]::after, .kr #k3:checked ~ .stack .idx label[for=k3]::after { content: "♡"; color: var(--pink-deep); }
+
+/* じょうほう */
+.kr .loc { text-align: center; font-size: 11.5px; padding-bottom: 6px; margin-bottom: 7px; border-bottom: 1px dotted var(--line); }
+.kr dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 6px; margin: 0; }
+.kr dt { font-size: 10px; padding: 0 6px; background: var(--lav); border-radius: 8px; height: fit-content; color: #888; }
+.kr dd { margin: 0; }
+.kr .mission { margin-top: 9px; padding: 6px 8px; background: #fff; border: 1px dashed var(--pink-line); border-radius: 10px; position: relative; }
+.kr .mission b { font-weight: 400; font-size: 10px; color: var(--pink-deep); display: block; }
+
+/* ステータス */
+.kr .mem { padding: 3px 0; border-bottom: 1px dotted #e3e3e3; }
+.kr .mem:last-child { border: 0; }
+.kr .nm { display: inline-block; padding: 0 7px; background: var(--blue); border: 1px solid var(--blue-line); border-radius: 9px; font-size: 10.5px; margin-right: 2px; }
+.kr .tg { display: inline-block; padding: 0 5px; margin-right: 2px; font-size: 10px; background: #fff; border: 1px solid var(--pink-line); border-radius: 9px;
+  font-family: 'SysEmoji', 'Mona12', sans-serif; }   /* ← 감정 칸만 기기 이모지 */
+.kr .act { display: block; color: #777; font-size: 10.5px; padding-left: 2px; }
+
+/* おまけ */
+.kr .memo { position: relative; padding: 8px 9px 7px; background: var(--butter); border: 1px solid #eadb93; transform: rotate(-1.2deg); margin-bottom: 12px; }
+.kr .memo small { display: block; font-size: 9px; color: #b3a04a; }
+.kr .bubble { position: relative; display: inline-block; background: #fff; border: 1px solid #b3b3b3; border-radius: 12px; padding: 5px 9px; }
+.kr .bubble::before, .kr .bubble::after { content: ""; position: absolute; border-style: solid; }
+.kr .bubble::before { bottom: -8px; left: 18px; border-width: 8px 6px 0; border-color: #b3b3b3 transparent transparent; }
+.kr .bubble::after { bottom: -6px; left: 19px; border-width: 7px 5px 0; border-color: #fff transparent transparent; }
+.kr .who { display: block; font-size: 9.5px; color: var(--soft); margin: 7px 0 10px 8px; }
+.kr .qa { border: 1px solid var(--blue-line); background: #fff; border-radius: 3px; }
+.kr .qa .h { font-size: 9.5px; color: #8ab0c9; background: var(--blue); padding: 0 6px; letter-spacing: .1em; }
+.kr .qa p { margin: 0; padding: 3px 7px; }
+.kr .qa p + p { border-top: 1px dotted #ddd; }
+.kr .qa i { font-style: normal; color: var(--pink-deep); margin-right: 3px; }
+
+/* 스티커 */
+.kr .stk { position: absolute; z-index: 7; font-size: 18px; pointer-events: none; font-family: 'SysEmoji', sans-serif;
+  filter: drop-shadow(1px 1px 0 #fff) drop-shadow(-1px -1px 0 #fff) drop-shadow(0 1px 1px rgba(0,0,0,.12)); }
+
+/* 폰트 비교용 */
+.fonts { width: 360px; background: #fff; border: 1px solid #ddd; padding: 12px; font-size: 11px; }
+.fonts div { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px dotted #ddd; }
+.fonts b { font-weight: 800; font-size: 20px; color: #e58fae; -webkit-text-stroke: 1px #fff; paint-order: stroke fill;
+  text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 3px 3px 0 #b7d3e6; }
+.fonts .emo { font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div>
+  <div class="lbl">キョニャ♡レポート v2<small>탭(색인) 버전 · 2000년대 일본 블로그 톤으로 차분하게</small></div>
+  <div class="kr">
+    <input type="radio" name="k" id="k1" checked><input type="radio" name="k" id="k2"><input type="radio" name="k" id="k3">
+    <span class="stk" style="top:-12px;left:-10px;transform:rotate(-14deg)">🎀</span>
+    <span class="stk" style="top:44px;right:4px;font-size:14px">⭐</span>
+    <span class="stk" style="bottom:-12px;left:30px;font-size:15px">🍓</span>
+
+    <div class="ttl">
+      <h3>キョニャ<span>♡</span>レポート</h3>
+      <div class="sub"><span class="chip pk">No.T66</span><span class="chip">2014.02.03 (월)</span><span class="chip bl">14:10</span><span class="chip bt">☀️</span></div>
+    </div>
+
+    <div class="stack">
+      <div class="idx"><label for="k1">じょうほう</label><label for="k2">ステータス</label><label for="k3">おまけ</label></div>
+
+      <div class="card c3"><span class="tape"></span>
+        <div class="band bt">Extra <small>おまけ</small></div>
+        <div class="memo"><small>📢 TMI</small>레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+        <div class="bubble">「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네? (・_・;)」</div>
+        <span class="who">🗣️ 1루 관중석의 스포츠지 기자</span>
+        <div class="qa"><div class="h">💌 INTERVIEW</div>
+          <p><i>Q.</i>오늘 가장 후회되는 일은?</p>
+          <p><i>A.</i>레이｜「ジュース、あげなきゃよかったかな。」<br>(주스, 주지 말 걸 그랬나.)</p>
+        </div>
+      </div>
+
+      <div class="card c2"><span class="tape"></span>
+        <div class="band bl">Status <small>ステータス</small></div>
+        <div class="mem"><span class="nm">레이</span><span class="tg">😐 싸늘</span><span class="tg">😒 씁쓸</span><span class="act">얼음주머니를 타케루에게 건넨다</span></div>
+        <div class="mem"><span class="nm">쿄헤이</span><span class="tg">😠 침묵</span><span class="tg">🤨 굳음</span><span class="act">배트를 짚은 채 2층 테라스를 봄</span></div>
+        <div class="mem"><span class="nm">이쿠토</span><span class="tg">😡 격분</span><span class="tg">😤 성마름</span><span class="act">그라운드 흙을 스파이크로 걷어참</span></div>
+        <div class="mem"><span class="nm">타케루</span><span class="tg">😢 충격</span><span class="tg">🥺 혼란</span><span class="act">얼음주머니를 받아 들고 고개를 숙임</span></div>
+        <div class="mem"><span class="nm">료</span><span class="tg">😒 냉담</span><span class="tg">🧊 차가움</span><span class="act">모자챙을 내리며 마운드로 걸어간다</span></div>
+      </div>
+
+      <div class="card c1"><span class="tape"></span>
+        <div class="band">Information <small>じょうほう</small></div>
+        <div class="loc">📍 오키나와 기노완 시립 야구장 1루 더그아웃 앞</div>
+        <dl>
+          <dt>📖 시점</dt><dd>레이</dd><dt>⛺ 일정</dt><dd>스프링캠프 훈련일</dd>
+          <dt>💗 호감도</dt><dd>😒 경계</dd><dt>💘 타겟</dt><dd>-</dd>
+        </dl>
+        <div class="mission"><b>🚩 Mission</b>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="lbl">제목 폰트 후보<small>PC·폰에서 열어보면 실제 폰트로 보여요</small></div>
+  <div class="fonts">
+    <div><b style="font-family:'Mochiy Pop One'">キョニャ♡レポート</b><span>① Mochiy Pop One<br>통통·팝</span></div>
+    <div><b style="font-family:'M PLUS Rounded 1c'">キョニャ♡レポート</b><span>② M PLUS Rounded<br>동글·단정</span></div>
+    <div><b style="font-family:'Hachi Maru Pop'">キョニャ♡レポート</b><span>③ Hachi Maru Pop<br>손글씨·동글</span></div>
+  </div>
+  <div class="lbl" style="margin-top:18px">감정 칸 이모지 비교<small>왼쪽 Mona12 이모지 / 오른쪽 기기 기본 이모지</small></div>
+  <div class="fonts">
+    <div class="emo"><span style="font-family:'Mona12'">😐 싸늘 😡 격분 🥺 혼란 🧊 차가움 🫥 🫨</span></div>
+    <div class="emo"><span style="font-family:'SysEmoji','Mona12'">😐 싸늘 😡 격분 🥺 혼란 🧊 차가움 🫥 🫨</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

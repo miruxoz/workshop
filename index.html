@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 작업대</title>
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ===== 맨 위 제목 ===== -->
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>로그 백업 작업실 ♪ 붙여넣기 → 변환 → 편집 → 미리보기 → 복사</p>
+  </header>
+
+  <!-- ===== 페이지 메뉴 ===== -->
+  <nav class="menu">
+    <a href="index.html" class="on">♡ 작업대 ♡</a>
+    <a href="vault.html">🗂 보관함</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- ===== 단계 탭 ===== -->
+    <div class="steps" id="steps">
+      <button class="step on" data-step="1">① 붙여넣기·나누기</button>
+      <button class="step" data-step="2">② 편집</button>
+      <button class="step" data-step="3">③ 미리보기</button>
+      <button class="step" data-step="4">④ 복사</button>
+    </div>
+
+    <!-- ===== ②③④ 공통: 작업할 글 고르기 ===== -->
+    <div class="pick-bar" id="pickBar" hidden>
+      <label class="lb" for="pickSel" style="flex:none">✎ 작업할 글</label>
+      <select class="tx sel" id="pickSel"></select>
+    </div>
+
+    <div class="step-pane" id="step1">
+
+    <!-- ===== ① 붙여넣기 ===== -->
+    <section class="win">
+      <div class="win-t pink"><span>✎ 로그 붙여넣기</span><span>♡</span></div>
+      <div class="win-b">
+
+        <!-- 채팅방 카테고리 -->
+        <div class="cat-bar">
+          <label class="lb" for="catSel" style="flex:none">🏷 채팅방</label>
+          <select class="tx sel" id="catSel"></select>
+          <button class="btn mini white" id="catDefault" title="이 채팅방을 기본으로">☆ 기본으로</button>
+          <button class="btn mini white" id="catRename">✎ 이름</button>
+          <button class="btn mini" id="catAdd">＋ 추가</button>
+          <button class="btn mini white" id="catDel" title="이 카테고리 지우기">🗑</button>
+        </div>
+        <div class="cat-bar">
+          <label class="lb" for="tplSel" style="flex:none">🎨 상태창</label>
+          <select class="tx sel" id="tplSel"></select>
+          <button class="btn mini white" id="tplReload" title="templates 폴더 다시 읽기">🔄</button>
+        </div>
+
+        <label class="lb" for="title">에피소드 제목 <small>서랍에 담을 때 붙어요 · 같은 제목은 ①②③ 자동 번호</small></label>
+        <input class="tx" id="title" type="text" placeholder="예: EP.12 스프링캠프">
+
+        <label class="lb" for="input">백업한 로그 <small>붙여넣으면 관찰일지·OOC는 서랍으로, 요약본은 자동 삭제</small></label>
+        <textarea class="tx big" id="input" rows="16" placeholder="백업 명령어로 복사한 로그를 여기에 붙여넣어 주세요 ♪"></textarea>
+
+        <!-- 자동 분류 결과 + 되돌리기 -->
+        <div class="classify-bar" id="classifyBar" hidden></div>
+
+        <div class="row">
+          <button class="btn big pink" id="convertBtn">⚡ 변환하기</button>
+          <button class="btn white" id="clearBtn" style="flex:none">🧹 비우기</button>
+        </div>
+        <div class="cut-bar">
+          <span class="cut-help">✂ 나누고 싶은 곳에 <b>커서</b>를 두고 →</span>
+          <button class="btn pink" id="cutBtn">✂ 여기까지! 담기</button>
+          <button class="btn white" id="cutAllBtn">📦 남은 거 전부 담기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 서랍 ===== -->
+    <section class="win">
+      <div class="win-t pink"><span>🗄 서랍</span><button class="btn mini white" id="drawerClear">올린 글 정리</button></div>
+      <div class="win-b">
+        <div class="dtabs" id="drawerTabs"></div>
+        <div class="empty" id="drawerEmpty"></div>
+        <ol class="drawer" id="drawer"></ol>
+      </div>
+    </section>
+
+    <!-- ===== 결과 ===== -->
+    <section class="win" id="resultWin">
+      <div class="win-t"><span>✧ 변환 결과<span id="resultLabel"></span></span><span id="resultHint"></span></div>
+      <div class="win-b">
+        <div class="empty" id="empty">아직 변환한 로그가 없어요 (｡•ᴗ•｡)</div>
+
+        <div id="result" hidden>
+          <div class="win-b" style="padding:0">
+            <div class="stats" id="stats"></div>
+
+            <div class="subtabs">
+              <button class="subtab on" data-pane="previewPane">👀 미리보기</button>
+              <button class="subtab" data-pane="codePane">💻 HTML 코드</button>
+            </div>
+            <div class="subpane" id="previewPane">
+              <div class="preview-wrap">
+                <!-- 붙여넣은 내용 속 스크립트가 실행되지 않도록 sandbox로 막아둔 미리보기 -->
+                <iframe class="preview-frame" id="preview" sandbox="allow-same-origin" title="미리보기"></iframe>
+              </div>
+            </div>
+            <div class="subpane" id="codePane" hidden>
+              <textarea class="tx code" id="output" readonly></textarea>
+            </div>
+
+            <button class="btn big" id="copyBtn">📋 HTML 복사하기 <small>(티스토리 HTML 모드에 붙여넣기)</small></button>
+          </div>
+        </div>
+      </div>
+    </section>
+    </div><!-- /step1 -->
+
+    <!-- ===== ② 편집 ===== -->
+    <div class="step-pane" id="step2" hidden>
+      <section class="win">
+        <div class="win-t pink"><span>✎ 편집 <small id="edState"></small></span><button class="btn mini white" id="edReset">↺ 원래대로</button></div>
+        <div class="win-b">
+          <div class="ed-tools" id="edTools">
+            <div class="ed-modes">
+              <button class="ed-mode on" data-mode="read">👆 보기</button>
+              <button class="ed-mode" data-mode="type">✏ 글 고치기</button>
+              <button class="ed-mode" data-mode="pen">🖍 형광펜</button>
+              <button class="ed-mode" data-mode="erase">🧽 지우개</button>
+              <button class="ed-mode" data-mode="xp">📸 발췌 펜</button>
+              <button class="ed-mode" data-mode="bm">🔖 책갈피</button>
+            </div>
+            <div class="ed-sub" data-for="pen">
+              <span class="ed-help">색 고르고 드래그하면 바로 칠해져요 · 칠한 곳을 누르면 💬 코멘트</span>
+              <span class="ed-colors" id="edColors"></span>
+              <button class="btn mini" id="edApply">🖍 선택한 곳 칠하기</button>
+            </div>
+            <div class="ed-sub" data-for="erase"><span class="ed-help">칠한 곳을 누르거나 드래그하면 지워져요 (형광펜·발췌 표시)</span></div>
+            <div class="ed-sub" data-for="xp"><span class="ed-help">트위터용 발췌 이미지에 넣을 문장을 드래그 (상태창 안 글자도 OK) · 결과물엔 안 보여요</span><button class="btn mini" id="edApplyXp">📸 선택한 곳 표시</button><button class="btn mini pink" id="edMakeXp">📸 발췌 이미지 만들기</button></div>
+            <div class="ed-sub" data-for="bm"><span class="ed-help">'여기까지 했어요' 할 곳을 누르면 🔖 가 꽂혀요 (다시 누르면 빠져요)</span></div>
+            <div class="ed-sub" data-for="type"><span class="ed-help">글자를 바로 고칠 수 있어요</span><button class="btn mini" id="edEmoji">🖼 GIF 이모지 넣기</button></div>
+            <div class="ed-row2">
+              <button class="btn mini white" id="edMemo">📝 메모 넣기</button>
+              <button class="btn mini white" id="edGoBm">🔖 책갈피로 가기</button>
+            </div>
+          </div>
+          <div class="empty" id="edEmpty">서랍에서 ✎ 편집 을 누르거나 위에서 작업할 글을 골라 주세요 ♪</div>
+          <div class="ed-frame"><div class="ed-body" id="edBody"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== ③ 미리보기 ===== -->
+    <div class="step-pane" id="step3" hidden>
+      <section class="win">
+        <div class="win-t"><span>👀 미리보기</span><span class="ed-modes"><button class="ed-mode on" data-w="375">📱 폰</button><button class="ed-mode" data-w="660">💻 PC</button></span></div>
+        <div class="win-b">
+          <div class="empty" id="pvEmpty">작업할 글을 골라 주세요 ♪</div>
+          <div class="preview-wrap"><iframe class="preview-frame" id="pvFrame" sandbox="allow-same-origin" title="미리보기" style="max-width:375px"></iframe></div>
+          <small class="ed-help">💬 형광펜 코멘트 팝업은 티스토리 스킨에서 눌러야 떠요 (여기선 모양만)</small>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== ④ 복사 ===== -->
+    <div class="step-pane" id="step4" hidden>
+      <section class="win">
+        <div class="win-t pink"><span>📋 복사</span><span></span></div>
+        <div class="win-b">
+          <div class="empty" id="cpEmpty">작업할 글을 골라 주세요 ♪</div>
+          <div id="cpBox" hidden>
+            <div class="stats" id="cpStats"></div>
+            <button class="btn big pink" id="cpCopy">📋 티스토리용 HTML 복사</button>
+            <div class="row">
+              <button class="btn" id="cpDone">✓ 올렸어요</button>
+              <button class="btn" id="cpVault">💾 보관함에 저장</button>
+              <button class="btn white" id="cpXp">📸 발췌 이미지</button>
+            </div>
+            <textarea class="tx code" id="cpCode" readonly rows="8"></textarea>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <footer class="foot">작업 중인 로그는 이 브라우저에만 저장돼요 · 💾 보관함은 내 비공개 깃허브 저장소에만 올라가요 ♡</footer>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/builtin-templates.js"></script>
+<script src="js/repo.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/log-style.js"></script>
+<script src="js/converter.js"></script>
+<script src="js/classify.js"></script>
+<script src="js/workbench.js"></script>
+<script src="js/drawer.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/excerpt.js"></script>
+<script src="js/widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상태창 방향 3종 — プロフ帳 · デコメ · 掲示板</title>
+<style>
+@font-face { font-family: "Mona12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2") format("woff2"); }
+@font-face { font-family: "SysEmoji"; src: local("Apple Color Emoji"), local("Segoe UI Emoji"), local("Noto Color Emoji"); unicode-range: U+2600-27BF, U+1F300-1FAFF, U+200D, U+FE0F; }
+body { margin: 0; padding: 24px 12px; background: #f3f0f2; font-family: 'Mona12', sans-serif; color: #555; }
+.text-emoji { display: inline-block !important; float: none !important; clear: none !important; height: 1.2em; width: auto; vertical-align: middle; margin: 0 2px; }
+.wrap { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: flex-start; }
+.lbl { font-size: 13px; text-align: center; margin-bottom: 8px; color: #333; }
+.lbl small { display: block; font-size: 10px; color: #888; }
+input.r { display: none; }
+.pn { display: none; }
+.tag { font-family: 'SysEmoji', 'Mona12', sans-serif; }
+
+/* =====================================================================
+   ① プロフ帳 — 프로필 수첩 (빈칸 채우기 양식)
+   ===================================================================== */
+.pf { width: 360px; font-size: 11px; line-height: 1.6; color: #5a5a5a; }
+.pf .tabs { display: flex; gap: 3px; padding: 0 10px; }
+.pf .tabs label { flex: 1; text-align: center; padding: 4px 0 2px; cursor: pointer; font-size: 10.5px; color: #aaa;
+  background: #fdf2f6; border: 1px solid #e8c3d1; border-bottom: 0; border-radius: 8px 8px 0 0; }
+.pf #p1:checked ~ .tabs label[for=p1], .pf #p2:checked ~ .tabs label[for=p2], .pf #p3:checked ~ .tabs label[for=p3] { background: #fff; color: #555; position: relative; top: 1px; }
+.pf #p1:checked ~ .book .a, .pf #p2:checked ~ .book .b, .pf #p3:checked ~ .book .c { display: block; }
+.pf .book { position: relative; background: #fff; border: 1px solid #e8c3d1; border-radius: 4px; padding: 14px 14px 14px 30px;
+  background-image: linear-gradient(90deg, transparent 22px, #f6d6e2 22px, #f6d6e2 23px, transparent 23px); }
+/* 수첩 링 구멍 */
+.pf .book::before { content: ""; position: absolute; left: 7px; top: 12px; bottom: 12px; width: 9px;
+  background: radial-gradient(circle, #f3f0f2 3px, #e8c3d1 3.5px, transparent 4.5px) 0 0 / 9px 22px repeat-y; }
+.pf .ttl { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2px solid #f6d6e2; padding-bottom: 4px; margin-bottom: 8px; }
+.pf .ttl b { font-weight: 400; font-size: 15px; color: #e58fae; letter-spacing: .08em; }
+.pf .ttl span { font-size: 10px; color: #aaa; }
+.pf .turn { background: #c9658c; color: #fff; padding: 0 6px; border-radius: 3px; font-size: 10px; margin-right: 3px; }
+.pf .q { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 6px; }
+.pf .q i { flex: none; font-style: normal; font-size: 10px; color: #c27d99; background: #fdf2f6; border: 1px solid #f0c9d7; border-radius: 9px; padding: 0 7px; }
+.pf .q span { flex: 1; border-bottom: 1px dashed #d9d9d9; padding: 0 2px 1px; }
+.pf .check { margin: 8px 0 2px; font-size: 10.5px; }
+.pf .check em { font-style: normal; display: inline-block; margin-right: 6px; color: #bbb; }
+.pf .check em.on { color: #e58fae; }
+.pf .free { margin-top: 8px; border: 1px solid #f0c9d7; border-radius: 6px; padding: 5px 8px; background: repeating-linear-gradient(#fff 0 19px, #fbe8ef 19px 20px); line-height: 20px; }
+.pf .free small { display: block; font-size: 9.5px; color: #c27d99; line-height: 1.4; }
+.pf .mem { border: 1px dashed #e8c3d1; border-radius: 6px; padding: 5px 8px; margin-bottom: 6px; }
+.pf .mem .nm { color: #e58fae; }
+.pf .mem .row { display: flex; gap: 6px; align-items: baseline; }
+.pf .mem .row i { font-style: normal; font-size: 9.5px; color: #aaa; flex: none; width: 34px; }
+
+/* =====================================================================
+   ② デコメ — 2000년대 휴대폰 데코메일
+   ===================================================================== */
+.dm { width: 340px; font-size: 11px; line-height: 1.7; color: #666; text-align: center; }
+.dm .tabs { display: flex; justify-content: center; gap: 2px; }
+.dm .tabs label { padding: 2px 10px; cursor: pointer; font-size: 10.5px; color: #b9a3c7; background: #f6f0fa; border: 1px solid #ddcfe8; border-bottom: 0; border-radius: 10px 10px 0 0; }
+.dm #d1:checked ~ .tabs label[for=d1], .dm #d2:checked ~ .tabs label[for=d2], .dm #d3:checked ~ .tabs label[for=d3] { background: #fff; color: #8c6aa6; }
+.dm #d1:checked ~ .mail .a, .dm #d2:checked ~ .mail .b, .dm #d3:checked ~ .mail .c { display: block; }
+.dm .mail { background: #fff; border: 1px solid #ddcfe8; border-radius: 6px; overflow: hidden; }
+.dm .head { text-align: left; font-size: 10px; color: #999; background: linear-gradient(#fbf7fd, #f3ecf8); padding: 4px 9px; border-bottom: 1px solid #ddcfe8; }
+.dm .head b { font-weight: 400; color: #8c6aa6; }
+/* 레이스 띠 */
+.dm .lace { height: 8px; background: radial-gradient(circle at 5px 8px, transparent 4px, #f3d3e0 4.5px, #f3d3e0 5px, transparent 5.5px) 0 0 / 10px 8px repeat-x; }
+.dm .body { padding: 8px 14px 12px; background: radial-gradient(#f4e4ee 1px, transparent 1.2px) 0 0 / 9px 9px; }
+.dm .sp { color: #f0a9c3; letter-spacing: .3em; font-size: 10px; }
+.dm .big { font-size: 13px; color: #555; margin: 2px 0; }
+.dm .line { color: #e3cbe0; letter-spacing: -.05em; margin: 4px 0; font-size: 10px; }
+.dm .pill { display: inline-block; background: #fff; border: 1px solid #f0c9d7; border-radius: 10px; padding: 0 8px; margin: 1px; }
+.dm .card { background: #fff; border: 1px dotted #e3c3d6; border-radius: 8px; padding: 4px 8px; margin: 5px auto; }
+.dm .card b { font-weight: 400; color: #e58fae; }
+
+/* =====================================================================
+   ③ 掲示板 — 옛날 일본 게시판(BBS)
+   ===================================================================== */
+.bb { width: 360px; font-size: 11px; line-height: 1.6; color: #555; }
+.bb .board { background: #f2eff5; border: 1px solid #c9c2d3; }
+.bb .bar { background: #ddd5e8; padding: 3px 8px; font-size: 11px; color: #6b5d80; border-bottom: 1px solid #c9c2d3; display: flex; justify-content: space-between; }
+.bb .tabs { display: flex; gap: 0; padding: 4px 6px 0; font-size: 10.5px; }
+.bb .tabs label { cursor: pointer; padding: 1px 8px; color: #7a6c92; text-decoration: underline; }
+.bb #b1:checked ~ .board .tabs label[for=b1], .bb #b2:checked ~ .board .tabs label[for=b2], .bb #b3:checked ~ .board .tabs label[for=b3] { text-decoration: none; background: #fff; border: 1px solid #c9c2d3; border-bottom: 0; color: #444; }
+.bb #b1:checked ~ .board .a, .bb #b2:checked ~ .board .b, .bb #b3:checked ~ .board .c { display: block; }
+.bb .pn { background: #fff; border-top: 1px solid #c9c2d3; padding: 6px 8px 8px; }
+.bb .post { margin-bottom: 8px; }
+.bb .ph { font-size: 10px; color: #888; }
+.bb .ph .no { color: #555; }
+.bb .ph .nm { color: #3a8a5a; font-weight: bold; }
+.bb .ph .nm.pk { color: #c25f87; }
+.bb .pb { padding: 2px 0 0 14px; }
+.bb .anc { color: #4a6fb5; text-decoration: underline; }
+.bb .res { font-size: 10px; color: #999; text-align: right; border-top: 1px dotted #ddd; padding-top: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ================= ① プロフ帳 ================= -->
+<div>
+  <div class="lbl">① プロフ帳 (프로필 수첩)<small>빈칸 채우기 양식 · 링 수첩 · 체크 칸</small></div>
+  <div class="pf">
+    <input class="r" type="radio" name="p" id="p1" checked><input class="r" type="radio" name="p" id="p2"><input class="r" type="radio" name="p" id="p3">
+    <div class="tabs"><label for="p1">じょうほう</label><label for="p2">ステータス</label><label for="p3">おまけ</label></div>
+    <div class="book">
+      <div class="ttl"><b>キョニャ♡プロフ</b><span><span class="turn">T66</span>2014.02.03 (월) 14:10 ☀️</span></div>
+      <div class="pn a">
+        <div class="q"><i>📍 いばしょ</i><span>오키나와 기노완 시립 야구장 1루 더그아웃 앞</span></div>
+        <div class="q"><i>📖 시점</i><span>레이</span></div>
+        <div class="q"><i>⛺ 일정</i><span>스프링캠프 훈련일</span></div>
+        <div class="q"><i>💘 타겟</i><span>-</span></div>
+        <div class="check">💗 호감도 : <em>□ 좋아</em><em>□ 보통</em><em class="on">☑ 경계 😒</em></div>
+        <div class="free"><small>🚩 きょうのミッション</small>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div>
+      </div>
+      <div class="pn b">
+        <div class="mem"><div class="row"><i>名前</i><span class="nm">레이</span></div><div class="row"><i>気分</i><span class="tag">😐 싸늘 · 😒 씁쓸</span></div><div class="row"><i>いま</i><span>얼음주머니를 타케루에게 건넨다</span></div></div>
+        <div class="mem"><div class="row"><i>名前</i><span class="nm">쿄헤이</span></div><div class="row"><i>気分</i><span class="tag">😠 침묵 · 🤨 굳음</span></div><div class="row"><i>いま</i><span>배트를 짚은 채 2층 테라스를 봄</span></div></div>
+        <div class="mem"><div class="row"><i>名前</i><span class="nm">이쿠토</span></div><div class="row"><i>気分</i><span class="tag">😡 격분 · 😤 성마름</span></div><div class="row"><i>いま</i><span>그라운드 흙을 스파이크로 걷어참</span></div></div>
+      </div>
+      <div class="pn c">
+        <div class="free"><small>📢 ひみつのTMI</small>레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+        <div class="q" style="margin-top:8px"><i>🗣️ 기자</i><span>「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네?」</span></div>
+        <div class="q"><i>💌 Q.</i><span>오늘 가장 후회되는 일은?</span></div>
+        <div class="q"><i>A. 레이</i><span>「ジュース、あげなきゃよかったかな。」(주스, 주지 말 걸 그랬나.)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ② デコメ ================= -->
+<div>
+  <div class="lbl">② デコメ (데코메일)<small>폰 메일 화면 · 레이스 띠 · 가운데 정렬 · 반짝이</small></div>
+  <div class="dm">
+    <input class="r" type="radio" name="d" id="d1" checked><input class="r" type="radio" name="d" id="d2"><input class="r" type="radio" name="d" id="d3">
+    <div class="tabs"><label for="d1">じょうほう</label><label for="d2">ステータス</label><label for="d3">おまけ</label></div>
+    <div class="mail">
+      <div class="head">From: <b>キョニャ♡</b><br>Sub: <b>T66</b> 2014/02/03 (月) 14:10 ☀️</div>
+      <div class="lace"></div>
+      <div class="body">
+        <div class="pn a">
+          <div class="sp">☆.｡.:*・゜</div>
+          <div class="big">📍 오키나와 기노완 시립 야구장<br>1루 더그아웃 앞</div>
+          <div class="line">┈┈┈┈┈┈ ♡ ┈┈┈┈┈┈</div>
+          <span class="pill">📖 시점 : 레이</span><span class="pill">⛺ 스프링캠프 훈련일</span><br>
+          <span class="pill">💗 호감도 : 😒 경계</span><span class="pill">💘 타겟 : -</span>
+          <div class="line">┈┈┈┈┈┈ ♡ ┈┈┈┈┈┈</div>
+          <div class="card"><b>🚩 MISSION</b><br>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이!<br>레이가 삼킨 속마음은?</div>
+          <div class="sp">・゜*:.｡.☆</div>
+        </div>
+        <div class="pn b">
+          <div class="sp">★ メンバー ★</div>
+          <div class="card"><b>레이</b> <span class="tag">😐 싸늘 😒 씁쓸</span><br>얼음주머니를 타케루에게 건넨다</div>
+          <div class="card"><b>쿄헤이</b> <span class="tag">😠 침묵 🤨 굳음</span><br>배트를 짚은 채 2층 테라스를 봄</div>
+          <div class="card"><b>이쿠토</b> <span class="tag">😡 격분 😤 성마름</span><br>그라운드 흙을 스파이크로 걷어참</div>
+        </div>
+        <div class="pn c">
+          <div class="sp">✉ おまけ ✉</div>
+          <div class="card">📢 레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+          <div class="card"><b>🗣️ 1루 관중석의 기자</b><br>「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네?」</div>
+          <div class="card"><b>💌 Q.</b> 오늘 가장 후회되는 일은?<br><b>A.</b> 레이｜「ジュース、あげなきゃよかったかな。」<br>(주스, 주지 말 걸 그랬나.)</div>
+        </div>
+      </div>
+      <div class="lace" style="transform:scaleY(-1)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ③ 掲示板 ================= -->
+<div>
+  <div class="lbl">③ 掲示板 (게시판)<small>옛날 일본 BBS · 글 번호 · 이름·날짜 줄</small></div>
+  <div class="bb">
+    <input class="r" type="radio" name="b" id="b1" checked><input class="r" type="radio" name="b" id="b2"><input class="r" type="radio" name="b" id="b3">
+    <div class="board">
+      <div class="bar"><span>【T66】キョニャ♡レポート板</span><span>☀️</span></div>
+      <div class="tabs"><label for="b1">じょうほう</label><label for="b2">ステータス</label><label for="b3">おまけ</label></div>
+      <div class="pn a">
+        <div class="post"><div class="ph"><span class="no">1</span> 名前：<span class="nm">じょうほう係</span> 投稿日：2014/02/03(月) 14:10 ☀️</div>
+          <div class="pb">📍 오키나와 기노완 시립 야구장 1루 더그아웃 앞<br>📖 시점：레이 ／ ⛺ 스프링캠프 훈련일<br>💗 호감도：😒 경계 ／ 💘 타겟：-</div></div>
+        <div class="post"><div class="ph"><span class="no">2</span> 名前：<span class="nm pk">ミッション★</span></div>
+          <div class="pb"><span class="anc">&gt;&gt;1</span><br>🚩 2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div></div>
+        <div class="res">レス 2 ／ 全部読む ／ 最新50</div>
+      </div>
+      <div class="pn b">
+        <div class="post"><div class="ph"><span class="no">3</span> 名前：<span class="nm">레이</span> ◆<span class="tag">😐 싸늘 😒 씁쓸</span></div><div class="pb">얼음주머니를 타케루에게 건넨다</div></div>
+        <div class="post"><div class="ph"><span class="no">4</span> 名前：<span class="nm">쿄헤이</span> ◆<span class="tag">😠 침묵 🤨 굳음</span></div><div class="pb">배트를 짚은 채 2층 테라스를 봄</div></div>
+        <div class="post"><div class="ph"><span class="no">5</span> 名前：<span class="nm">이쿠토</span> ◆<span class="tag">😡 격분 😤 성마름</span></div><div class="pb">그라운드 흙을 스파이크로 걷어참</div></div>
+      </div>
+      <div class="pn c">
+        <div class="post"><div class="ph"><span class="no">6</span> 名前：<span class="nm pk">TMI</span></div><div class="pb">📢 레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div></div>
+        <div class="post"><div class="ph"><span class="no">7</span> 名前：<span class="nm">1루 관중석의 기자</span></div><div class="pb">「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네?」</div></div>
+        <div class="post"><div class="ph"><span class="no">8</span> 名前：<span class="nm pk">💌 인터뷰</span></div><div class="pb">Q. 오늘 가장 후회되는 일은?<br><span class="anc">&gt;&gt;3</span> 레이｜「ジュース、あげなきゃよかったかな。」(주스, 주지 말 걸 그랬나.)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

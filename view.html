@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 글 보기</title>
+  <link rel="stylesheet" href="css/site.css">
+  <style>
+    /* 티스토리 스킨 본문 느낌 */
+    @font-face { font-family: 'MonaTarget'; src: url('https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2') format('woff2');
+      unicode-range: U+3040-309F, U+30A0-30FF, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF, U+1F300-1F9FF, U+2600-26FF, U+2700-27BF; }
+    :root { --c--palepink: #fdf7fa; --c-gray: #555; }
+    .view-post { font-family: 'MonaTarget', 'Mona12', sans-serif; }
+    .view-post img { max-width: 100%; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p id="sub">🗂 보관함 ♪ 글 보기</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="vault.html" class="on">♡ 보관함 ♡</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+  </nav>
+
+  <main class="main">
+    <section class="win">
+      <div class="win-t pink"><span id="vTitle">불러오는 중… ☕</span><a class="btn mini white" href="vault.html" style="text-decoration:none;color:inherit">◀ 목록</a></div>
+      <div class="win-b">
+        <div class="stats" id="vMeta"></div>
+        <div class="view-req" id="vReq" hidden></div>
+        <article class="view-post" id="vPost"></article>
+        <div class="row">
+          <button class="btn pink" id="vCopy" disabled>📋 HTML 복사하기</button>
+          <button class="btn white" id="vDrawer" disabled>🗄 서랍으로 꺼내기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="foot">보관함은 내 비공개 깃허브 저장소에만 저장돼요 ♡</footer>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/builtin-templates.js"></script>
+<script src="js/repo.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/log-style.js"></script>
+<script src="js/converter.js"></script>
+<script>
+  /* 👀 글 하나만 완성된 모습으로 보기 */
+  (async function () {
+    const $ = id => document.getElementById(id);
+    const TYPES = { main: '📖 본편', journal: '📓 관찰일지', ooc: '💬 OOC' };
+    const id = new URLSearchParams(location.search).get('id');
+    if (!Vault.configured()) { $('vTitle').textContent = '보관함이 연결되지 않았어요'; $('vPost').innerHTML = '<p class="empty">보관함 페이지에서 먼저 연결해 주세요 ♪</p>'; return; }
+    try {
+      const post = await Vault.getPost(id);
+      if (!post) throw new Error('글을 찾을 수 없어요');
+      const { html } = LogConverter.renderItem(post, post.title);
+      document.title = `♡ ${post.title || '제목 없음'} ♡`;
+      $('vTitle').textContent = `${TYPES[post.type] ? TYPES[post.type].slice(0, 2) : '📖'} ${post.title || '제목 없음'}`;
+      $('vMeta').innerHTML =
+        `<span>🏷 ${esc(Meta.catName(post.cat))}</span><span>${TYPES[post.type] || '📖 본편'}</span>` +
+        (post.storyDate ? `<span>📅 ${esc(post.storyDate)}</span>` : '') +
+        `<span>💾 ${fmt.date(post.savedAt)}</span>`;
+      if (post.request) { $('vReq').hidden = false; $('vReq').innerHTML = `<b>💬 내 요청</b>${esc(post.request)}`; }
+      $('vPost').innerHTML = html;   // 우리 변환기가 글자를 안전하게 바꿔서 만든 HTML
+      $('vCopy').disabled = $('vDrawer').disabled = false;
+      $('vCopy').onclick = async () => toast(await copyText(html) ? '📋 복사 완료!' : '⚠️ 복사 실패');
+      $('vDrawer').onclick = () => Vault.toDrawer(post) ? toast('🗄 서랍으로 꺼냈어요!') : Modal.alert('이미 서랍에 있어요');
+    } catch (e) {
+      $('vTitle').textContent = '⚠️ 불러오지 못했어요';
+      $('vPost').innerHTML = `<p class="empty">${esc(e.message)}</p>`;
+    }
+  })();
+</script>
+<script src="js/widget.js"></script>
+</body>
+</html>

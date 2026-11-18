@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상태창 시안 3종</title>
+<style>
+@font-face { font-family: "Mona12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2") format("woff2"); }
+@font-face { font-family: "ThinMulmaru"; src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2') format('woff2'); }
+@font-face { font-family: "Umdot12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2") format("woff2"); }
+body { margin: 0; padding: 24px 12px; background: #fdf7fa; font-family: 'Mona12', sans-serif; color: #333; }
+.text-emoji { display: inline-block !important; float: none !important; clear: none !important; height: 1.2em; width: auto; vertical-align: middle; margin: 0 2px; }
+.wrap { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; align-items: flex-start; }
+.col { width: 360px; }
+.lbl { font-size: 13px; text-align: center; margin-bottom: 8px; letter-spacing: .1em; }
+.lbl small { display: block; font-size: 10px; color: #888; letter-spacing: 0; }
+input.tab { display: none; }
+.pane { display: none; }
+
+/* ============================================================
+   시안 A — 「ノート」 탭 노트 (스킨의 INFO/LUCKY/HELP! 탭 느낌)
+   ============================================================ */
+.A { --pk: #fbeef5; --bl: #e3eef8; --ln: #6b6b6b; font-size: 11px; line-height: 1.6; }
+.A .tabs { display: flex; gap: 3px; padding-left: 6px; }
+.A .tabs label { padding: 4px 10px 3px; font-size: 11px; cursor: pointer; background: var(--pk); border: 1px solid var(--ln); border-bottom: 0;
+  border-radius: 6px 6px 0 0; box-shadow: inset -2px 0 0 rgba(0,0,0,.08), inset 2px 2px 0 #fff; position: relative; top: 1px; color: #777; }
+.A .body { border: 1px solid var(--ln); border-radius: 0 10px 10px 10px; background:
+  repeating-linear-gradient(#fff 0 21px, #f4dbe6 21px 22px); padding: 10px 12px 12px; box-shadow: 3px 3px 0 #e9dfe4; min-height: 230px; }
+.A #a1:checked ~ .tabs label[for=a1], .A #a2:checked ~ .tabs label[for=a2], .A #a3:checked ~ .tabs label[for=a3] { background: #fff; color: #333; z-index: 2; }
+.A #a1:checked ~ .body .p1, .A #a2:checked ~ .body .p2, .A #a3:checked ~ .body .p3 { display: block; }
+.A .head { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dotted #e3a9c1; padding-bottom: 4px; margin-bottom: 6px; }
+.A .slot { background: #444; color: #fff; padding: 0 6px; border-radius: 3px; font-size: 10px; margin-right: 4px; }
+.A .loc { text-align: center; font-size: 12px; margin: 4px 0 8px; }
+.A dl { margin: 0; display: grid; grid-template-columns: 54px 1fr; row-gap: 0; }
+.A dt { color: #c06e92; } .A dd { margin: 0; }
+.A .mission { margin-top: 8px; background: #fffbea; border: 1px dashed #c9b860; padding: 5px 8px; border-radius: 6px; }
+.A .mission b { font-weight: 400; color: #9a8420; display: block; font-size: 10px; }
+.A .mem { display: grid; grid-template-columns: 46px 1fr; gap: 0 6px; padding: 3px 0; border-bottom: 1px dotted #ddd; }
+.A .mem:last-child { border: 0; }
+.A .mem .nm { grid-row: span 2; display: flex; align-items: center; justify-content: center; background: var(--bl); border: 1px solid var(--ln); border-radius: 50%; height: 40px; width: 40px; font-size: 10px; }
+.A .tg { display: inline-block; font-size: 9.5px; background: var(--pk); border: 1px solid #ddb; border-radius: 8px; padding: 0 5px; margin-right: 2px; }
+.A .tmi { background: var(--bl); border-radius: 8px; padding: 6px 8px; margin-bottom: 8px; }
+.A .say small { color: #888; font-size: 10px; } .A .bub { background: #fff; border: 1px solid var(--ln); border-radius: 10px 10px 10px 2px; padding: 4px 8px; display: inline-block; }
+
+/* ============================================================
+   시안 B — 「ゲーム」 레트로 게임 / 윈도우 창
+   ============================================================ */
+.B { --ln: #333; --face: #efe9ec; font-size: 11px; line-height: 1.55; background: #fff; border: 3px double var(--ln); box-shadow: 4px 4px 0 #d9e9f5; }
+.B .title { display: flex; justify-content: space-between; align-items: center; padding: 3px 6px; color: #fff; font-size: 11px; letter-spacing: .1em;
+  background: linear-gradient(90deg, #e79bbb, #a9cbe8); }
+.B .title i { font-style: normal; display: inline-block; width: 13px; height: 13px; line-height: 11px; text-align: center; background: var(--face); color: #333; border: 1px solid var(--ln); margin-left: 2px; font-size: 9px; }
+.B .tabs { display: flex; gap: 4px; padding: 6px 6px 0; background: var(--face); border-bottom: 1px solid var(--ln); }
+.B .tabs label { flex: 1; text-align: center; padding: 3px 0; cursor: pointer; background: var(--face); border: 1px solid var(--ln); border-bottom: 0;
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,.15), inset 2px 2px 0 #fff; color: #666; }
+.B #b1:checked ~ .tabs label[for=b1], .B #b2:checked ~ .tabs label[for=b2], .B #b3:checked ~ .tabs label[for=b3] { background: #fff; color: #333; box-shadow: inset 2px 2px 0 #fff; }
+.B #b1:checked ~ .body .p1, .B #b2:checked ~ .body .p2, .B #b3:checked ~ .body .p3 { display: block; }
+.B .body { padding: 8px; min-height: 230px; background: #fff; }
+.B .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.B .cell { border: 1px solid var(--ln); padding: 2px 6px; box-shadow: inset 1px 1px 0 #ccc; }
+.B .cell small { display: block; font-size: 9px; color: #999; }
+.B .cell.w { grid-column: span 2; }
+.B .quest { margin-top: 6px; border: 2px solid var(--ln); padding: 5px 7px; background: #fff7fb; }
+.B .quest b { font-weight: 400; color: #d0608e; }
+.B .mem { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dashed #ccc; }
+.B .mem .nm { width: 44px; flex: none; font-size: 11px; }
+.B .bars { flex: 1; }
+.B .bar { display: flex; gap: 3px; margin-bottom: 2px; }
+.B .bar span { font-size: 9.5px; padding: 0 4px; background: #e3eef8; border: 1px solid #9ab; }
+.B .bar span + span { background: #fbeef5; border-color: #c9a; }
+.B .act { font-size: 10px; color: #555; }
+.B .msgwin { border: 2px solid #333; border-radius: 6px; padding: 6px 8px; background: #333; color: #fff; margin-bottom: 8px; box-shadow: inset 0 0 0 2px #fff; }
+.B .msgwin small { color: #f6c4d9; font-size: 10px; display: block; }
+.B .msgwin.l { background: #fff; color: #333; box-shadow: none; }
+.B .msgwin.l small { color: #888; }
+.B .msgwin::after { content: "▼"; display: block; text-align: right; font-size: 8px; animation: bl 1s steps(2) infinite; }
+@keyframes bl { 50% { opacity: 0; } }
+
+/* ============================================================
+   시안 C — 「ケータイ」 2000년대 일본 폴더폰 화면
+   ============================================================ */
+.C { --ln: #333; font-size: 11px; line-height: 1.55; width: 300px; margin: 0 auto; background: #f6eef2; border: 2px solid var(--ln); border-radius: 26px 26px 16px 16px;
+  padding: 14px 12px 12px; box-shadow: 4px 4px 0 #e3cbd6; }
+.C .speaker { width: 50px; height: 5px; margin: 0 auto 10px; border-radius: 3px; background: repeating-linear-gradient(90deg, #999 0 3px, transparent 3px 6px); }
+.C .screen { border: 2px solid var(--ln); background: #fff; }
+.C .sbar { display: flex; justify-content: space-between; font-size: 9px; padding: 1px 5px; background: linear-gradient(#ffd6e7, #ffb8d3); border-bottom: 1px solid var(--ln); }
+.C .ttl { text-align: center; padding: 3px; font-size: 12px; letter-spacing: .15em; color: #fff; background: linear-gradient(#ff9fc4, #f27ba9);
+  text-shadow: 1px 1px 0 #c2507e; }
+.C .body { padding: 7px 8px; min-height: 210px; background: repeating-linear-gradient(45deg, #fff 0 6px, #fff8fb 6px 12px); }
+.C #c1:checked ~ .screen .p1, .C #c2:checked ~ .screen .p2, .C #c3:checked ~ .screen .p3 { display: block; }
+.C .soft { display: flex; border-top: 2px solid var(--ln); }
+.C .soft label { flex: 1; text-align: center; padding: 3px 0; cursor: pointer; font-size: 10.5px; background: #fff; border-right: 1px solid var(--ln); color: #777; }
+.C .soft label:last-child { border: 0; }
+.C #c1:checked ~ .screen .soft label[for=c1], .C #c2:checked ~ .screen .soft label[for=c2], .C #c3:checked ~ .screen .soft label[for=c3] { background: #ffd6e7; color: #333; }
+.C .row { padding: 2px 0; border-bottom: 1px dotted #f0b6cc; }
+.C .row b { font-weight: 400; color: #f27ba9; margin-right: 4px; }
+.C .mail { margin-top: 6px; border: 1px solid #f27ba9; border-radius: 6px; background: #fff; padding: 4px 7px; }
+.C .mail small { color: #f27ba9; display: block; font-size: 9.5px; }
+.C .mem { padding: 3px 0; border-bottom: 1px dotted #f0b6cc; }
+.C .mem b { font-weight: 400; background: #333; color: #fff; padding: 0 5px; font-size: 10px; margin-right: 3px; }
+.C .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 10px; }
+.C .keys span { text-align: center; font-size: 9px; padding: 2px 0; background: #fff; border: 1px solid var(--ln); border-radius: 8px; color: #999; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ========================= A ========================= -->
+<div class="col">
+  <div class="lbl">시안 A 「ノート」<small>스킨의 탭 노트처럼 · 줄 공책 배경</small></div>
+  <div class="A">
+    <input class="tab" type="radio" name="a" id="a1" checked><input class="tab" type="radio" name="a" id="a2"><input class="tab" type="radio" name="a" id="a3">
+    <div class="tabs"><label for="a1">じょうほう</label><label for="a2">ステータス</label><label for="a3">おまけ</label></div>
+    <div class="body">
+      <div class="pane p1">
+        <div class="head"><span><span class="slot">T66</span>2014.02.03 (월) 14:10</span><span>☀️</span></div>
+        <div class="loc">📍 오키나와 기노완 시립 야구장 1루 더그아웃 앞</div>
+        <dl><dt>📖 시점</dt><dd>레이</dd><dt>⛺ 일정</dt><dd>스프링캠프 훈련일</dd><dt>💗 호감도</dt><dd>😒 경계</dd><dt>💘 타겟</dt><dd>-</dd></dl>
+        <div class="mission"><b>🚩 MISSION</b>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div>
+      </div>
+      <div class="pane p2">
+        <div class="mem"><span class="nm">레이</span><div><span class="tg">😐 싸늘</span><span class="tg">😒 씁쓸</span></div><div>얼음주머니를 타케루에게 건넨다</div></div>
+        <div class="mem"><span class="nm">쿄헤이</span><div><span class="tg">😠 침묵</span><span class="tg">🤨 굳음</span></div><div>배트를 짚은 채 2층 테라스를 봄</div></div>
+        <div class="mem"><span class="nm">이쿠토</span><div><span class="tg">😡 격분</span><span class="tg">😤 성마름</span></div><div>그라운드 흙을 스파이크로 걷어참</div></div>
+        <div class="mem"><span class="nm">타케루</span><div><span class="tg">😢 충격</span><span class="tg">🥺 혼란</span></div><div>얼음주머니를 받아 들고 고개를 숙임</div></div>
+        <div class="mem"><span class="nm">료</span><div><span class="tg">😒 냉담</span><span class="tg">🧊 차가움</span></div><div>모자챙을 내리며 마운드로 걸어간다</div></div>
+      </div>
+      <div class="pane p3">
+        <div class="tmi">📢 레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+        <div class="say"><small>🗣️ 1루 관중석의 스포츠지 기자</small><br><span class="bub">「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네? (・_・;)」</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================= B ========================= -->
+<div class="col">
+  <div class="lbl">시안 B 「ゲーム」<small>레트로 게임 창 · 윈도우98 버튼 · 메시지 창</small></div>
+  <div class="B">
+    <input class="tab" type="radio" name="b" id="b1" checked><input class="tab" type="radio" name="b" id="b2"><input class="tab" type="radio" name="b" id="b3">
+    <div class="title"><span>♡ T66 ♡ status.exe</span><span><i>_</i><i>□</i><i>✕</i></span></div>
+    <div class="tabs"><label for="b1">じょうほう</label><label for="b2">ステータス</label><label for="b3">おまけ</label></div>
+    <div class="body">
+      <div class="pane p1">
+        <div class="grid">
+          <div class="cell"><small>DATE</small>2014.02.03 (월)</div><div class="cell"><small>TIME · 天気</small>14:10 ☀️</div>
+          <div class="cell w"><small>📍 PLACE</small>오키나와 기노완 시립 야구장 1루 더그아웃 앞</div>
+          <div class="cell"><small>📖 시점</small>레이</div><div class="cell"><small>⛺ 일정</small>스프링캠프 훈련일</div>
+          <div class="cell"><small>💗 호감도</small>😒 경계</div><div class="cell"><small>💘 타겟</small>-</div>
+        </div>
+        <div class="quest"><b>▶ QUEST</b> 2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div>
+      </div>
+      <div class="pane p2">
+        <div class="mem"><span class="nm">레이</span><div class="bars"><div class="bar"><span>😐 싸늘</span><span>😒 씁쓸</span></div><div class="act">얼음주머니를 타케루에게 건넨다</div></div></div>
+        <div class="mem"><span class="nm">쿄헤이</span><div class="bars"><div class="bar"><span>😠 침묵</span><span>🤨 굳음</span></div><div class="act">배트를 짚은 채 2층 테라스를 봄</div></div></div>
+        <div class="mem"><span class="nm">이쿠토</span><div class="bars"><div class="bar"><span>😡 격분</span><span>😤 성마름</span></div><div class="act">그라운드 흙을 스파이크로 걷어참</div></div></div>
+        <div class="mem"><span class="nm">타케루</span><div class="bars"><div class="bar"><span>😢 충격</span><span>🥺 혼란</span></div><div class="act">얼음주머니를 받아 들고 고개를 숙임</div></div></div>
+        <div class="mem"><span class="nm">료</span><div class="bars"><div class="bar"><span>😒 냉담</span><span>🧊 차가움</span></div><div class="act">모자챙을 내리며 마운드로 걸어간다</div></div></div>
+      </div>
+      <div class="pane p3">
+        <div class="msgwin"><small>📢 TMI</small>레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+        <div class="msgwin l"><small>🗣️ 1루 관중석의 스포츠지 기자</small>「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네? (・_・;)」</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================= C ========================= -->
+<div class="col">
+  <div class="lbl">시안 C 「ケータイ」<small>2000년대 일본 폴더폰 화면 · 아래 소프트키가 탭</small></div>
+  <div class="C">
+    <input class="tab" type="radio" name="c" id="c1" checked><input class="tab" type="radio" name="c" id="c2"><input class="tab" type="radio" name="c" id="c3">
+    <div class="speaker"></div>
+    <div class="screen">
+      <div class="sbar"><span>📶 T66</span><span>2014/02/03 14:10</span><span>☀️ 🔋</span></div>
+      <div class="ttl">♡ ステータス ♡</div>
+      <div class="body">
+        <div class="pane p1">
+          <div class="row"><b>📍</b>오키나와 기노완 시립 야구장 1루 더그아웃 앞</div>
+          <div class="row"><b>📖</b>시점: 레이　<b>⛺</b>스프링캠프 훈련일</div>
+          <div class="row"><b>💗</b>호감도: 😒 경계　<b>💘</b>타겟: -</div>
+          <div class="mail"><small>✉ 新着ミッション</small>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div>
+        </div>
+        <div class="pane p2">
+          <div class="mem"><b>레이</b>😐 싸늘 · 😒 씁쓸<br>얼음주머니를 타케루에게 건넨다</div>
+          <div class="mem"><b>쿄헤이</b>😠 침묵 · 🤨 굳음<br>배트를 짚은 채 2층 테라스를 봄</div>
+          <div class="mem"><b>이쿠토</b>😡 격분 · 😤 성마름<br>그라운드 흙을 스파이크로 걷어참</div>
+          <div class="mem"><b>타케루</b>😢 충격 · 🥺 혼란<br>얼음주머니를 받아 들고 고개를 숙임</div>
+          <div class="mem"><b>료</b>😒 냉담 · 🧊 차가움<br>모자챙을 내리며 마운드로 걸어간다</div>
+        </div>
+        <div class="pane p3">
+          <div class="mail"><small>✉ TMI</small>레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+          <div class="mail"><small>✉ 1루 관중석의 스포츠지 기자</small>「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네? (・_・;)」</div>
+        </div>
+      </div>
+      <div class="soft"><label for="c1">じょうほう</label><label for="c2">ステータス</label><label for="c3">おまけ</label></div>
+    </div>
+    <div class="keys"><span>1 あ</span><span>2 か</span><span>3 さ</span><span>4 た</span><span>5 な</span><span>6 は</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

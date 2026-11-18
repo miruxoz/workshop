@@ -1,0 +1,44 @@
+<!-- name: 예시 · 위쪽 탭 3개 (모양 확인용) -->
+<div class="st-x">
+  <input type="radio" name="st-{{uid}}" id="st-{{uid}}-1" checked>
+  <input type="radio" name="st-{{uid}}" id="st-{{uid}}-2">
+  <input type="radio" name="st-{{uid}}" id="st-{{uid}}-3">
+  <div class="st-tabs">
+    <label for="st-{{uid}}-1">じょうほう</label>
+    <label for="st-{{uid}}-2">ステータス</label>
+    <label for="st-{{uid}}-3">おまけ</label>
+  </div>
+  <div class="st-box">
+    <div class="st-p st-p1">
+      <div class="st-head"><span class="st-turn">{{turn}}</span> {{date}} {{time}} {{weather}}</div>
+      {{#location}}<div class="st-loc">📍 {{location}}</div>{{/location}}
+      {{#chips}}<div class="st-row"><b>{{icon}} {{label}}</b> {{value}}</div>{{/chips}}
+      {{#mission}}<div class="st-mission">🚩 {{mission}}</div>{{/mission}}
+    </div>
+    <div class="st-p st-p2">
+      {{#members}}<div class="st-mem"><b>{{name}}</b> {{#tags}}<span class="st-tag">{{.}}</span>{{/tags}}<div>{{action}}</div></div>{{/members}}
+      {{^members}}<div class="st-none">캐릭터 정보가 없어요</div>{{/members}}
+    </div>
+    <div class="st-p st-p3">
+      {{#tmi}}<div class="st-tmi">📢 {{tmi}}</div>{{/tmi}}
+      {{#talk}}<div class="st-talk"><small>🗣️ {{who}}</small><div>{{say}}</div></div>{{/talk}}
+      {{#interview}}<div class="st-qa"><b>Q.</b> {{q}}<br><b>A.</b> {{who}}｜{{ja}} <small>({{ko}})</small></div>{{/interview}}
+    </div>
+  </div>
+</div>
+<style>
+.st-x { max-width: 360px; margin: 10px auto 26px; font-size: 11px; line-height: 1.6; color: #555; }
+.st-x input { display: none; }
+.st-x .st-tabs { display: flex; gap: 3px; }
+.st-x .st-tabs label { flex: 1; text-align: center; padding: 3px 0; cursor: pointer; background: #f6f6f6; border: 1px solid #ccc; border-bottom: 0; border-radius: 6px 6px 0 0; color: #999; }
+.st-x .st-box { border: 1px solid #ccc; padding: 10px; background: #fff; }
+.st-x .st-p { display: none; }
+.st-x input:nth-of-type(1):checked ~ .st-box .st-p1, .st-x input:nth-of-type(2):checked ~ .st-box .st-p2, .st-x input:nth-of-type(3):checked ~ .st-box .st-p3 { display: block; }
+.st-x input:nth-of-type(1):checked ~ .st-tabs label:nth-child(1), .st-x input:nth-of-type(2):checked ~ .st-tabs label:nth-child(2), .st-x input:nth-of-type(3):checked ~ .st-tabs label:nth-child(3) { background: #fbeef5; color: #555; }
+.st-x .st-turn { background: #555; color: #fff; padding: 0 5px; border-radius: 3px; }
+.st-x .st-loc { text-align: center; margin: 4px 0 6px; }
+.st-x .st-mission, .st-x .st-tmi { margin-top: 6px; padding: 5px 8px; background: #fbeef5; border-radius: 6px; }
+.st-x .st-mem { padding: 3px 0; border-bottom: 1px dotted #ddd; }
+.st-x .st-tag { font-family: 'SysEmoji', inherit; font-size: 10px; border: 1px solid #f0b9cb; border-radius: 8px; padding: 0 5px; margin-left: 2px; }
+.st-x .st-talk, .st-x .st-qa { margin-top: 6px; padding: 5px 8px; border: 1px solid #ccc; border-radius: 10px; }
+</style>

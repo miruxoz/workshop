@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상태창 스크랩북 시안</title>
+<style>
+@font-face { font-family: "Mona12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2") format("woff2"); }
+@font-face { font-family: "ThinMulmaru"; src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2') format('woff2'); }
+body { margin: 0; padding: 24px 12px; background: #f6f6f6; font-family: 'Mona12', sans-serif; color: #333; }
+.text-emoji { display: inline-block !important; float: none !important; clear: none !important; height: 1.2em; width: auto; vertical-align: middle; margin: 0 2px; }
+.wrap { display: flex; flex-wrap: wrap; gap: 36px; justify-content: center; align-items: flex-start; }
+.lbl { font-size: 13px; text-align: center; margin-bottom: 8px; letter-spacing: .1em; }
+.lbl small { display: block; font-size: 10px; color: #888; letter-spacing: 0; }
+
+/* ============================================================
+   공통 색 (첫 번째 레퍼런스 기본 + 두 번째 레퍼런스 포인트)
+   ============================================================ */
+.sb {
+  --pink: #f6c9d8; --pink-pale: #fdeef3; --blue: #cfe6f3; --blue-pale: #eef7fc;
+  --gray: #9a9a9a; --ink: #444;
+  --yellow: #ffe680; --red: #f47c7c; --mint: #bfeadf;   /* 포인트 컬러 */
+  --serif: 'Georgia', 'Times New Roman', serif;
+  position: relative; width: 360px; box-sizing: border-box; font-size: 11px; line-height: 1.6; color: var(--ink);
+  background: #fff radial-gradient(#d4d4d4 1.2px, transparent 1.3px) 0 0 / 12px 12px;   /* 회색 도트 */
+  border: 1px solid #ddd; box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+.sb * { box-sizing: border-box; }
+
+/* 종이 조각 */
+.sb .paper { position: relative; background: #fff; border: 1px solid #e3e3e3; box-shadow: 2px 3px 0 rgba(0,0,0,.06); }
+/* 마스킹 테이프 */
+.sb .tape { position: absolute; width: 64px; height: 16px; top: -8px; left: 50%; margin-left: -32px; transform: rotate(-3deg);
+  background: repeating-linear-gradient(90deg, rgba(246,201,216,.85) 0 6px, rgba(255,255,255,.85) 6px 12px); box-shadow: 0 1px 0 rgba(0,0,0,.05); }
+.sb .tape.blue { background: repeating-linear-gradient(45deg, rgba(207,230,243,.9) 0 5px, rgba(255,255,255,.9) 5px 10px); }
+.sb .tape.yellow { background: rgba(255,230,128,.75); }
+/* 흰 라벨 상자 (두·세 번째 레퍼런스) */
+.sb .lab { display: inline-block; background: #fff; border: 1px solid #333; padding: 1px 7px; font-size: 10.5px; line-height: 1.5; }
+.sb .lab.pk { background: var(--pink); border-color: var(--pink); }
+.sb .lab.rd { background: var(--red); border-color: var(--red); color: #fff; }
+.sb .lab.ye { background: var(--yellow); border-color: var(--yellow); }
+.sb .lab.bl { background: var(--blue); border-color: var(--blue); }
+/* 분홍 줄무늬 띠 제목 (첫 번째 레퍼런스 'Bow Cutlery Plate') */
+.sb .band { text-align: center; font-family: var(--serif); font-style: italic; font-size: 17px; color: #b9b9b9; letter-spacing: .02em;
+  background: repeating-linear-gradient(0deg, #fff 0 3px, var(--pink) 3px 5px); padding: 3px 0; margin: -1px -1px 6px;
+  text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff; }
+.sb .band small { font-family: 'Mona12'; font-style: normal; font-size: 9px; color: #999; margin-left: 4px; }
+/* 스티커 (이모지 — 나중에 GIF로 바꿔도 돼요) */
+.sb .stk { position: absolute; z-index: 5; font-size: 22px; filter: drop-shadow(1px 1px 0 #fff) drop-shadow(-1px -1px 0 #fff) drop-shadow(1px 2px 1px rgba(0,0,0,.15)); pointer-events: none; }
+/* 말풍선 (다섯 번째 레퍼런스) */
+.sb .bubble { position: relative; display: inline-block; background: #fff; border: 1px solid #aaa; border-radius: 14px; padding: 6px 10px; max-width: 100%; }
+.sb .bubble::before, .sb .bubble::after { content: ""; position: absolute; left: 22px; border-style: solid; }
+.sb .bubble::before { bottom: -9px; border-width: 9px 7px 0 7px; border-color: #aaa transparent transparent transparent; }
+.sb .bubble::after { bottom: -7px; left: 23px; border-width: 8px 6px 0 6px; border-color: #fff transparent transparent transparent; }
+
+/* ============================================================
+   시안 1 — 「スクラップ」 전부 펼쳐 붙이기
+   ============================================================ */
+.s1 { padding: 18px 16px 22px; }
+.s1 .top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 10px; }
+.s1 .ttl { font-family: var(--serif); font-style: italic; font-size: 26px; color: #a9a9a9; line-height: 1; background: var(--pink-pale); padding: 4px 10px 6px; }
+.s1 .ttl small { display: block; font-family: 'Mona12'; font-style: normal; font-size: 9px; color: #999; margin-top: 3px; letter-spacing: .1em; }
+.s1 .ticket { text-align: center; background: #fff; border: 1px dashed #aaa; padding: 2px 8px; transform: rotate(4deg); font-size: 10px; }
+.s1 .ticket b { display: block; font-size: 15px; font-weight: 400; color: var(--red); letter-spacing: .1em; }
+
+.s1 .info { padding: 12px 12px 10px; transform: rotate(-1deg); margin-bottom: 4px; }
+.s1 .row { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-bottom: 5px; }
+.s1 .loc { font-size: 12px; margin: 2px 0 8px; padding-bottom: 6px; border-bottom: 1px dotted #ccc; }
+.s1 .todo { margin-top: 8px; text-align: center; }
+.s1 .todo .pill { display: inline-block; font-family: var(--serif); font-style: italic; font-size: 13px; color: #fff; background: #c8c8c8; border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #c8c8c8; border-radius: 50%; padding: 2px 16px; margin-bottom: 3px; }
+.s1 .todo p { margin: 0; font-size: 10.5px; }
+
+.s1 .status { margin: -6px 10px 0 18px; padding: 0 10px 8px; transform: rotate(1.2deg); z-index: 2; }
+.s1 .mem { display: grid; grid-template-columns: auto 1fr; gap: 0 6px; align-items: start; padding: 4px 0; border-bottom: 1px dashed #e5e5e5; }
+.s1 .mem:last-child { border: 0; }
+.s1 .nm { grid-row: span 2; background: var(--blue); padding: 0 6px; font-size: 11px; border-radius: 8px; }
+.s1 .tg { display: inline-block; font-size: 9.5px; background: var(--pink-pale); border: 1px solid var(--pink); border-radius: 8px; padding: 0 5px; margin-right: 2px; }
+.s1 .act { font-size: 10.5px; color: #666; }
+
+.s1 .etc { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+.s1 .memo { background: var(--yellow); padding: 10px 10px 8px; transform: rotate(-2deg); width: 82%; box-shadow: 2px 3px 0 rgba(0,0,0,.08); position: relative; }
+.s1 .memo small { display: block; font-size: 9px; color: #9a8420; letter-spacing: .1em; }
+.s1 .clip { position: absolute; top: -12px; right: 12px; font-size: 22px; transform: rotate(20deg); }
+.s1 .say { align-self: flex-end; width: 88%; text-align: left; }
+.s1 .say small { display: block; font-size: 9.5px; color: #999; margin: 8px 0 0 10px; }
+
+/* ============================================================
+   시안 2 — 「スクラップ＋インデックス」 겹친 카드 + 옆 색인 탭
+   (색인을 누르면 그 카드가 맨 앞으로)
+   ============================================================ */
+.s2 { padding: 16px 30px 18px 12px; }
+.s2 input { display: none; }
+.s2 .head { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+.s2 .head .ttl { font-family: var(--serif); font-style: italic; font-size: 20px; color: #aaa; margin-right: 4px; }
+.s2 .stack { position: relative; height: 300px; }
+.s2 .card { position: absolute; inset: 0; padding: 0 10px 8px; overflow: hidden; transition: transform .25s, opacity .25s; }
+.s2 .c1 { transform: rotate(-1.5deg) translate(-2px, 0); }
+.s2 .c2 { transform: rotate(1.5deg) translate(4px, 6px); }
+.s2 .c3 { transform: rotate(-.5deg) translate(8px, 12px); }
+.s2 .card { z-index: 1; filter: brightness(.97); }
+.s2 #s2a:checked ~ .stack .c1, .s2 #s2b:checked ~ .stack .c2, .s2 #s2c:checked ~ .stack .c3 { z-index: 5; transform: rotate(0) translate(0, 0); filter: none; }
+.s2 .idx { position: absolute; right: -27px; z-index: 6; display: flex; flex-direction: column; gap: 4px; top: 12px; }
+.s2 .idx label { writing-mode: vertical-rl; cursor: pointer; font-size: 10px; padding: 8px 3px; border: 1px solid #ccc; border-left: 0; border-radius: 0 6px 6px 0; color: #777; }
+.s2 .idx label:nth-child(1) { background: var(--pink); } .s2 .idx label:nth-child(2) { background: var(--blue); } .s2 .idx label:nth-child(3) { background: var(--yellow); }
+.s2 #s2a:checked ~ .stack .idx label[for=s2a], .s2 #s2b:checked ~ .stack .idx label[for=s2b], .s2 #s2c:checked ~ .stack .idx label[for=s2c] { color: #333; padding-right: 7px; box-shadow: 2px 0 0 #333; }
+.s2 .row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 5px; }
+.s2 .mem { padding: 3px 0; border-bottom: 1px dashed #e5e5e5; }
+.s2 .mem b { font-weight: 400; background: var(--blue); padding: 0 6px; border-radius: 8px; margin-right: 3px; }
+.s2 .tg { display: inline-block; font-size: 9.5px; background: var(--pink-pale); border: 1px solid var(--pink); border-radius: 8px; padding: 0 5px; margin-right: 2px; }
+.s2 .act { display: block; font-size: 10.5px; color: #666; }
+.s2 .mission { margin-top: 8px; padding: 6px 8px; background: var(--pink-pale); border: 1px dashed #e7a3bb; border-radius: 8px; }
+.s2 .mission b { font-weight: 400; color: var(--red); }
+.s2 .memo { background: var(--yellow); padding: 8px 10px; transform: rotate(-1.5deg); margin: 4px 0 14px; }
+.s2 .memo small { display: block; font-size: 9px; color: #9a8420; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- =================== 시안 1 =================== -->
+<div>
+  <div class="lbl">시안 1 「スクラップ」<small>탭 없이 종이 조각을 겹쳐 붙여서 전부 펼쳐 보이기</small></div>
+  <div class="sb s1">
+    <span class="stk" style="top:-10px; left:-8px; transform:rotate(-12deg)">🎀</span>
+    <span class="stk" style="top:96px; right:-10px">⭐</span>
+    <span class="stk" style="top:300px; left:-12px; font-size:26px">🍪</span>
+    <span class="stk" style="bottom:120px; right:-8px">🍎</span>
+    <span class="stk" style="bottom:-8px; left:40%; font-size:18px; color:#aaa">♪</span>
+
+    <div class="top">
+      <div class="ttl">Status Report<small>じょうほう · ステータス · おまけ</small></div>
+      <div class="ticket">No.<b>T66</b></div>
+    </div>
+
+    <!-- じょうほう -->
+    <div class="paper info">
+      <span class="tape"></span>
+      <div class="row"><span class="lab">2014.02.03 (월)</span><span class="lab bl">14:10</span><span class="lab ye">☀️ 맑음</span></div>
+      <div class="loc">📍 오키나와 기노완 시립 야구장 1루 더그아웃 앞</div>
+      <div class="row"><span class="lab">📖 시점: 레이</span><span class="lab">⛺ 스프링캠프 훈련일</span></div>
+      <div class="row"><span class="lab rd">💗 호감도</span><span class="lab">😒 경계</span><span class="lab pk">💘 타겟</span><span class="lab">-</span></div>
+      <div class="todo"><span class="pill">Mission</span><p>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</p></div>
+    </div>
+
+    <!-- ステータス -->
+    <div class="paper status">
+      <span class="tape blue"></span>
+      <div class="band">Status<small>ステータス</small></div>
+      <div class="mem"><span class="nm">레이</span><div><span class="tg">😐 싸늘</span><span class="tg">😒 씁쓸</span></div><div class="act">얼음주머니를 타케루에게 건넨다</div></div>
+      <div class="mem"><span class="nm">쿄헤이</span><div><span class="tg">😠 침묵</span><span class="tg">🤨 굳음</span></div><div class="act">배트를 짚은 채 2층 테라스를 봄</div></div>
+      <div class="mem"><span class="nm">이쿠토</span><div><span class="tg">😡 격분</span><span class="tg">😤 성마름</span></div><div class="act">그라운드 흙을 스파이크로 걷어참</div></div>
+      <div class="mem"><span class="nm">타케루</span><div><span class="tg">😢 충격</span><span class="tg">🥺 혼란</span></div><div class="act">얼음주머니를 받아 들고 고개를 숙임</div></div>
+      <div class="mem"><span class="nm">료</span><div><span class="tg">😒 냉담</span><span class="tg">🧊 차가움</span></div><div class="act">모자챙을 내리며 마운드로 걸어간다</div></div>
+    </div>
+
+    <!-- おまけ -->
+    <div class="etc">
+      <div class="memo"><span class="clip">📎</span><small>📢 TMI</small>레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+      <div class="say"><div class="bubble">「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네? (・_・;)」</div><small>🗣️ 1루 관중석의 스포츠지 기자</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== 시안 2 =================== -->
+<div>
+  <div class="lbl">시안 2 「スクラップ＋インデックス」<small>겹쳐진 카드 · 오른쪽 색인을 누르면 그 카드가 맨 앞으로</small></div>
+  <div class="sb s2">
+    <input type="radio" name="s2" id="s2a" checked><input type="radio" name="s2" id="s2b"><input type="radio" name="s2" id="s2c">
+    <span class="stk" style="top:-10px; right:-6px; transform:rotate(14deg)">🎀</span>
+    <span class="stk" style="bottom:-10px; left:-8px">⭐</span>
+    <span class="stk" style="top:40px; left:-12px; font-size:18px">🍪</span>
+
+    <div class="head"><span class="ttl">Status</span><span class="lab rd">T66</span><span class="lab">2014.02.03 (월)</span><span class="lab bl">14:10 ☀️</span></div>
+
+    <div class="stack">
+      <div class="idx"><label for="s2a">じょうほう</label><label for="s2b">ステータス</label><label for="s2c">おまけ</label></div>
+
+      <div class="paper card c3">
+        <div class="band">Extra<small>おまけ</small></div>
+        <div class="memo"><small>📢 TMI 📎</small>레이는 토요일에 벤치에 따서 두고 왔던 복숭아 주스가 괜한 짓이었다고 생각하며 입맛을 다셨습니다 (￣ー￣)</div>
+        <div class="bubble">「어라, 니시카와 선수 오늘따라 표정이 무섭게 굳어 있네? (・_・;)」</div>
+        <div style="font-size:9.5px;color:#999;margin:8px 0 0 10px">🗣️ 1루 관중석의 스포츠지 기자</div>
+      </div>
+      <div class="paper card c2">
+        <div class="band">Status<small>ステータス</small></div>
+        <div class="mem"><b>레이</b><span class="tg">😐 싸늘</span><span class="tg">😒 씁쓸</span><span class="act">얼음주머니를 타케루에게 건넨다</span></div>
+        <div class="mem"><b>쿄헤이</b><span class="tg">😠 침묵</span><span class="tg">🤨 굳음</span><span class="act">배트를 짚은 채 2층 테라스를 봄</span></div>
+        <div class="mem"><b>이쿠토</b><span class="tg">😡 격분</span><span class="tg">😤 성마름</span><span class="act">그라운드 흙을 스파이크로 걷어참</span></div>
+        <div class="mem"><b>타케루</b><span class="tg">😢 충격</span><span class="tg">🥺 혼란</span><span class="act">얼음주머니를 받아 들고 고개를 숙임</span></div>
+        <div class="mem"><b>료</b><span class="tg">😒 냉담</span><span class="tg">🧊 차가움</span><span class="act">모자챙을 내리며 마운드로 걸어간다</span></div>
+      </div>
+      <div class="paper card c1">
+        <div class="band">Information<small>じょうほう</small></div>
+        <div style="font-size:12px;margin:2px 0 8px;padding-bottom:6px;border-bottom:1px dotted #ccc">📍 오키나와 기노완 시립 야구장 1루 더그아웃 앞</div>
+        <div class="row"><span class="lab">📖 시점: 레이</span><span class="lab">⛺ 스프링캠프 훈련일</span></div>
+        <div class="row"><span class="lab rd">💗 호감도</span><span class="lab">😒 경계</span><span class="lab pk">💘 타겟</span><span class="lab">-</span></div>
+        <div class="mission"><b>🚩 Mission</b><br>2층 회의실 문밖에서 들었던 대화를 선수들에게 전한 레이! 레이가 삼킨 속마음은?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
