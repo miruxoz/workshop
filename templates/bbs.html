@@ -5,29 +5,29 @@
   <input type="radio" name="bb-{{uid}}" id="bb-{{uid}}-3">
   <div class="bb-board">
     <div class="bb-bar"><span>【{{turn}}】キョニャ♡レポート板</span><span>{{weather}}</span></div>
-    <div class="bb-tabs">
+    <div class="bb-tabs st-tabs">
       <label for="bb-{{uid}}-1">じょうほう</label>
       <label for="bb-{{uid}}-2">ステータス</label>
       <label for="bb-{{uid}}-3">おまけ</label>
     </div>
 
     <!-- じょうほう -->
-    <div class="bb-p bb-p1">
-      <div class="bb-post"><div class="bb-ph">名前：<span class="bb-nm">じょうほう係</span> 投稿日：{{date}} {{time}} {{weather}}</div>
+    <div class="bb-p bb-p1 st-panel" data-sec="info chips mission">
+      <div class="bb-post" data-sec="info chips"><div class="bb-ph">名前：<span class="bb-nm">じょうほう係</span> 投稿日：{{date}} {{time}} {{weather}}</div>
         <div class="bb-pb">{{#location}}📍 {{location}}<br>{{/location}}{{#chips}}<span class="bb-chip">{{text}}</span>{{/chips}}</div></div>
       {{#mission}}<div class="bb-post"><div class="bb-ph">名前：<span class="bb-nm bb-pk">ミッション★</span></div>
         <div class="bb-pb"><span class="bb-anc">&gt;&gt;1</span><br>🚩 {{mission}}</div></div>{{/mission}}
-      <div class="bb-res">レス ／ 全部読む ／ 最新50</div>
+      <div class="bb-res" data-sec="info chips">レス ／ 全部読む ／ 最新50</div>
     </div>
 
     <!-- ステータス -->
-    <div class="bb-p bb-p2">
+    <div class="bb-p bb-p2 st-panel" data-sec="members">
       {{#members}}<div class="bb-post"><div class="bb-ph">名前：<span class="bb-nm">{{name}}</span> ◆<span class="bb-tags">{{#tags}}<span>{{.}}</span>{{/tags}}</span></div><div class="bb-pb">{{action}}</div></div>{{/members}}
       {{^members}}<div class="bb-post"><div class="bb-pb">このスレッドには まだ 書き込みが ありません</div></div>{{/members}}
     </div>
 
     <!-- おまけ -->
-    <div class="bb-p bb-p3">
+    <div class="bb-p bb-p3 st-panel" data-sec="tmi qa talk">
       {{#tmi}}<div class="bb-post"><div class="bb-ph">名前：<span class="bb-nm bb-pk">内緒だよ　ʕ⸝⸝ᴥ˶กʔ꜆꜄꜆꜄꜆</span></div><div class="bb-pb">📢 {{tmi}}</div></div>{{/tmi}}
       {{#interview}}<div class="bb-post"><div class="bb-ph">名前：<span class="bb-nm bb-pk">💌 インタビュー</span></div><div class="bb-pb">Q. {{q}}<br>{{#who}}<span class="bb-anc">&gt;&gt;{{who}}</span><br>{{/who}}{{ja}}{{#ko}}<br><span class="bb-ko">({{ko}})</span>{{/ko}}</div></div>{{/interview}}
       {{#talk}}<div class="bb-post"><div class="bb-ph">名前：<span class="bb-nm">{{#who}}{{who}}{{/who}}{{^who}}名無しさん{{/who}}</span></div><div class="bb-pb">{{say}}</div></div>{{/talk}}

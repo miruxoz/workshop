@@ -3,28 +3,28 @@
   <input type="radio" name="dm-{{uid}}" id="dm-{{uid}}-1" checked>
   <input type="radio" name="dm-{{uid}}" id="dm-{{uid}}-2">
   <input type="radio" name="dm-{{uid}}" id="dm-{{uid}}-3">
-  <div class="dm-tabs">
+  <div class="dm-tabs st-tabs">
     <label for="dm-{{uid}}-1">じょうほう</label>
     <label for="dm-{{uid}}-2">ステータス</label>
     <label for="dm-{{uid}}-3">おまけ</label>
   </div>
   <div class="dm-mail">
-    <div class="dm-head">From: <b>キョニャ♡</b><br>Sub: <b>{{turn}}</b> {{date}} {{time}} {{weather}}</div>
+    <div class="dm-head" data-sec="info">From: <b>キョニャ♡</b><br>Sub: <b>{{turn}}</b> {{date}} {{time}} {{weather}}</div>
     <div class="dm-lace"></div>
     <div class="dm-body">
 
       <!-- じょうほう -->
-      <div class="dm-p dm-p1">
+      <div class="dm-p dm-p1 st-panel" data-sec="info chips mission">
         <div class="dm-sp">☆.｡.:*・゜</div>
-        {{#location}}<div class="dm-here"><span class="dm-here-t">今ここだよ♪</span>📍 {{location}}</div>{{/location}}
+        {{#location}}<div class="dm-here" data-sec="info"><span class="dm-here-t">今ここだよ♪</span>📍 {{location}}</div>{{/location}}
         <div class="dm-line">┈┈┈┈┈┈ ♡ ┈┈┈┈┈┈</div>
-        {{#chips}}<span class="dm-pill">{{text}}</span>{{/chips}}
+        {{#chips}}<span class="dm-pill" data-sec="chips">{{text}}</span>{{/chips}}
         {{#mission}}<div class="dm-line">┈┈┈┈┈┈ ♡ ┈┈┈┈┈┈</div><div class="dm-card"><b>🚩 MISSION</b><br>{{mission}}</div>{{/mission}}
         <div class="dm-sp">・゜*:.｡.☆</div>
       </div>
 
       <!-- ステータス: 표 -->
-      <div class="dm-p dm-p2">
+      <div class="dm-p dm-p2 st-panel" data-sec="members">
         <div class="dm-sp">★ メンバー ★</div>
         <table class="dm-tb">
           <thead><tr><th>なまえ</th><th>ようす</th></tr></thead>
@@ -44,7 +44,7 @@
       </div>
 
       <!-- おまけ -->
-      <div class="dm-p dm-p3">
+      <div class="dm-p dm-p3 st-panel" data-sec="tmi qa talk">
         <div class="dm-sp">✉ おまけ ✉</div>
         {{#tmi}}<div class="dm-card"><b>内緒だよ　ʕ⸝⸝ᴥ˶กʔ꜆꜄꜆꜄꜆</b><br>{{tmi}}</div>{{/tmi}}
         {{#interview}}<div class="dm-card"><b>💌 Q.</b> {{q}}<br>{{#who}}<span class="dm-who">{{who}}</span><br>{{/who}}{{ja}}{{#ko}}<br><span class="dm-ko">({{ko}})</span>{{/ko}}</div>{{/interview}}

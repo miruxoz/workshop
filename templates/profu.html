@@ -3,26 +3,26 @@
   <input type="radio" name="pf-{{uid}}" id="pf-{{uid}}-1" checked>
   <input type="radio" name="pf-{{uid}}" id="pf-{{uid}}-2">
   <input type="radio" name="pf-{{uid}}" id="pf-{{uid}}-3">
-  <div class="pf-tabs">
+  <div class="pf-tabs st-tabs">
     <label for="pf-{{uid}}-1">じょうほう</label>
     <label for="pf-{{uid}}-2">ステータス</label>
     <label for="pf-{{uid}}-3">おまけ</label>
   </div>
   <div class="pf-book">
-    <div class="pf-ttl"><b>キョニャ♡プロフ</b><span>{{#turn}}<span class="pf-turn">{{turn}}</span>{{/turn}}{{date}} {{time}} {{weather}}</span></div>
+    <div class="pf-ttl" data-sec="info"><b>キョニャ♡プロフ</b><span>{{#turn}}<span class="pf-turn">{{turn}}</span>{{/turn}}{{date}} {{time}} {{weather}}</span></div>
 
     <!-- じょうほう -->
-    <div class="pf-p pf-p1">
-      {{#location}}<div class="pf-q"><i>📍 場所</i><span>{{location}}</span></div>{{/location}}
-      {{#f.시점}}<div class="pf-q"><i>📖 視点</i><span>{{f.시점}}</span></div>{{/f.시점}}
-      {{#f.일정}}<div class="pf-q"><i>⛺ 予定</i><span>{{f.일정}}</span></div>{{/f.일정}}
-      {{#f.타겟}}<div class="pf-q"><i>💘 ターゲット</i><span>{{f.타겟}}</span></div>{{/f.타겟}}
-      {{#f.호감도}}<div class="pf-check"><i>💗 好感度</i> <em>☑ <span class="pf-emo">{{f.호감도}}</span></em></div>{{/f.호감도}}
+    <div class="pf-p pf-p1 st-panel" data-sec="info chips mission">
+      {{#location}}<div class="pf-q" data-sec="info"><i>📍 場所</i><span>{{location}}</span></div>{{/location}}
+      {{#f.시점}}<div class="pf-q" data-sec="chips"><i>📖 視点</i><span>{{f.시점}}</span></div>{{/f.시점}}
+      {{#f.일정}}<div class="pf-q" data-sec="chips"><i>⛺ 予定</i><span>{{f.일정}}</span></div>{{/f.일정}}
+      {{#f.타겟}}<div class="pf-q" data-sec="chips"><i>💘 ターゲット</i><span>{{f.타겟}}</span></div>{{/f.타겟}}
+      {{#f.호감도}}<div class="pf-check" data-sec="chips"><i>💗 好感度</i> <em>☑ <span class="pf-emo">{{f.호감도}}</span></em></div>{{/f.호감도}}
       {{#mission}}<div class="pf-free"><small>🚩 ミッション</small>{{mission}}</div>{{/mission}}
     </div>
 
     <!-- ステータス -->
-    <div class="pf-p pf-p2">
+    <div class="pf-p pf-p2 st-panel" data-sec="members">
       {{#members}}
       <div class="pf-mem">
         <div class="pf-row"><i>名前</i><span class="pf-nm">{{name}}</span></div>
@@ -34,7 +34,7 @@
     </div>
 
     <!-- おまけ -->
-    <div class="pf-p pf-p3">
+    <div class="pf-p pf-p3 st-panel" data-sec="tmi qa talk">
       {{#tmi}}<div class="pf-free"><small>内緒だよ　ʕ⸝⸝ᴥ˶กʔ꜆꜄꜆꜄꜆</small>{{tmi}}</div>{{/tmi}}
       {{#interview}}
       <div class="pf-free pf-qa">

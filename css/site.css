@@ -233,10 +233,8 @@ select.tx.sel { width: auto; flex: 1; min-width: 120px; padding: 4px 6px; font-f
   .wg.m-open #wgFold::before { content: "✕"; }
   .wg.m-open #wgFold { font-size: 0; }
   .wg.m-open #wgFold::before { font-size: 10px; }
-  .wg-icon { display: flex; flex-direction: column; align-items: center; position: absolute; top: 6px; left: 6px; z-index: 1400; padding: 2px 5px 1px; cursor: pointer;
-    background: #fff; border: 2px solid var(--line); box-shadow: 2px 2px 0 var(--pink-bg); font: inherit; line-height: 1.1; }
-  .wg-icon span { font-size: 17px; }
-  .wg-icon small { font-family: var(--title-font); font-size: 8px; color: var(--pink); letter-spacing: .05em; }
+  .wg-icon { display: block; position: absolute; top: 4px; left: 4px; z-index: 1400; padding: 2px; cursor: pointer;
+    background: transparent; border: 0; box-shadow: none; font-size: 24px; line-height: 1; font-family: 'SysEmoji', sans-serif; }
 }
 .wg-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; }
 .wg-row .k { font-family: var(--title-font); font-size: 10px; color: #666; }

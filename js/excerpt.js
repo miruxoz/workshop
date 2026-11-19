@@ -385,12 +385,19 @@ const Excerpt = (() => {
     return x;
   }
 
-  async function renderTplStatus(d, tpl, opt) {
+  async function renderTplStatus(d, tpl, opt, on) {
     const cssW = opt.cssW;
-    const css = await inlineCss([SITE_FONTS, window.LOG_CSS || '', tpl ? tpl.css || '' : ''].join('\n'));
+    // 탭 있는 틀은 탭 버튼을 숨기고 칸을 전부 펼쳐서 세로로 이어 붙여요
+    const EXTRA = '.st-tabs{display:none !important;} .st-panel{display:block !important;}';
+    const css = await inlineCss([SITE_FONTS, window.LOG_CSS || '', tpl ? tpl.css || '' : '', EXTRA].join('\n'));
+    const fam = FONTS[opt.font].css.replace(/"/g, "'");
     const holder = document.createElement('div');
     holder.innerHTML = LogConverter.statusHtml(d, tpl);
     holder.querySelectorAll('details').forEach(x => x.setAttribute('open', ''));   // 접힌 おまけ 는 펼쳐서
+    // 체크 안 한 칸 지우기 (틀 안의 data-sec="info chips" → 둘 다 꺼져 있을 때만 지움)
+    holder.querySelectorAll('[data-sec]').forEach(el => {
+      if (!el.dataset.sec.split(/\s+/).some(k => on[k])) el.remove();
+    });
     await Promise.all([...holder.querySelectorAll('img[src]')].map(async im => {
       const v = await toData(im.getAttribute('src'));
       if (v) im.setAttribute('src', v); else im.remove();
@@ -403,7 +410,7 @@ const Excerpt = (() => {
     const doc = ifr.contentDocument;
     doc.open();
     doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style><style>html,body{margin:0;background:transparent;}</style></head><body>` +
-      `<div class="cl-log" id="xsRoot" style="width:${cssW}px;margin:0;padding:0;box-sizing:border-box;display:flow-root;background:transparent;">${holder.innerHTML}</div></body></html>`);
+      `<div class="cl-log" id="xsRoot" style="width:${cssW}px;font-family:${fam}, sans-serif;margin:0;padding:0;box-sizing:border-box;display:flow-root;background:transparent;">${holder.innerHTML}</div></body></html>`);
     doc.close();
     try { await doc.fonts.ready; } catch (e) {}
     await Promise.all([...doc.images].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
@@ -486,7 +493,7 @@ const Excerpt = (() => {
               <select class="tx sel xs-fs" id="xsScale" title="크기 배율 (클수록 선명)">${[2, 3, 4].map(n => `<option value="${n}" ${n === opt.scale ? 'selected' : ''}>×${n}</option>`).join('')}</select>
             </div>
             <div class="xs-row xs-st"><div class="xs-secs">${SECTIONS.map(([k, l]) => `<label class="xs-check"><input type="checkbox" data-sec="${k}" ${secOn[k] ? 'checked' : ''}> ${l}</label>`).join('')}</div></div>
-            <div class="xs-row xs-txt"><span class="xs-lb">글꼴</span>
+            <div class="xs-row"><span class="xs-lb">글꼴</span>
               <select class="tx sel" id="xsFont">${Object.entries(FONTS).map(([k, v]) => `<option value="${k}" ${k === opt.font ? 'selected' : ''}>${v.label}</option>`).join('')}</select>
               <select class="tx sel xs-fs" id="xsFs">${FS.map(f => `<option value="${f}" ${f === opt.fs ? 'selected' : ''}>${f}px</option>`).join('')}</select>
               <label class="xs-check" id="xsFitL"><input type="checkbox" id="xsFit" ${opt.fit ? 'checked' : ''}> 한 장에 맞추기</label>
@@ -539,7 +546,7 @@ const Excerpt = (() => {
         else {
           $('#xsInfo').textContent = '상태창 그리는 중… ✏';
           try {
-            const r = await renderTplStatus(pickSections(stList[stIdx], secOn), tplObj(), opt);
+            const r = await renderTplStatus(pickSections(stList[stIdx], secOn), tplObj(), opt, secOn);
             canvases = r.canvases;
             const prev = $('#xsPrev'); prev.innerHTML = '';
             const im = new Image(); im.src = canvases[0].toDataURL('image/png'); prev.appendChild(im);
@@ -592,6 +599,7 @@ const Excerpt = (() => {
       ov.querySelectorAll('.xs-txt').forEach(r => r.hidden = tpl);
       $('#xsHelp').hidden = tpl;
       $('#xsFitL').hidden = opt.size === 'auto' || tpl;
+      $('#xsFs').hidden = tpl;                 // 틀 디자인은 글꼴만 바꾸고 크기는 틀 그대로
     }
 
     /* --- 편집기 --- */

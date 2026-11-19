@@ -43,7 +43,7 @@
   const mobile = window.matchMedia('(max-width: 600px)');
   const icon = document.createElement('button');
   icon.className = 'wg-icon'; icon.type = 'button'; icon.title = '현황 위젯';
-  icon.innerHTML = '<span>🎀</span><small>げんじょう</small>';
+  icon.textContent = '🎀';
   document.body.appendChild(icon);
   icon.onclick = e => { e.stopPropagation(); el.classList.toggle('m-open'); };
   document.addEventListener('pointerdown', e => {

@@ -3,20 +3,20 @@
 
   <!-- ===== 위: 하늘색 체크 + 구름 테두리 메모지 ===== -->
   <div class="np-top">
-    <div class="np-head">
+    <div class="np-head" data-sec="info">
       <div class="np-field np-field-s"><small>ターン</small><b>{{turn}}</b></div>
       <div class="np-field"><small>日付</small><b>{{dateJa}}</b></div>
       <div class="np-field np-field-s"><small>時間</small><b>{{time}} {{weather}}</b></div>
     </div>
 
     <!-- 인포 상자 -->
-    <div class="np-paper">
+    <div class="np-paper" data-sec="info chips">
       <div class="np-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      {{#location}}<div class="np-loc">📍 {{location}}</div>{{/location}}
-      <div class="np-ln"><b>視点</b>{{f.시점}}</div>
-      <div class="np-ln"><b>予定</b>{{f.일정}}</div>
-      <div class="np-ln"><b>好感度</b><span class="np-emo">{{f.호감도}}</span></div>
-      <div class="np-ln"><b>ターゲット</b>{{f.타겟}}</div>
+      {{#location}}<div class="np-loc" data-sec="info">📍 {{location}}</div>{{/location}}
+      <div class="np-ln" data-sec="chips"><b>視点</b>{{f.시점}}</div>
+      <div class="np-ln" data-sec="chips"><b>予定</b>{{f.일정}}</div>
+      <div class="np-ln" data-sec="chips"><b>好感度</b><span class="np-emo">{{f.호감도}}</span></div>
+      <div class="np-ln" data-sec="chips"><b>ターゲット</b>{{f.타겟}}</div>
     </div>
 
     <!-- 캐릭터 감정 상자 -->
