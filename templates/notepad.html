@@ -15,10 +15,10 @@
     <div class="np-paper np-info" data-sec="info chips">
       <div class="np-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       {{#location}}<div class="np-loc" data-sec="info">📍 {{location}}</div>{{/location}}
-      <div class="np-ln" data-sec="chips"><b>視点</b>{{f.시점}}</div>
-      <div class="np-ln" data-sec="chips"><b>予定</b>{{f.일정}}</div>
-      <div class="np-ln" data-sec="chips"><b>好感度</b><span class="np-emo">{{f.호감도}}</span></div>
-      <div class="np-ln" data-sec="chips"><b>ターゲット</b>{{f.타겟}}</div>
+      <div class="np-ln" data-sec="chips"><b>시점</b>{{f.시점}}</div>
+      <div class="np-ln" data-sec="chips"><b>일정</b>{{f.일정}}</div>
+      <div class="np-ln" data-sec="chips"><b>호감도</b><span class="np-emo">{{f.호감도}}</span></div>
+      <div class="np-ln" data-sec="chips"><b>타겟</b>{{f.타겟}}</div>
     </div>
 
     <!-- 캐릭터 감정 상자 -->
@@ -111,7 +111,10 @@
 .np-st .np-dots i { display: none; }
 .np-st .np-dots-b { margin: 6px 0 0; }   /* 미션 칸 아래 */
 .np-st .np-dots i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid; }
-.np-st .np-info { padding-top: 0; }   /* 구분선이 칸 맨 위에 딱 붙게 */
+.np-st .np-info { padding-top: 0; }
+/* 🍮 제목 앞 이모지 (stickers/제목이모지.gif · 10px) */
+.np-st .np-ln b::before { content: ""; display: inline-block; width: 14px; height: 10px; margin-right: 3px; vertical-align: -1px;
+  background: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/stickers/%EC%A0%9C%EB%AA%A9%EC%9D%B4%EB%AA%A8%EC%A7%80.gif") left center / contain no-repeat; }   /* 구분선이 칸 맨 위에 딱 붙게 */
 .np-st .np-dots i:nth-child(5n+1) { border-color: #f2a9c4; } .np-st .np-dots i:nth-child(5n+2) { border-color: #9ccbe6; }
 .np-st .np-dots i:nth-child(5n+3) { border-color: #f3d27a; } .np-st .np-dots i:nth-child(5n+4) { border-color: #b9d99b; }
 .np-st .np-dots i:nth-child(5n+5) { border-color: #c9b4e3; }
