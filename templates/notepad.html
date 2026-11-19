@@ -106,8 +106,8 @@
   border-width: 7px; border-style: solid; border-color: #d9d4d6;   /* 이미지가 안 뜰 때 대신 보일 색 */
   border-image: url("https://github.com/okayletsgo555/img/blob/main/%EA%B7%B8%EB%A0%88%EC%9D%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png?raw=true") 8 fill round;
   background: #fff; background-clip: padding-box; }
-.np-st .np-dots { height: 30px; margin: 0 0 4px; padding: 0;
-  background: url("https://decomail.space/dividers/multicolor/130.png") center / auto 100% repeat-x; }   /* 구분선 130 */
+.np-st .np-dots { height: 24px; margin: 0 0 4px; padding: 0;
+  background: url("https://decomail.space/dividers/multicolor/130.png") left center / auto 100% round no-repeat; }   /* 구분선 130 · 양 끝까지 온전한 무늬로(round) */
 .np-st .np-dots i { display: none; }
 .np-st .np-dots-b { margin: 6px 0 0; }   /* 미션 칸 아래 */
 .np-st .np-dots i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid; }
@@ -128,7 +128,7 @@
 .np-st .np-act { font-size: 10.5px; color: #9a8b85; margin-top: 5px; }
 /* 리본 라벨 미션 */
 .np-st .np-mission { padding: 8px 12px 0; }
-.np-st .np-mis-t { text-align: justify; text-justify: inter-character; word-break: keep-all; }   /* 양쪽 맞춤 */
+.np-st .np-mis-t { text-align: justify; word-break: break-word; overflow-wrap: anywhere; }   /* 양쪽 맞춤 + 글자 단위 줄바꿈 (띄어쓰기 구멍 방지) */
 .np-st .np-ribbon { display: inline-block; position: relative; font-family: 'Mona12', sans-serif; font-size: 10px; color: #fff; background: #f689b6; padding: 0 12px 0 8px; margin: 0 0 4px -19px; top: -5px;
   clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 50%, 100% 100%, 0 100%); }
 
