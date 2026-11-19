@@ -107,7 +107,7 @@
   border-image: url("https://github.com/okayletsgo555/img/blob/main/%EA%B7%B8%EB%A0%88%EC%9D%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png?raw=true") 8 fill round;
   background: #fff; background-clip: padding-box; }
 .np-st .np-dots { height: 24px; margin: 0 0 4px; padding: 0;
-  background: url("https://decomail.space/dividers/multicolor/130.png") left center / auto 100% round no-repeat; }   /* 구분선 130 · 양 끝까지 온전한 무늬로(round) */
+  background: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/stickers/%EA%B5%AC%EB%B6%84%EC%84%A0.png") left center / auto 100% round no-repeat; }   /* 구분선 130 (stickers/구분선.png) · 양 끝까지 온전한 무늬로(round) */
 .np-st .np-dots i { display: none; }
 .np-st .np-dots-b { margin: 6px 0 0; }   /* 미션 칸 아래 */
 .np-st .np-dots i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid; }
@@ -161,9 +161,8 @@
 .np-st .np-q b { font-weight: 400; color: #e17aa3; }
 .np-st .np-a { margin-top: 9px; }
 .np-st .np-ko { display: block; margin-top: 5px; color: #8c8c8c; }
-.np-st .np-news { border-color: #b9dd9e; background: #f6fbf0 radial-gradient(#d9edc6 1.5px, transparent 1.8px) 0 0 / 10px 10px; padding-left: 18px; }
-.np-st .np-news::before { content: ""; position: absolute; left: -7px; top: 12px; bottom: 12px; width: 12px;
-  background: radial-gradient(circle, #fff 3px, #b9dd9e 3.5px, #b9dd9e 4.5px, transparent 5px) 0 0 / 12px 18px repeat-y; }
+.np-st .np-news { border-color: #b9dd9e;   /* 배경 = stickers/뉴스배경.png 위에 흰색 65% 덮기 */
+  background: linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.65)), url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/stickers/%EB%89%B4%EC%8A%A4%EB%B0%B0%EA%B2%BD.png") 0 0 / auto repeat, #f6fbf0; }
 .np-st .np-talk-who { font-size: 10px; color: #8a9c7c; margin-bottom: 4px; }
 .np-st .np-bubble { position: relative; display: inline-block; max-width: 100%; margin-top: 6px; padding: 5px 10px; background: #fff; border: 1px solid #b8b8b8; border-radius: 12px; }
 .np-st .np-bubble::before, .np-st .np-bubble::after { content: ""; position: absolute; left: 14px; border-style: solid; }
