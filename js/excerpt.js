@@ -31,6 +31,19 @@ const Excerpt = (() => {
     sans:  { label: '기본 고딕',  css: 'sans-serif' },
     serif: { label: '기본 명조',  css: 'serif' }
   };
+  // 🔤 폰트 모음(FontLib) 의 폰트는 'lib:이름' 으로 골라요
+  const OLD_KEY = { mona: 'lib:Mona12', thin: 'lib:ThinMulmaru', umdot: 'lib:Umdot12' };
+  const hasLib = () => typeof FontLib !== 'undefined';
+  const fontCss = k => {
+    k = OLD_KEY[k] || k;
+    if (k.startsWith('lib:')) return `"${k.slice(4)}"`;
+    return (FONTS[k] || FONTS.mona).css;
+  };
+  const fontOk = k => { k = OLD_KEY[k] || k; return k.startsWith('lib:') ? (!hasLib() || !!FontLib.get(k.slice(4))) : !!FONTS[k]; };
+  const fontLabel = k => { k = OLD_KEY[k] || k; return k.startsWith('lib:') ? k.slice(4) : (FONTS[k] || {}).label; };
+  const fontSelectHtml = sel => hasLib()
+    ? FontLib.optionsHtml(OLD_KEY[sel] || sel, [['sans', '기본 고딕'], ['serif', '기본 명조']])
+    : Object.entries(FONTS).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v.label}</option>`).join('');
   const FS = [24, 30, 36, 42, 48];
   // 형광펜 색 = ② 편집 형광펜과 같은 3색
   const HL = ['#fdf7fa', '#fff6fe', '#eaf3fb'];
@@ -292,7 +305,7 @@ const Excerpt = (() => {
   }
 
   async function render(paras, opt) {
-    const fam = FONTS[opt.font].css;
+    const fam = fontCss(opt.font);
     await fontsReady(fam);
     const sz = SIZES[opt.size];
     const W = sz.w;
@@ -389,8 +402,10 @@ const Excerpt = (() => {
     const cssW = opt.cssW;
     // 탭 있는 틀은 탭 버튼을 숨기고 칸을 전부 펼쳐서 세로로 이어 붙여요
     const EXTRA = '.st-tabs{display:none !important;} .st-panel{display:block !important;}';
-    const css = await inlineCss([SITE_FONTS, window.LOG_CSS || '', tpl ? tpl.css || '' : '', EXTRA].join('\n'));
-    const fam = FONTS[opt.font].css.replace(/"/g, "'");
+    const k = OLD_KEY[opt.font] || opt.font;
+    const libFace = hasLib() && k.startsWith('lib:') && FontLib.get(k.slice(4)) && !FontLib.get(k.slice(4)).builtin ? FontLib.get(k.slice(4)).css : '';
+    const css = await inlineCss([SITE_FONTS, libFace, window.LOG_CSS || '', tpl ? tpl.css || '' : '', EXTRA].join('\n'));
+    const fam = fontCss(opt.font).replace(/"/g, "'");
     const holder = document.createElement('div');
     holder.innerHTML = LogConverter.statusHtml(d, tpl);
     holder.querySelectorAll('details').forEach(x => x.setAttribute('open', ''));   // 접힌 おまけ 는 펼쳐서
@@ -457,7 +472,8 @@ const Excerpt = (() => {
     const TPLS = typeof Templates !== 'undefined' ? Templates.cached() : [];
     const tplObj = () => TPLS.find(t => t.file === opt.tplFile) || null;
     if (!SIZES[opt.size]) opt.size = 'tall';
-    if (!FONTS[opt.font]) opt.font = 'mona';
+    opt.font = OLD_KEY[opt.font] || opt.font;
+    if (!fontOk(opt.font)) opt.font = 'lib:Mona12';
     const secOn = Object.assign(Object.fromEntries(SECTIONS.map(s => [s[0], true])), store.json('xp.sec', {}));
     let stIdx = 0;
     const startMode = mode || (groups.length || it.xpDraft?.body || !stList.length ? 'body' : 'status');
@@ -494,7 +510,7 @@ const Excerpt = (() => {
             </div>
             <div class="xs-row xs-st"><div class="xs-secs">${SECTIONS.map(([k, l]) => `<label class="xs-check"><input type="checkbox" data-sec="${k}" ${secOn[k] ? 'checked' : ''}> ${l}</label>`).join('')}</div></div>
             <div class="xs-row"><span class="xs-lb">글꼴</span>
-              <select class="tx sel" id="xsFont">${Object.entries(FONTS).map(([k, v]) => `<option value="${k}" ${k === opt.font ? 'selected' : ''}>${v.label}</option>`).join('')}</select>
+              <select class="tx sel" id="xsFont">${fontSelectHtml(opt.font)}</select>
               <select class="tx sel xs-fs" id="xsFs">${FS.map(f => `<option value="${f}" ${f === opt.fs ? 'selected' : ''}>${f}px</option>`).join('')}</select>
               <label class="xs-check" id="xsFitL"><input type="checkbox" id="xsFit" ${opt.fit ? 'checked' : ''}> 한 장에 맞추기</label>
             </div>
@@ -699,8 +715,9 @@ const Excerpt = (() => {
     $('#xsTpl').onchange = e => { opt.tplFile = e.target.value; store.set('xp.tpl', opt.tplFile); redraw(); };
     $('#xsScale').onchange = e => { opt.scale = +e.target.value; store.set('xp.scale', opt.scale); redraw(); };
     $('#xsCssW').onchange = e => { opt.cssW = +e.target.value; store.set('xp.cssW', opt.cssW); redraw(); };
-    $('#xsFont').onchange = e => { opt.font = e.target.value; store.set('xp.font', opt.font); ed.dataset.font = opt.font; redraw(); };
-    ed.dataset.font = opt.font;
+    const edFont = () => { ed.style.fontFamily = fontCss(opt.font) + ', sans-serif'; };
+    $('#xsFont').onchange = e => { opt.font = e.target.value; store.set('xp.font', opt.font); edFont(); redraw(); };
+    edFont();
     $('#xsFs').onchange = e => { opt.fs = +e.target.value; store.set('xp.fs', opt.fs); redraw(); };
     $('#xsFit').onchange = e => { opt.fit = e.target.checked; store.set('xp.fit', opt.fit ? '1' : '0'); redraw(); };
 

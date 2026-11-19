@@ -481,3 +481,12 @@ AI 캐릭터 채팅(주로 크랙) 로그를 백업하고 꾸미는 **개인용 
 - 새 틀 만들 때: 칸마다 data-sec(info/chips/members/mission/tmi/talk/qa), 탭 버튼 줄에 st-tabs, 탭 내용에 st-panel 붙이기
 - 📱 위젯 아이콘: 🎀 이모지만 (배경·테두리 투명)
 - ⚠️ 백업이 중간에 멈춤 → STOP 문장이 짧으면(예: "안녕") 그 글자가 처음 나오는 곳에서 멈춤
+
+### 2026-11-19 🔤 폰트 모음
+- fonts.html (메뉴 5번째) + js/fonts.js (FontLib)
+- fonts/ 폴더 *.css = 분류 하나씩 (앞 번호 01_ 은 빼고 보여줌), @font-face 그대로 붙여넣기
+- @font-face 위 CSS 주석 「종류 | 지원 글자 | 메모」 를 정보로 읽음 · 짧은 url("x.ttf") 는 fonts/ 폴더 파일(jsDelivr 주소)로 바꿈 · 같은 font-family 는 하나로 합침
+- 기본 3개(Mona12·ThinMulmaru·Umdot12)는 늘 들어 있음
+- 미리보기 문구: 기본 = 교헤이 대사+지문 예문, 직접 입력 가능(브라우저에 저장), 크기·줄간격·대사 진하게/지문 연하게
+- 카드: ☆ 즐겨찾기(Meta.favFonts, 맨 위 고정) / 📋 @font-face / 📋 font-family / 📸 발췌 글꼴로
+- 📸 발췌 스튜디오 글꼴 목록 = 기본 고딕·명조 + ★ 즐겨찾기 + 분류별 FontLib 전부 ('lib:이름', 예전 mona/thin/umdot 키는 자동 변환)

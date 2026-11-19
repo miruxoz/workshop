@@ -67,6 +67,9 @@ const Meta = (() => {
     setCommands(list) { update(d => d.commands = list); },
     // ★ 즐겨찾기한 명령어 id (맨 위에 고정)
     favCmds: () => data.favCmds || [],
+    // ★ 즐겨찾기한 폰트 이름
+    favFonts: () => data.favFonts || [],
+    toggleFavFont(n) { update(d => { const f = d.favFonts || []; d.favFonts = f.includes(n) ? f.filter(x => x !== n) : f.concat(n); }); },
     toggleFavCmd(id) { update(d => { const f = d.favCmds || []; d.favCmds = f.includes(id) ? f.filter(x => x !== id) : f.concat(id); }); },
     stop: catId => data.stops[catId] || null,
     setStop(catId, text) { update(d => d.stops[catId] = { text, date: Date.now() }); },
