@@ -242,6 +242,9 @@ const Excerpt = (() => {
     return { lines: out, height };
   }
 
+  const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter('ko', { granularity: 'grapheme' }) : null;
+  const graphemes = t => segmenter ? [...segmenter.segment(t)].map(x => x.segment) : Array.from(t);
+
   function drawLines(g, lines, x0, y0, maxW, fs, align) {
     let y = y0;
     lines.forEach(l => {
@@ -252,24 +255,30 @@ const Excerpt = (() => {
         g.fillText('·   ·   ♡   ·   ·', x0 + maxW / 2, mid);
         y += l.h; return;
       }
-      // 글자 조각마다 x 위치 (양쪽 맞춤이면 남는 공간을 띄어쓰기에 나눠 주기)
+      // 양쪽 맞춤 = 남는 공간을 글자 사이마다 조금씩 (한·일 조판 방식, 띄어쓰기에 몰지 않음)
       const extra = Math.max(0, maxW - l.w);
-      let perSpace = 0, perGap = 0;
-      if (align === 'justify' && !l.last && !l.center && extra > 0) {
-        const spaces = l.segs.filter(s => s.t === ' ').length;
-        if (spaces) perSpace = extra / spaces;
-        else if (l.segs.length > 1 && extra / (l.segs.length - 1) < fs) perGap = extra / (l.segs.length - 1);
-      }
-      const xs = []; let x = l.center ? x0 + extra / 2 : x0;
-      l.segs.forEach(s => { xs.push(x); x += s.w + (s.t === ' ' ? perSpace : 0) + perGap; });
+      const chars = l.segs.map(s => { g.font = s.font; return graphemes(s.t).map(c => ({ c, w: g.measureText(c).width })); });
+      const n = chars.reduce((a, cs) => a + cs.length, 0);
+      let per = 0;
+      if (align === 'justify' && !l.last && !l.center && extra > 0 && n > 1) per = extra / (n - 1);
+      if (per > fs * .6) per = 0;               // 너무 벌어지면 그냥 왼쪽 정렬
+      // 조각·글자별 x 위치
+      let x = l.center ? x0 + extra / 2 : x0;
+      const pos = chars.map(cs => cs.map(ch => { const at = x; x += ch.w + per; return at; }));
+      const segX = pos.map((ps, i) => ps.length ? ps[0] : (i ? pos[i - 1][pos[i - 1].length - 1] : x0));
+      const segEnd = i => { const ps = pos[i], cs = chars[i]; return ps.length ? ps[ps.length - 1] + cs[cs.length - 1].w : segX[i]; };
       g.textAlign = 'left'; g.textBaseline = 'middle';
       // 형광펜 먼저 (옆 글자와 이어지게)
       l.segs.forEach((s, i) => {
         if (!s.hl) return;
-        const sz = parseInt(s.font), x2 = i < l.segs.length - 1 && l.segs[i + 1].hl ? xs[i + 1] : xs[i] + s.w;
-        g.fillStyle = s.hl; g.fillRect(Math.floor(xs[i]) - 1, Math.round(mid - sz * .62), Math.ceil(x2 - xs[i]) + 2, Math.round(sz * 1.24));
+        const sz = parseInt(s.font), x2 = i < l.segs.length - 1 && l.segs[i + 1].hl ? segX[i + 1] : segEnd(i);
+        g.fillStyle = s.hl; g.fillRect(Math.floor(segX[i]) - 1, Math.round(mid - sz * .62), Math.ceil(x2 - segX[i]) + 2, Math.round(sz * 1.24));
       });
-      l.segs.forEach((s, i) => { g.font = s.font; g.fillStyle = s.color; g.fillText(s.t, xs[i], mid); });
+      l.segs.forEach((s, i) => {
+        g.font = s.font; g.fillStyle = s.color;
+        if (!per) g.fillText(s.t, segX[i], mid);
+        else chars[i].forEach((ch, j) => g.fillText(ch.c, pos[i][j], mid));
+      });
       y += l.h;
     });
   }
@@ -393,8 +402,8 @@ const Excerpt = (() => {
     document.body.appendChild(ifr);
     const doc = ifr.contentDocument;
     doc.open();
-    doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style><style>html,body{margin:0;background:#fff;}</style></head><body>` +
-      `<div class="cl-log" id="xsRoot" style="width:${cssW}px;margin:0;padding:0;box-sizing:border-box;display:flow-root;background:#fff;">${holder.innerHTML}</div></body></html>`);
+    doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style><style>html,body{margin:0;background:transparent;}</style></head><body>` +
+      `<div class="cl-log" id="xsRoot" style="width:${cssW}px;margin:0;padding:0;box-sizing:border-box;display:flow-root;background:transparent;">${holder.innerHTML}</div></body></html>`);
     doc.close();
     try { await doc.fonts.ready; } catch (e) {}
     await Promise.all([...doc.images].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
@@ -404,18 +413,13 @@ const Excerpt = (() => {
     const xhtml = new XMLSerializer().serializeToString(root);
     ifr.remove();
 
-    // 바깥 캔버스 크기와 배율
-    const sz = SIZES[opt.size];
-    const { padX, padY } = margins(opt.size);
-    const W = sz.w;
-    let scale = (W - padX * 2) / cssW;
-    if (sz.h) scale = Math.min(scale, (sz.h - padY * 2) / h);
-    const H = sz.h || Math.round(h * scale + padY * 2);
-    const dw = Math.round(cssW * scale), dh = Math.round(h * scale);
-
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${dw}" height="${dh}" viewBox="0 0 ${cssW} ${h}">` +
+    // 상태창 크기 그대로 × 배율 (바깥은 투명)
+    // SVG 자체 크기 = 잴 때 쓴 폭 → 틀의 @media 가 PC·폰 상관없이 똑같이 적용돼요
+    const sc = opt.scale || 3;
+    const W = Math.round(cssW * sc), H = Math.round(h * sc);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cssW}" height="${h}" viewBox="0 0 ${cssW} ${h}">` +
       `<foreignObject x="0" y="0" width="${cssW}" height="${h}">` +
-      `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${cssW}px;background:#fff;"><style><![CDATA[${css.replace(/]]>/g, '')}\nhtml,body{margin:0}]]></style>${xhtml}</div>` +
+      `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${cssW}px;"><style><![CDATA[${css.replace(/]]>/g, '')}\nhtml,body{margin:0}]]></style>${xhtml}</div>` +
       `</foreignObject></svg>`;
     const img = await new Promise((res, rej) => {
       const im = new Image();
@@ -423,10 +427,8 @@ const Excerpt = (() => {
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
     });
     const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    const g = cv.getContext('2d');
-    g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
-    g.drawImage(img, Math.round((W - dw) / 2), Math.round((H - dh) / 2), dw, dh);
-    return { canvases: [cv], fs: opt.fs, small: sz.h && scale < (W - padX * 2) / cssW * .75 };
+    cv.getContext('2d').drawImage(img, 0, 0, W, H);
+    return { canvases: [cv], fs: opt.fs };
   }
 
   /* =========================================================
@@ -442,6 +444,7 @@ const Excerpt = (() => {
       align: store.get('xp.align', 'left'),
       stStyle: store.get('xp.stStyle', 'tpl'),                       // 상태창: tpl = 틀 디자인 그대로 / text = 글자만
       cssW: +store.get('xp.cssW', 420),
+      scale: +store.get('xp.scale', 3),
       tplFile: store.get('xp.tpl', (typeof Templates !== 'undefined' && Templates.current() || {}).file || '')
     };
     const TPLS = typeof Templates !== 'undefined' ? Templates.cached() : [];
@@ -468,7 +471,7 @@ const Excerpt = (() => {
         </div>
         <div class="xs-main">
           <div class="xs-left">
-            <div class="xs-row"><span class="xs-lb">비율</span>
+            <div class="xs-row xs-txt"><span class="xs-lb">비율</span>
               ${Object.entries(SIZES).map(([k, v]) => `<label class="xs-chip"><input type="radio" name="xsSize" value="${k}" ${k === opt.size ? 'checked' : ''}><span>${v.label}</span></label>`).join('')}
             </div>
             <div class="xs-row xs-st">
@@ -479,7 +482,8 @@ const Excerpt = (() => {
             </div>
             <div class="xs-row xs-st xs-tplonly"><span class="xs-lb">틀</span>
               <select class="tx sel" id="xsTpl"><option value="">기본 상태창</option>${TPLS.map(t => `<option value="${esc(t.file)}" ${t.file === opt.tplFile ? 'selected' : ''}>${esc(t.name || t.file)}</option>`).join('')}</select>
-              <select class="tx sel xs-fs" id="xsCssW" title="상태창 너비 (좁을수록 크게 나와요)">${[340, 420, 520, 660].map(w => `<option value="${w}" ${w === opt.cssW ? 'selected' : ''}>폭 ${w}</option>`).join('')}</select>
+              <select class="tx sel xs-fs" id="xsCssW" title="상태창 너비 (좁으면 폰 화면 모양, 넓으면 PC 화면 모양)">${[340, 420, 520, 660].map(w => `<option value="${w}" ${w === opt.cssW ? 'selected' : ''}>폭 ${w}</option>`).join('')}</select>
+              <select class="tx sel xs-fs" id="xsScale" title="크기 배율 (클수록 선명)">${[2, 3, 4].map(n => `<option value="${n}" ${n === opt.scale ? 'selected' : ''}>×${n}</option>`).join('')}</select>
             </div>
             <div class="xs-row xs-st"><div class="xs-secs">${SECTIONS.map(([k, l]) => `<label class="xs-check"><input type="checkbox" data-sec="${k}" ${secOn[k] ? 'checked' : ''}> ${l}</label>`).join('')}</div></div>
             <div class="xs-row xs-txt"><span class="xs-lb">글꼴</span>
@@ -539,8 +543,7 @@ const Excerpt = (() => {
             canvases = r.canvases;
             const prev = $('#xsPrev'); prev.innerHTML = '';
             const im = new Image(); im.src = canvases[0].toDataURL('image/png'); prev.appendChild(im);
-            $('#xsInfo').innerHTML = `${canvases[0].width}×${canvases[0].height} · 🎨 ${esc((tplObj() || {}).name || '기본 상태창')}` +
-              (r.small ? ' · 길어서 작게 들어갔어요 → <b>세로 자동</b>을 추천해요' : '');
+            $('#xsInfo').innerHTML = `${canvases[0].width}×${canvases[0].height} · 🎨 ${esc((tplObj() || {}).name || '기본 상태창')} · 상태창만 (바깥은 투명)`;
           } catch (err) {
             canvases = []; $('#xsPrev').innerHTML = '';
             $('#xsInfo').innerHTML = '⚠️ 이 브라우저에선 틀 그대로 그리기가 안 돼요 → <b>📝 글자만</b>을 써 주세요';
@@ -686,6 +689,7 @@ const Excerpt = (() => {
       showRows();
     });
     $('#xsTpl').onchange = e => { opt.tplFile = e.target.value; store.set('xp.tpl', opt.tplFile); redraw(); };
+    $('#xsScale').onchange = e => { opt.scale = +e.target.value; store.set('xp.scale', opt.scale); redraw(); };
     $('#xsCssW').onchange = e => { opt.cssW = +e.target.value; store.set('xp.cssW', opt.cssW); redraw(); };
     $('#xsFont').onchange = e => { opt.font = e.target.value; store.set('xp.font', opt.font); ed.dataset.font = opt.font; redraw(); };
     ed.dataset.font = opt.font;

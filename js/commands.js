@@ -8,6 +8,8 @@
   const $ = id => document.getElementById(id);
   const defaults = window.DEFAULT_COMMANDS || [];
   let cat = store.get('cmd.cat', '') || Meta.defaultCat();
+  const PER_PAGE = 10;
+  let page = 1;
 
   /* ---------- 📌 STOP ---------- */
   function renderStop() {
@@ -42,6 +44,7 @@
     return `
       <div class="cmd" data-id="${esc(c.id)}" data-def="${isDefault ? 1 : 0}">
         <div class="cmd-t">
+          <button class="cmd-fav ${Meta.favCmds().includes(c.id) ? 'on' : ''}" data-act="fav" title="즐겨찾기 (맨 위에 고정)">${Meta.favCmds().includes(c.id) ? '★' : '☆'}</button>
           <b>${esc(c.title || '이름 없음')}</b>
           <span class="cmd-badge ${isDefault ? '' : 'my'}">${isDefault ? '기본' : '내 것'}</span>
           ${(c.tags || []).map(t => `<span class="cmd-badge">#${esc(t)}</span>`).join('')}
@@ -63,10 +66,22 @@
   function render() {
     const q = $('q').value.trim().toLowerCase();
     const hit = c => !q || [c.title, c.desc, ...(c.tags || [])].join(' ').toLowerCase().includes(q);
-    const html = defaults.filter(hit).map(c => card(c, true)).join('') + mine().filter(hit).map(c => card(c, false)).join('');
+    const fav = Meta.favCmds();
+    let all = defaults.map(c => ({ c, def: true })).concat(mine().map(c => ({ c, def: false }))).filter(x => hit(x.c));
+    // ★ 즐겨찾기는 맨 위에 (즐겨찾기한 순서대로)
+    all = all.filter(x => fav.includes(x.c.id)).sort((a, b) => fav.indexOf(a.c.id) - fav.indexOf(b.c.id))
+      .concat(all.filter(x => !fav.includes(x.c.id)));
+    const pages = Math.max(1, Math.ceil(all.length / PER_PAGE));
+    if (page > pages) page = pages;
+    const html = all.slice((page - 1) * PER_PAGE, page * PER_PAGE).map(x => card(x.c, x.def)).join('');
     $('list').innerHTML = html || '<div class="empty">찾는 명령어가 없어요 (｡•́︿•̀｡)</div>';
+    $('pager').innerHTML = pagerHtml(page, pages);
   }
-  $('q').oninput = render;
+  $('q').oninput = () => { page = 1; render(); };
+  $('pager').onclick = e => {
+    const b = e.target.closest('[data-page]'); if (!b || b.disabled) return;
+    page = +b.dataset.page; render(); $('q').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   async function editDialog(c, title) {
     const r = await Modal.prompt(title, [
@@ -94,6 +109,11 @@
     const c = (isDef ? defaults : mine()).find(x => x.id === box.dataset.id);
     if (!c) return;
     switch (btn.dataset.act) {
+      case 'fav':
+        Meta.toggleFavCmd(c.id);
+        toast(Meta.favCmds().includes(c.id) ? '★ 맨 위에 고정했어요' : '☆ 고정을 풀었어요');
+        render();
+        break;
       case 'copy':
         toast(await copyText(withStop(c.code)) ? '📋 복사 완료! 크랙 콘솔에 붙여넣으세요 ♪' : '⚠️ 복사 실패');
         break;
@@ -108,7 +128,10 @@
         break;
       }
       case 'del':
-        if (await Modal.confirm(`「${esc(c.title)}」을(를) 지울까요?`, { ok: '지울래요' })) Meta.setCommands(mine().filter(x => x.id !== c.id));
+        if (await Modal.confirm(`「${esc(c.title)}」을(를) 지울까요?`, { ok: '지울래요' })) {
+          Meta.setCommands(mine().filter(x => x.id !== c.id));
+          if (Meta.favCmds().includes(c.id)) Meta.toggleFavCmd(c.id);
+        }
         break;
     }
   });

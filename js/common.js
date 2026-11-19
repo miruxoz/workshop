@@ -110,3 +110,14 @@ const Modal = (() => {
     }).then(v => v && v.pick !== undefined ? v.pick : null)
   };
 })();
+
+/* ---------- 페이지 번호 버튼 (◀ 1 … 4 5 6 … 20 ▶) ---------- */
+function pagerHtml(page, pages) {
+  if (pages <= 1) return '';
+  return `<button data-page="${page - 1}" ${page === 1 ? 'disabled' : ''}>◀</button>` +
+    Array.from({ length: pages }, (_, i) => i + 1)
+      .filter(n => n === 1 || n === pages || Math.abs(n - page) <= 2)
+      .map((n, i, arr) => (i && n - arr[i - 1] > 1 ? '<button disabled>…</button>' : '') + `<button data-page="${n}" class="${n === page ? 'on' : ''}">${n}</button>`)
+      .join('') +
+    `<button data-page="${page + 1}" ${page === pages ? 'disabled' : ''}>▶</button>`;
+}

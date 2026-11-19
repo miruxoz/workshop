@@ -60,6 +60,7 @@ button, input, textarea { font: inherit; color: inherit; }
   background: repeating-linear-gradient(90deg, var(--blue-bg) 0 6px, #fff 6px 12px); border-bottom: 3px double var(--line); }
 .win-t.pink { background: repeating-linear-gradient(90deg, var(--pink-bg) 0 6px, #fff 6px 12px); }
 .win-b { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.win-b[hidden] { display: none; }
 
 label.lb { font-family: var(--title-font); font-size: 11px; display: flex; justify-content: space-between; gap: 6px; }
 label.lb small { color: var(--ink-soft); font-family: var(--body-font); }
@@ -222,6 +223,21 @@ select.tx.sel { width: auto; flex: 1; min-width: 120px; padding: 4px 6px; font-f
 .wg-t button { font: inherit; font-size: 10px; width: 18px; height: 18px; padding: 0; cursor: pointer; background: #fff; border: 1px solid var(--line); box-shadow: inset -2px -2px 0 #ccc, inset 2px 2px 0 #fff; }
 .wg-b { border-top: 3px double var(--line); padding: 8px; display: flex; flex-direction: column; gap: 6px; max-height: 70vh; overflow: auto; }
 .wg.folded .wg-b { display: none; }
+/* 📱 폰: 위젯은 아이콘을 눌러야 떠요 */
+.wg-icon { display: none; }
+@media (max-width: 600px) {
+  .wg { display: none; }
+  .wg.m-open { display: block; left: 8px !important; right: 8px; top: 12px !important; width: auto; z-index: 1900; box-shadow: 4px 4px 0 var(--blue-bg), 0 0 0 100vmax rgba(80, 60, 70, .2); }
+  .wg.m-open .wg-b { display: flex; max-height: calc(100vh - 80px); }
+  .wg.m-open .wg-t { cursor: default; }
+  .wg.m-open #wgFold::before { content: "✕"; }
+  .wg.m-open #wgFold { font-size: 0; }
+  .wg.m-open #wgFold::before { font-size: 10px; }
+  .wg-icon { display: flex; flex-direction: column; align-items: center; position: absolute; top: 6px; left: 6px; z-index: 1400; padding: 2px 5px 1px; cursor: pointer;
+    background: #fff; border: 2px solid var(--line); box-shadow: 2px 2px 0 var(--pink-bg); font: inherit; line-height: 1.1; }
+  .wg-icon span { font-size: 17px; }
+  .wg-icon small { font-family: var(--title-font); font-size: 8px; color: var(--pink); letter-spacing: .05em; }
+}
 .wg-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; }
 .wg-row .k { font-family: var(--title-font); font-size: 10px; color: #666; }
 .wg-row .v { font-family: var(--title-font); }
@@ -392,17 +408,27 @@ select.tx.sel { width: auto; flex: 1; min-width: 120px; padding: 4px 6px; font-f
 .ep-it:hover { background: var(--pink-bg); border-color: var(--line); }
 .ep-it img { max-width: 100%; max-height: 100%; image-rendering: auto; }
 .ep-it[hidden] { display: none; }
-.emo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; }
-.emo-it { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 4px; cursor: pointer; background: #fff; border: 1px solid var(--line);
-  box-shadow: 2px 2px 0 var(--blue-bg); font-size: 10px; color: #666; text-align: center; word-break: break-all; }
-.emo-it:hover { background: var(--pink-pale); }
-.emo-it img { height: 34px; width: auto; max-width: 80px; }
+.emo-bar { display: flex; gap: 6px; flex-wrap: wrap; }
+.emo-bar select.tx.sel { flex: 1 1 180px; font-size: 13px; padding: 6px 8px; }
+.emo-bar input.tx { flex: 1 1 140px; width: auto; }
+.emo-info { font-size: 11px; color: #666; }
+.emo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 4px; }
+.emo-sub { grid-column: 1 / -1; font-family: var(--title-font); font-size: 11px; color: var(--pink); margin-top: 6px; padding-bottom: 1px; border-bottom: 1px dotted var(--pink-bg); }
+.emo-sub:first-child { margin-top: 0; }
+.emo-it { display: flex; align-items: center; justify-content: center; aspect-ratio: 1; padding: 4px; cursor: pointer; background: #fff; border: 1px solid #ccc; }
+.emo-it:hover { background: var(--pink-pale); border-color: var(--line); }
+.emo-it:active { background: var(--pink-bg); }
+.emo-it img { max-height: 32px; max-width: 100%; width: auto; }
+@media (max-width: 560px) { .emo-grid { grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); } }
 .emo-it[hidden] { display: none; }
 
 /* ---------- ⌨ 명령어 ---------- */
 .cmd { border: 1px solid var(--line); background: #fff; box-shadow: 3px 3px 0 var(--pink-bg); }
 .cmd-t { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-bottom: 1px dotted var(--line); flex-wrap: wrap; }
 .cmd-t b { font-family: var(--title-font); font-weight: 400; font-size: 13px; flex: 1; min-width: 120px; }
+.cmd-fav { flex: none; font-size: 15px; line-height: 1; padding: 0 2px; cursor: pointer; background: none; border: 0; color: #c4c4c4; }
+.cmd-fav:hover, .cmd-fav.on { color: #f0b400; }
+.cmd:has(.cmd-fav.on) { box-shadow: 3px 3px 0 #fff2a8; }
 .cmd-badge { font-size: 9px; padding: 0 5px; border: 1px solid var(--line); background: var(--blue-bg); font-family: var(--title-font); }
 .cmd-badge.my { background: var(--pink-bg); }
 .cmd-d { font-size: 11px; color: #666; padding: 4px 8px 0; white-space: pre-wrap; }

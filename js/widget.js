@@ -37,6 +37,19 @@
   document.body.appendChild(el);
   const $ = id => el.querySelector('#' + id);
 
+  /* ---------- 📱 폰: 왼쪽 위 아이콘을 누르면 위젯이 떠요 ----------
+     · 아이콘은 페이지와 같이 스크롤돼요 (내리면 안 보여요)
+     · ✕ 나 바깥을 누르면 닫혀요 */
+  const mobile = window.matchMedia('(max-width: 600px)');
+  const icon = document.createElement('button');
+  icon.className = 'wg-icon'; icon.type = 'button'; icon.title = '현황 위젯';
+  icon.innerHTML = '<span>🎀</span><small>げんじょう</small>';
+  document.body.appendChild(icon);
+  icon.onclick = e => { e.stopPropagation(); el.classList.toggle('m-open'); };
+  document.addEventListener('pointerdown', e => {
+    if (mobile.matches && el.classList.contains('m-open') && !el.contains(e.target) && !icon.contains(e.target)) el.classList.remove('m-open');
+  });
+
   /* ---------- 위치 (드래그) ---------- */
   const clamp = () => {
     const r = el.getBoundingClientRect();
@@ -59,7 +72,7 @@
 
   let drag = null;
   $('wgHandle').addEventListener('pointerdown', e => {
-    if (e.target.closest('button')) return;
+    if (e.target.closest('button') || mobile.matches) return;
     const r = el.getBoundingClientRect();
     drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
     el.classList.add('dragging');
@@ -80,6 +93,7 @@
   $('wgHandle').addEventListener('dblclick', () => { store.remove(POS_KEY); placeDefault(); });   // 두 번 누르면 기본 위치로
 
   $('wgFold').onclick = () => {
+    if (mobile.matches) { el.classList.remove('m-open'); return; }   // 폰: 닫기
     const f = el.classList.toggle('folded');
     $('wgFold').textContent = f ? '＋' : '－';
     store.set(FOLD_KEY, f ? '1' : '0');
