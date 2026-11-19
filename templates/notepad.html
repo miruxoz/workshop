@@ -44,7 +44,7 @@
     <div class="np-boxes">
       {{#tmi}}
       <div class="np-box np-secret">
-        <div class="np-lab"><ruby>SECRET<rt>シークレット</rt></ruby></div>
+        <div class="np-lab"><ruby>SECRET<rt>ないしょだよ</rt></ruby></div>
         <div class="np-bunting"></div>
         <small class="np-kao">内緒だよ　ʕ⸝⸝ᴥ˶กʔ꜆꜄꜆꜄꜆</small>
         <div>{{tmi}}</div>
@@ -74,9 +74,10 @@
 <style>
 /* ===== ④ 交換ノート ===== */
 @font-face { font-family: "Mona12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2") format("woff2"); }
+@font-face { font-family: "SchoolSafetyRoundedSmile7"; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 @font-face { font-family: "ThinMulmaru"; src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2') format('woff2'); font-weight: 400; font-display: swap; }
 .np-st { --brown: #7b5545; --line: #c9a48f; --sky: #cfe6f2; --pk: #f2a9c4; --ink: #5a4a44;
-  max-width: 380px; margin: 12px auto 28px; clear: both; font-family: 'ThinMulmaru', sans-serif; font-size: 11px; line-height: 1.6; color: var(--ink); word-break: keep-all;
+  max-width: 380px; margin: 12px auto 28px; clear: both; font-family: 'ThinMulmaru', 'Mona12', sans-serif; font-size: 11px; line-height: 1.6; color: var(--ink); word-break: keep-all;
   border-radius: 6px; overflow: hidden; box-shadow: 0 2px 0 rgba(0,0,0,.06); border: 1px solid #e3d9d4; }
 .np-st * { box-sizing: border-box; }
 
@@ -104,16 +105,17 @@
 .np-st .np-loc { text-align: center; font-size: 11.5px; color: #555; padding: 2px 0 4px; border-bottom: 1px dashed var(--line); }
 .np-st .np-ln { min-height: 25px; padding: 4px 0 2px; border-bottom: 1px dashed var(--line); }
 .np-st .np-ln b { display: inline-block; min-width: 54px; font-weight: 400; font-family: 'Mona12', sans-serif; font-size: 9.5px; color: var(--brown); margin-right: 4px; }
-.np-st .np-emo, .np-st .np-tags { font-family: 'SysEmoji', 'ThinMulmaru', sans-serif; }
-.np-st .np-mem { padding: 5px 0 4px; border-bottom: 1px dashed var(--line); }
+.np-st .np-emo, .np-st .np-tags { font-family: 'SysEmoji', 'ThinMulmaru', sans-serif; }   /* 감정·호감도만 기기 이모지 */
+.np-st .np-loc, .np-st .np-talk-who, .np-st .np-ln, .np-st .np-act, .np-st .np-boxes { font-family: 'ThinMulmaru', 'Mona12', sans-serif; }   /* 나머지 이모지(📍🗣️ 등)는 Mona12 */
+.np-st .np-mem { padding: 6px 0 6px; border-bottom: 1px dashed var(--line); }
 .np-st .np-mem-top { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; }
 .np-st .np-nm { font-family: 'Mona12', sans-serif; font-size: 11px; color: #444; margin-right: 2px; }
 .np-st .np-tags { display: inline-flex; flex-wrap: wrap; gap: 3px; }
-.np-st .np-tags span { font-size: 10px; padding: 0 5px; background: #fff; border: 1px solid #cfcfcf; border-radius: 3px; color: #666; line-height: 1.5; }
-.np-st .np-act { font-size: 10.5px; color: #9a8b85; }
+.np-st .np-tags span { display: inline-flex; align-items: center; height: 18px; font-size: 10px; line-height: 1; padding: 0 5px; background: #fff; border: 1px solid #cfcfcf; border-radius: 3px; color: #666; }
+.np-st .np-act { font-size: 10.5px; color: #9a8b85; margin-top: 5px; }
 /* 리본 라벨 미션 */
 .np-st .np-mission { padding: 8px 12px 8px; }
-.np-st .np-ribbon { display: inline-block; position: relative; font-family: 'Mona12', sans-serif; font-size: 10px; color: #fff; background: #e98fb4; padding: 0 12px 0 8px; margin: 0 0 4px -19px;
+.np-st .np-ribbon { display: inline-block; position: relative; font-family: 'Mona12', sans-serif; font-size: 10px; color: #fff; background: #e98fb4; padding: 0 12px 0 8px; margin: 0 0 4px -19px; top: -5px;
   clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 50%, 100% 100%, 0 100%); }
 
 /* 아래: 분홍 도트 — 접었다 펴기 */
@@ -130,13 +132,14 @@
 .np-st .np-lab { position: absolute; top: -17px; left: 8px; font-family: 'Mona12', sans-serif; font-size: 14px; letter-spacing: .04em; color: var(--brown);
   text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff; }
 .np-st .np-lab-r { left: auto; right: 8px; }
-.np-st .np-lab rt { font-size: 7.5px; letter-spacing: 0; }
+.np-st .np-lab ruby { font-family: 'SchoolSafetyRoundedSmile7', 'Mona12', sans-serif; font-weight: 700; }   /* 영어(SECRET·Q&A·NEWS) */
+.np-st .np-lab rt { font-family: 'Mona12', sans-serif; font-weight: 400; font-size: 7.5px; letter-spacing: 0; }
 .np-st .np-secret { border-color: #bfe0ef; background: #fdfbe6; }
 .np-st .np-bunting { height: 8px; margin: -6px 4px 4px; background: linear-gradient(135deg, transparent 50%, #f6b9cf 50%) 0 0 / 12px 8px,
   linear-gradient(225deg, transparent 50%, #f6b9cf 50%) 0 0 / 12px 8px; opacity: .7; }
 .np-st .np-kao { display: block; font-size: 9.5px; color: #b9a14c; }
 .np-st .np-love { border-color: #f6b5cc; background: #fff;
-  background-image: linear-gradient(90deg, rgba(246,181,204,.18) 50%, transparent 50%), linear-gradient(rgba(246,181,204,.18) 50%, transparent 50%); background-size: 12px 12px; }
+  background-image: linear-gradient(90deg, rgba(246,181,204,.07) 50%, transparent 50%), linear-gradient(rgba(246,181,204,.07) 50%, transparent 50%); background-size: 12px 12px; }
 .np-st .np-love::before, .np-st .np-love::after { content: "♥"; position: absolute; color: #ef8db2; font-size: 15px; }
 .np-st .np-love::before { left: -8px; top: -12px; transform: rotate(-15deg); }
 .np-st .np-love::after { right: -6px; bottom: -10px; transform: rotate(12deg); }
