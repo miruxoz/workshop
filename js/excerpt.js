@@ -193,7 +193,7 @@ const Excerpt = (() => {
   const NO_START = /^[、。，．,.!?！？」』）)〉》】…ー〜~]$/;
 
   // 문단들을 줄 단위로 배치 → { lines:[{segs, h, gapBefore}] , height }
-  function layout(ctx, paras, maxW, fs, fam) {
+  function layout(ctx, paras, maxW, fs, fam, align) {
     const lh = Math.round(fs * 1.75);
     const out = [];
     paras.forEach((p, pi) => {
@@ -218,7 +218,7 @@ const Excerpt = (() => {
       const push = () => { trim(); out.push(line); line = { segs: [], w: 0, gapBefore: 0, center: !!st.center, head: p.k === 'h', h: Math.round(lh * (st.scale || 1)) }; };
       runs.forEach(r => {
         if (r.br) { line.last = true; push(); return; }
-        (r.t.match(ATOM) || []).forEach(a => {
+        (r.t.match(ATOM) || []).flatMap(a => align === 'justify' && /[\uac00-\ud7a3]/.test(a) ? [...a] : [a]).forEach(a => {   // 양쪽 맞춤 = 한글도 글자 단위 줄바꿈
           const style = { color: r.lab ? '#9a9a9a' : st.color, hl: r.hl, font };
           const aw = ctx.measureText(a).width;
           if (/^\s+$/.test(a)) { if (line.segs.length) { line.segs.push({ t: ' ', w: ctx.measureText(' ').width, ...style }); line.w += line.segs[line.segs.length - 1].w; } return; }
@@ -314,12 +314,12 @@ const Excerpt = (() => {
     const meas = document.createElement('canvas').getContext('2d');
 
     // 고정 비율 + 한 장 맞추기 → 들어갈 때까지 글자 줄이기
-    let fs = opt.fs, lay = layout(meas, paras, maxW, fs, fam);
+    let fs = opt.fs, lay = layout(meas, paras, maxW, fs, fam, opt.align);
     if (sz.h && opt.fit) {
       const room = sz.h - padY * 2;
       for (const f of FS.filter(f => f < opt.fs).reverse()) {
         if (lay.height <= room) break;
-        fs = f; lay = layout(meas, paras, maxW, fs, fam);
+        fs = f; lay = layout(meas, paras, maxW, fs, fam, opt.align);
       }
     }
 

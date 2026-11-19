@@ -462,3 +462,23 @@ select.tx.sel { width: auto; flex: 1; min-width: 120px; padding: 4px 6px; font-f
 .fl-langs i { font-style: normal; font-size: 10px; line-height: 1; padding: 2px 3px; border: 1px solid #ddd; color: #ccc; background: #fff; text-decoration: line-through; }
 .fl-langs i.on { color: #222; border-color: var(--line); background: var(--pink-pale); text-decoration: none; }
 .fl-langs i.ng { color: #c27d99; text-decoration: none; }
+
+/* ---------- 📏 여백 넉넉하게 (2026-11-19) ---------- */
+.main { padding: 18px; gap: 22px; }
+.step-pane { gap: 22px; }
+.steps { gap: 6px; }
+.win-b { padding: 14px; gap: 12px; }
+.win-b > label.lb { margin-top: 4px; margin-bottom: -6px; }        /* 이름표는 자기 칸에 붙고, 묶음끼리는 떨어지게 */
+.win-b > label.lb:first-child { margin-top: 0; }
+.row { gap: 8px; }
+.cat-bar, .cut-bar, .pick-bar, .classify-bar { padding: 9px 11px; gap: 7px; }
+.cat-bar + .cat-bar { margin-top: -4px; }                          /* 채팅방 · 상태창 두 줄은 한 묶음 */
+input.tx, textarea.tx { padding: 8px 10px; }
+textarea.tx { line-height: 1.7; }
+.drawer { gap: 12px; }
+.dw-added { color: var(--ink-soft); }
+@media (max-width: 560px) {
+  .main { padding: 12px; gap: 18px; }
+  .step-pane { gap: 18px; }
+  .win-b { padding: 11px; gap: 11px; }
+}

@@ -496,3 +496,12 @@ AI 캐릭터 채팅(주로 크랙) 로그를 백업하고 꾸미는 **개인용 
 - ⚠️ @import 폰트는 📸 상태창 🎨 틀 디자인 이미지에는 안 들어감(본문 발췌는 됨)
 - (대기) notepad SECRET 칸 内緒だよ 카오모지 줄 삭제 — 다음 전달 때 notepad.html·builtin-templates.js 포함
 - notepad: 시크릿 장식선 삭제, Q&A 답변 'A. 이름', 번역 #8c8c8c, ⭐ 스티커(노란별 오른쪽 위·초록별 왼쪽 아래, CSS 배경 = miruxoz/workshop stickers jsDelivr) · stickers/ 폴더 16개
+- (대기) notepad 미션 리본 #e98fb4 → #ef7aab (채도 ↑) — 다음 전달 때 포함
+
+### 2026-11-19 오후
+- ⭐ 양쪽 정렬 = 「text-align: justify; word-break: break-word; overflow-wrap: anywhere;」 (사용자가 정한 기본. 글자 단위 줄바꿈이라 띄어쓰기 구멍 없음)
+  - 로그 본문(.cl-talk/.cl-narr/.cl-thought-line), notepad 오마케 글, notepad 미션 문장에 적용
+  - 📸 발췌 '양쪽 맞춤'도 한글을 글자 단위로 줄바꿈
+- notepad: 구분선 130(decomail) 24px round · 정보 칸 위 여백 0 · 미션 칸 아래에도 구분선 · 📍 왼쪽 정렬 · 리본 #f689b6 · Q&A 여백 · PC에서도 폭 380 고정(@media 삭제)
+- 서랍 카드: 🕰 담은 시각 (분 단위, 예전 글은 id 속 시각)
+- 사이트 여백 넓힘 (css 끝 「📏 여백 넉넉하게」)

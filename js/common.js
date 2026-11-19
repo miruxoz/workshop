@@ -37,6 +37,7 @@ const store = {
 // 날짜 표시 도우미
 const fmt = {
   date(ts) { const d = new Date(ts); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; },
+  dateTime(ts) { const d = new Date(ts); return `${fmt.date(ts)} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; },
   jpDate(ts) { const d = new Date(ts); return `${d.getFullYear()}年 ${String(d.getMonth() + 1).padStart(2, '0')}月 ${String(d.getDate()).padStart(2, '0')}日`; },
   ago(ts) {
     const days = Math.floor((new Date().setHours(0, 0, 0, 0) - new Date(ts).setHours(0, 0, 0, 0)) / 86400000);

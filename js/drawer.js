@@ -51,6 +51,9 @@ const Drawer = (() => {
     };
   };
 
+  // 담은 시각 (예전 글은 id 안의 시각으로)
+  const addedAt = it => it.addedAt || parseInt(String(it.id).slice(0, -4), 36) || Date.now();
+
   /* ---------- 담기 ---------- */
   // obj: { text, base, type, cat, request, storyDate }
   function add(obj) {
@@ -59,7 +62,7 @@ const Drawer = (() => {
       base: (obj.base || '').trim(), no: 1, text: obj.text, type: obj.type || 'main',
       cat: obj.cat || Workbench.currentCat(), request: obj.request || '',
       storyDate: obj.storyDate || (obj.type === 'main' || !obj.type ? Classifier.headerDate(obj.text) : ''),
-      done: false, bookmark: null, vaultAt: 0
+      done: false, bookmark: null, vaultAt: 0, addedAt: Date.now()
     };
     it.no = nextNo(it);
     items.push(it);
@@ -128,7 +131,7 @@ const Drawer = (() => {
             ${it.bookmark != null ? '<span class="dw-saved" title="책갈피">🔖</span>' : ''}
             ${it.edited ? '<span class="dw-saved" title="편집함">✏</span>' : ''}
           </div>
-          <div class="dw-meta">${it.storyDate ? `📅 ${esc(it.storyDate)} · ` : ''}${it.type === 'main' ? `상태창 <b>${s.status}</b> · ` : ''}사진 <b>${s.images}</b> · <b>${s.chars.toLocaleString()}</b>자</div>
+          <div class="dw-meta"><span class="dw-added" title="서랍에 담은 시각">🕰 ${fmt.dateTime(addedAt(it))} 담음</span> · ${it.storyDate ? `📅 ${esc(it.storyDate)} · ` : ''}${it.type === 'main' ? `상태창 <b>${s.status}</b> · ` : ''}사진 <b>${s.images}</b> · <b>${s.chars.toLocaleString()}</b>자</div>
           ${it.request ? `<div class="dw-req"><span>내 요청</span>${esc(it.request.replace(/\s+/g, ' ').slice(0, 80))}${it.request.length > 80 ? '…' : ''}</div>` : ''}
           <div class="dw-peek"><span>처음</span>${esc(s.first.slice(0, 46))}${s.first.length > 46 ? '…' : ''}</div>
           <div class="dw-peek"><span>끝</span>${esc(s.last.slice(-46))}</div>

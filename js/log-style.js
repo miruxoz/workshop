@@ -37,6 +37,8 @@ window.LOG_CSS = `
 
 /* ---------- 본문 ---------- */
 .cl-talk, .cl-narr, .cl-thought-line { margin-bottom: 22px; clear: both; }
+/* 양쪽 맞춤 + 글자 단위 줄바꿈 (띄어쓰기 구멍 방지) */
+.cl-talk, .cl-narr, .cl-thought-line { text-align: justify; word-break: break-word; overflow-wrap: anywhere; }
 .cl-talk { color: var(--cl-ink); }
 .cl-narr { color: var(--cl-narr); }
 .cl-thought { font-size: .88em; color: var(--cl-thought); }
