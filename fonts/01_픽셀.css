@@ -1,0 +1,84 @@
+/* =========================================================
+   📁 픽셀
+   @font-face 위 주석 = 종류 | 지원 글자 | 메모
+   (지원 글자는 비워두면 사이트가 자동으로 검사해요)
+   ========================================================= */
+
+/* 픽셀 | | DOS샘물 */
+@font-face {
+    font-family: 'DosSammul';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSSaemmul.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 픽셀 | | */
+@font-face {
+    font-family: 'DreamHeumul';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2608201818@dreamheumulkr/dreamheumulkr/DreamHeumulKR.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* 픽셀 | | */
+@font-face {
+    font-family: 'DeltaDotum';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2611112258@deltadotumkr/deltadotumkr/DeltaDotumKR.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* 픽셀 | | PF스타더스트 */
+@font-face {
+    font-family: 'PfStardust30S';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/PFStardustS.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* 픽셀 | | 단풍샘물 */
+@font-face {
+    font-family: 'DanpungSaemmul';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2609272011@maplesaemmul/maplesaemmul/MapleSaemmul.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* 픽셀 | 일·영 | でんきチップ · 굵은 2px 선 · 한글 없음 → 한글 폰트를 뒤에 같이 적기 · OFL */
+@font-face {
+    font-family: 'DenkiChip';
+    src: url('https://cdn.jsdelivr.net/gh/hicchicc/x8y12pxDenkiChip@main/fonts/woff2/x8y12pxDenkiChip.woff2') format('woff2');
+    font-display: swap;
+}
+
+/* 픽셀 | | */
+@font-face {
+    font-family: 'TerrarumSansBitmap';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2606-1@1.1/TerrarumSansBitmap.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 픽셀 | | 마루미냐 한글판 */
+@font-face {
+    font-family: 'MaruminyaHangeul';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2604-1@1.1/x12y12pxMaruMinyaHangul.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 픽셀 | | */
+@font-face {
+    font-family: 'Puzzle';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2606-1@1.1/PuzzleSans.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 픽셀 | | */
+@font-face {
+    font-family: 'Tangba';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-4@1.1/Tangba12.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}

@@ -1,0 +1,46 @@
+/* =========================================================
+   📁 고딕 · 명조
+   ========================================================= */
+
+/* 고딕 | | 프리텐다드 Medium */
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+
+/* 고딕 | | SUIT Medium */
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+
+/* 고딕 · 제목 | | 여기어때 잘난체 */
+@font-face {
+    font-family: 'YeogiOttaeJalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 둥근 고딕 | | 학교안심 둥근미소 R */
+@font-face {
+    font-family: 'SchoolSafetyRoundedSmileN';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-R.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 둥근 고딕 | | 학교안심 둥근미소 B (굵게) */
+@font-face {
+    font-family: 'SchoolSafetyRoundedSmile7';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* 명조 | | KoPubWorld 바탕 · 굵기 300/500/700 · 묶음 CSS(@import) | KoPubWorld Batang */
+@import url("https://cdn.jsdelivr.net/npm/font-kopubworld@1.0/batang.min.css");

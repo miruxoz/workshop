@@ -458,3 +458,7 @@ select.tx.sel { width: auto; flex: 1; min-width: 120px; padding: 4px 6px; font-f
 .fl-btns { display: flex; gap: 4px; flex-wrap: wrap; padding: 6px 8px; border-top: 1px dotted var(--line); background: var(--blue-pale); }
 .fl-sample { margin: 0; padding: 8px 10px; font-size: 11px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; background: #fff; border: 1px dashed var(--line); }
 .hint { margin: 0; font-size: 11px; color: #777; line-height: 1.5; }
+.fl-langs { display: inline-flex; gap: 2px; }
+.fl-langs i { font-style: normal; font-size: 10px; line-height: 1; padding: 2px 3px; border: 1px solid #ddd; color: #ccc; background: #fff; text-decoration: line-through; }
+.fl-langs i.on { color: #222; border-color: var(--line); background: var(--pink-pale); text-decoration: none; }
+.fl-langs i.ng { color: #c27d99; text-decoration: none; }

@@ -7,6 +7,8 @@
    · @font-face 바로 위에 「종류 | 지원 글자 | 메모」 를 CSS 주석으로 달면 정보로 읽어요
        (예: 픽셀 | 한·일·영 | 12px 배수에서 선명)
    · url("내폰트.ttf") 처럼 주소가 짧으면 fonts/ 폴더 안 파일로 봐요
+   · 웹폰트가 CSS 묶음으로만 있으면 @import 도 돼요. 이때는 주석 4번째 칸에 font-family 이름을 적어요
+       (예: 명조 | | KoPubWorld 바탕 | KoPubWorld Batang)  + 다음 줄에 @import url("…css");
    · 같은 이름(font-family)이 여러 번 나오면 (굵기별 등) 하나로 합쳐요
    ========================================================= */
 const FontLib = (() => {
@@ -32,8 +34,16 @@ const FontLib = (() => {
 
   function parse(group, text) {
     const out = new Map();
-    const re = /(?:\/\*([\s\S]*?)\*\/\s*)?@font-face\s*{[^}]*}/g;
+    // @import (CSS 묶음) — 주석 4번째 칸 = font-family
+    const imRe = /(?:\/\*((?:(?!\*\/|\/\*)[\s\S])*)\*\/\s*)?@import\s+(?:url\()?\s*['"]?([^'")\s;]+)['"]?\s*\)?\s*;/g;
     let m;
+    while ((m = imRe.exec(text))) {
+      const meta = (m[1] || '').split('|').map(x => x.trim());
+      const family = meta[3];
+      if (!family) continue;
+      out.set(family, { family, group, kind: meta[0] || '', langs: meta[1] || '', memo: meta[2] || '', css: `@import url("${m[2]}");`, imp: true });
+    }
+    const re = /(?:\/\*((?:(?!\*\/|\/\*)[\s\S])*)\*\/\s*)?@font-face\s*{[^}]*}/g;
     while ((m = re.exec(text))) {
       const block = m[0].replace(/^\/\*[\s\S]*?\*\/\s*/, '');
       const fam = (block.match(/font-family\s*:\s*(['"]?)([^;'"]+)\1/) || [])[2];
@@ -58,7 +68,9 @@ const FontLib = (() => {
   function inject() {
     let st = document.getElementById('fontlibFaces');
     if (!st) { st = document.createElement('style'); st.id = 'fontlibFaces'; document.head.appendChild(st); }
-    st.textContent = cached().map(f => f.css).join('\n');
+    // @import 는 맨 앞에 있어야 먹어요
+    const all = cached();
+    st.textContent = all.filter(f => f.imp).map(f => f.css).concat(all.filter(f => !f.imp).map(f => f.css)).join('\n');
   }
 
   async function refresh() {
@@ -93,6 +105,27 @@ const FontLib = (() => {
     return html;
   }
 
+  /* 지원 글자 검사 — 폰트를 받은 뒤, 글자 폭이 대신 쓰는 글꼴과 다르면 "있다"로 봐요 */
+  const LANGS = [['한', '가나다라마바사한글'], ['あ', 'あいうえおアイウエオ'], ['漢', '漢字東京時間全然'], ['A', 'AaBbQqWw0123']];
+  const langCache = new Map();
+  async function detect(family) {
+    if (langCache.has(family)) return langCache.get(family);
+    const p = (async () => {
+      try { await document.fonts.load(`16px "${family}"`, LANGS.map(l => l[1]).join('')); } catch (e) {}
+      const g = document.createElement('canvas').getContext('2d');
+      return LANGS.map(([k, t]) => {
+        const has = ['monospace', 'serif'].some(fb => {
+          g.font = `32px "${family}", ${fb}`; const a = g.measureText(t).width;
+          g.font = `32px ${fb}`; const b = g.measureText(t).width;
+          return Math.abs(a - b) > .5;
+        });
+        return [k, has];
+      });
+    })();
+    langCache.set(family, p);
+    return p;
+  }
+
   inject();
-  return { BUILTIN, parse, cached, get, inject, refresh, favs, toggleFav, optionsHtml };
+  return { detect, BUILTIN, parse, cached, get, inject, refresh, favs, toggleFav, optionsHtml };
 })();

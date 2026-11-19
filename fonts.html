@@ -128,6 +128,7 @@
           <div class="fl-head">
             <button class="cmd-fav ${on ? 'on' : ''}" data-act="fav" title="즐겨찾기">${on ? '★' : '☆'}</button>
             <b class="fl-name" style="font-family:'${esc(f.family)}', sans-serif">${esc(f.family)}</b>
+            <span class="fl-langs" title="지원 글자 (자동 검사)"></span>
             <span class="fl-tags">
               <span class="cmd-badge">📁 ${esc(f.group)}</span>
               ${f.kind ? `<span class="cmd-badge">${esc(f.kind)}</span>` : ''}
@@ -144,6 +145,15 @@
         </div>`;
       }).join('') || '<div class="empty">찾는 폰트가 없어요 (｡•́︿•̀｡)</div>';
       $('pager').innerHTML = pagerHtml(page, pages);
+      // 지원 글자 자동 검사 → 한 あ 漢 A 배지
+      $('list').querySelectorAll('.fl-card').forEach(async card => {
+        const r = await FontLib.detect(card.dataset.f);
+        const box = card.querySelector('.fl-langs');
+        if (!box) return;
+        box.innerHTML = r.some(x => x[1])
+          ? r.map(([k, on]) => `<i class="${on ? 'on' : ''}" title="${on ? '있어요' : '없어요'}">${k}</i>`).join('')
+          : '<i class="ng" title="폰트를 아직 못 받았거나 주소가 틀렸어요">?</i>';
+      });
     }
 
     async function reload(show) {
