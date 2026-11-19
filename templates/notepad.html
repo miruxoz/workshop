@@ -3,6 +3,8 @@
 
   <!-- ===== 위: 하늘색 체크 + 구름 테두리 메모지 ===== -->
   <div class="np-top">
+    <span class="np-stk np-stk-y" aria-hidden="true"></span>
+    <span class="np-stk np-stk-g" aria-hidden="true"></span>
     <div class="np-head" data-sec="info">
       <div class="np-field np-field-s"><small>ターン</small><b>{{turn}}</b></div>
       <div class="np-field"><small>日付</small><b>{{dateJa}}</b></div>
@@ -45,8 +47,6 @@
       {{#tmi}}
       <div class="np-box np-secret">
         <div class="np-lab"><ruby>SECRET<rt>ないしょだよ</rt></ruby></div>
-        <div class="np-bunting"></div>
-        <small class="np-kao">内緒だよ　ʕ⸝⸝ᴥ˶กʔ꜆꜄꜆꜄꜆</small>
         <div>{{tmi}}</div>
       </div>
       {{/tmi}}
@@ -54,7 +54,7 @@
       <div class="np-box np-love">
         <div class="np-lab np-lab-r"><ruby>Q&amp;A<rt>おしえて！</rt></ruby></div>
         <div class="np-q"><b>Q.</b> {{q}}</div>
-        {{#who}}<span class="np-who">{{who}}</span>{{/who}}
+        {{#who}}<div class="np-q np-a"><b>A.</b> {{who}}</div>{{/who}}
         <div>{{ja}}{{#ko}}<span class="np-ko">({{ko}})</span>{{/ko}}</div>
       </div>
       {{/interview}}
@@ -91,6 +91,15 @@
 .np-st .np-field-s { flex: 0 0 auto; min-width: 58px; }
 .np-st .np-field small { display: block; font-family: 'Mona12', sans-serif; font-size: 8.5px; color: var(--brown); line-height: 1.3; text-align: left; }
 .np-st .np-field b { font-weight: 400; font-family: 'Mona12', sans-serif; font-size: 11px; color: #444; white-space: nowrap; }
+
+/* ⭐ 스티커 (stickers 폴더 → jsDelivr) */
+.np-st .np-top { position: relative; }
+.np-st .np-stk { position: absolute; z-index: 2; display: block; pointer-events: none; background: center / contain no-repeat;
+  filter: drop-shadow(1px 2px 0 rgba(120, 150, 170, .25)); }
+.np-st .np-stk-y { width: 34px; height: 34px; top: 40px; right: 0; transform: rotate(14deg);
+  background-image: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/stickers/%EB%85%B8%EB%9E%80%EB%B3%84.png"); }
+.np-st .np-stk-g { width: 28px; height: 28px; bottom: 4px; left: 2px; transform: rotate(-12deg);
+  background-image: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/stickers/%EC%B4%88%EB%A1%9D%EB%B3%84.png"); }
 
 /* 줄 공책 상자 (회색 프레임 테두리 이미지) */
 .np-st .np-paper { position: relative; padding: 4px 12px 8px; margin-top: 9px;
@@ -135,17 +144,14 @@
 .np-st .np-lab ruby { font-family: 'SchoolSafetyRoundedSmile7', 'Mona12', sans-serif; font-weight: 700; }   /* 영어(SECRET·Q&A·NEWS) */
 .np-st .np-lab rt { font-family: 'Mona12', sans-serif; font-weight: 400; font-size: 7.5px; letter-spacing: 0; }
 .np-st .np-secret { border-color: #bfe0ef; background: #fdfbe6; }
-.np-st .np-bunting { height: 8px; margin: -6px 4px 4px; background: linear-gradient(135deg, transparent 50%, #f6b9cf 50%) 0 0 / 12px 8px,
-  linear-gradient(225deg, transparent 50%, #f6b9cf 50%) 0 0 / 12px 8px; opacity: .7; }
-.np-st .np-kao { display: block; font-size: 9.5px; color: #b9a14c; }
 .np-st .np-love { border-color: #f6b5cc; background: #fff;
   background-image: linear-gradient(90deg, rgba(246,181,204,.07) 50%, transparent 50%), linear-gradient(rgba(246,181,204,.07) 50%, transparent 50%); background-size: 12px 12px; }
 .np-st .np-love::before, .np-st .np-love::after { content: "♥"; position: absolute; color: #ef8db2; font-size: 15px; }
 .np-st .np-love::before { left: -8px; top: -12px; transform: rotate(-15deg); }
 .np-st .np-love::after { right: -6px; bottom: -10px; transform: rotate(12deg); }
 .np-st .np-q b { font-weight: 400; color: #e17aa3; }
-.np-st .np-who { display: inline-block; font-size: 10px; padding: 0 7px; margin: 3px 0 1px; background: var(--sky); border-radius: 9px; color: #444; }
-.np-st .np-ko { display: block; color: #a8a8a8; }
+.np-st .np-a { margin-top: 3px; }
+.np-st .np-ko { display: block; color: #8c8c8c; }
 .np-st .np-news { border-color: #b9dd9e; background: #f6fbf0 radial-gradient(#d9edc6 1.5px, transparent 1.8px) 0 0 / 10px 10px; padding-left: 18px; }
 .np-st .np-news::before { content: ""; position: absolute; left: -7px; top: 12px; bottom: 12px; width: 12px;
   background: radial-gradient(circle, #fff 3px, #b9dd9e 3.5px, #b9dd9e 4.5px, transparent 5px) 0 0 / 12px 18px repeat-y; }

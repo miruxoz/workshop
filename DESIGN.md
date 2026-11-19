@@ -487,10 +487,12 @@ AI 캐릭터 채팅(주로 크랙) 로그를 백업하고 꾸미는 **개인용 
 - fonts/ 폴더 *.css = 분류 하나씩 (앞 번호 01_ 은 빼고 보여줌), @font-face 그대로 붙여넣기
 - @font-face 위 CSS 주석 「종류 | 지원 글자 | 메모」 를 정보로 읽음 · 짧은 url("x.ttf") 는 fonts/ 폴더 파일(jsDelivr 주소)로 바꿈 · 같은 font-family 는 하나로 합침
 - 기본 3개(Mona12·ThinMulmaru·Umdot12)는 늘 들어 있음
-- 미리보기 문구: 기본 = 교헤이 대사+지문 예문, 직접 입력 가능(브라우저에 저장), 크기·줄간격·대사 진하게/지문 연하게
+- 미리보기 문구: 기본 = 쿄헤이 대사+지문 예문, 직접 입력 가능(브라우저에 저장), 크기·줄간격·대사 진하게/지문 연하게
 - 카드: ☆ 즐겨찾기(Meta.favFonts, 맨 위 고정) / 📋 @font-face / 📋 font-family / 📸 발췌 글꼴로
 - 📸 발췌 스튜디오 글꼴 목록 = 기본 고딕·명조 + ★ 즐겨찾기 + 분류별 FontLib 전부 ('lib:이름', 예전 mona/thin/umdot 키는 자동 변환)
 - 폰트 파일: fonts/01_픽셀.css(10) · 02_고딕·명조.css(6, KoPubWorld 바탕은 @import 묶음) · 03_손글씨.css(2)
 - @import 지원: 주석 4번째 칸 = font-family (예: 명조 | | 메모 | KoPubWorld Batang) · 페이지에 넣을 때 @import 를 맨 앞으로
 - 지원 글자(한/あ/漢/A)는 폰트를 받은 뒤 글자 폭 비교로 자동 검사해서 배지로 표시 (못 받으면 ?)
 - ⚠️ @import 폰트는 📸 상태창 🎨 틀 디자인 이미지에는 안 들어감(본문 발췌는 됨)
+- (대기) notepad SECRET 칸 内緒だよ 카오모지 줄 삭제 — 다음 전달 때 notepad.html·builtin-templates.js 포함
+- notepad: 시크릿 장식선 삭제, Q&A 답변 'A. 이름', 번역 #8c8c8c, ⭐ 스티커(노란별 오른쪽 위·초록별 왼쪽 아래, CSS 배경 = miruxoz/workshop stickers jsDelivr) · stickers/ 폴더 16개
