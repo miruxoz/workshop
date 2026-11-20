@@ -154,9 +154,13 @@
               <button class="btn mini white" id="bxDup">📄 복제</button>
               <button class="btn mini white danger" id="bxDel">🗑 상자 지우기</button>
             </div>
-            <details class="lab-det"><summary>✍ 이 상자의 style 직접 고치기</summary>
-              <textarea class="tx mono" id="bxStyle" rows="4" spellcheck="false"></textarea>
-              <button class="btn mini pink" id="bxStyleApply">적용</button>
+            <details class="lab-det" id="cssDet"><summary>✍ 이 상자에 걸린 CSS 보기 · 고치기</summary>
+              <div class="css-blk">
+                <div class="css-h"><b>style="…"</b><small>이 상자에만 붙은 꾸밈 (제일 강해요)</small></div>
+                <textarea class="tx mono" id="bxStyle" rows="3" spellcheck="false" placeholder="(없음)"></textarea>
+                <button class="btn mini pink" id="bxStyleApply">적용</button>
+              </div>
+              <div id="cssRules"></div>
             </details>
           </div>
         </div>

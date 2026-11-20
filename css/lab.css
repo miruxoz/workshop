@@ -290,3 +290,26 @@
 .pos-nums .tx { padding: 3px 6px; font-size: 12px; border: 1px solid #bbb; }
 .pos-nums select.tx { flex: none; width: 52px; }
 .pos-nums .btn.mini { padding: 2px 8px; }
+
+/* ===== 3차: 간격 넓히기 · CSS 보기 ===== */
+.lab-pane { gap: 14px; }
+.lab-row.wrap { gap: 10px; }
+.lab-props { gap: 10px 12px; }
+.qk-pane { padding: 14px 12px; gap: 14px; }
+#qkSw { gap: 8px; max-height: 260px; }
+#qkSw .sw { width: 32px; height: 32px; }
+.qk-g { margin-top: 8px; margin-bottom: -2px; }
+.qk .lab-row { gap: 10px; }
+.qk .lab-help { margin: -4px 0 0; }
+#boxBody { display: flex; flex-direction: column; gap: 14px; }
+#boxBody[hidden] { display: none; }
+#boxBody > .lab-row.wrap .btn.mini { padding: 5px 12px; }
+.lab-det[open] { gap: 10px; }
+.css-blk { display: flex; flex-direction: column; gap: 4px; padding: 8px; background: #fbfbfb; border: 1px solid #ddd; }
+.css-blk .btn.mini { align-self: flex-end; }
+.css-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.css-h b { font-family: Consolas, monospace; font-weight: 700; font-size: 12px; color: #b0306a; word-break: break-all; }
+.css-h small { font-size: 11px; color: #999; }
+.css-blk textarea { font-size: 12px !important; line-height: 1.6; }
+.ft-drag { font-size: 12px; padding: 5px 8px; background: var(--pink-pale); border: 1px dashed var(--pink); word-break: break-all; }
+.ft-drag b { font-weight: 400; color: var(--pink); }

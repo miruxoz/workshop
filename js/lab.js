@@ -192,8 +192,65 @@ body[contenteditable]{outline:none}`;
     document.querySelectorAll('.bx-n').forEach(inp => { inp.value = parseFloat(cs.getPropertyValue(inp.dataset.p)) || 0; });
     $('bxSize').textContent = `${Math.round(sel.getBoundingClientRect().width)} × ${Math.round(sel.getBoundingClientRect().height)}`;
     document.querySelectorAll('.lab-props [data-p]').forEach(inp => { inp.value = sel.style.getPropertyValue(inp.dataset.p) || ''; inp.placeholder = cs.getPropertyValue(inp.dataset.p); });
-    $('bxStyle').value = sel.getAttribute('style') || '';
+    $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
+    if ($('cssDet').open) drawRules();
   }
+  $('cssDet').addEventListener('toggle', () => { if ($('cssDet').open) drawRules(); });
+
+  /* ---- 고른 상자에 걸린 <style> 규칙 찾기 · 고치기 ---- */
+  // <style> 글자를 훑어서 { } 덩어리 위치를 찾아요 (주석·@media 안쪽까지)
+  function scanBlocks(text) {
+    const out = []; const stack = []; let i = 0, selStart = 0;
+    while (i < text.length) {
+      const c = text[i];
+      if (c === '/' && text[i + 1] === '*') { const e = text.indexOf('*/', i + 2); i = e < 0 ? text.length : e + 2; continue; }
+      if (c === '"' || c === "'") { const e = text.indexOf(c, i + 1); i = e < 0 ? text.length : e + 1; continue; }
+      if (c === '{') { stack.push({ sel: text.slice(selStart, i), open: i }); selStart = i + 1; }
+      else if (c === '}') { const b = stack.pop(); if (b) out.push({ sel: b.sel, open: b.open, close: i, depth: stack.length }); selStart = i + 1; }
+      else if (c === ';' && !stack.length) selStart = i + 1;
+      i++;
+    }
+    return out;
+  }
+  const normSel = t => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, '').replace(/"/g, "'");
+  function splitSel(t) { const out = []; let d = 0, cur = ''; for (const ch of t) { if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && !d) { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out.map(x => x.trim()).filter(Boolean); }
+  function ruleHits(el, selectorText) {
+    return splitSel(selectorText).some(one => {
+      const base = one.replace(/::?(before|after|first-letter|first-line|marker|placeholder|selection)\b/g, '').replace(/:(hover|active|focus|focus-within|focus-visible|visited|checked)\b/g, '').trim() || '*';
+      try { return el.matches(base); } catch (e) { return false; }
+    });
+  }
+  let ruleList = [];
+  function drawRules() {
+    const d = doc(); if (!sel || !d) { $('cssRules').innerHTML = ''; return; }
+    ruleList = [];
+    [...d.querySelectorAll('style')].forEach(st => {
+      if (st.hasAttribute('data-lab') || st.hasAttribute('data-fontface')) return;
+      const text = st.textContent, blocks = scanBlocks(text);
+      const walk = (rules, media) => [...rules].forEach(r => {
+        if (r.cssRules && r.media) { walk(r.cssRules, r.media.mediaText); return; }
+        if (!r.selectorText || !ruleHits(sel, r.selectorText)) return;
+        const want = normSel(r.selectorText);
+        const blk = blocks.find(b => normSel(b.sel) === want && !ruleList.some(x => x.st === st && x.open === b.open));
+        ruleList.push({ st, selector: r.selectorText, media, open: blk ? blk.open : -1, close: blk ? blk.close : -1, body: blk ? text.slice(blk.open + 1, blk.close) : r.style.cssText, rule: r });
+      });
+      try { walk(st.sheet.cssRules, ''); } catch (e) {}
+    });
+    const clean = b => b.replace(/^\s*\n|\s+$/g, '').split('\n').map(l => l.replace(/^\s{2,}/, '  ')).join('\n').trim();
+    $('cssRules').innerHTML = ruleList.length ? `<p class="lab-help">⚠️ 아래 CSS는 <b>같은 이름(class)을 쓰는 다른 상자도 같이</b> 바뀌어요. 이 상자만 바꾸고 싶으면 위 style 칸에 적어 주세요.</p>` + ruleList.map((r, i) => `<div class="css-blk">
+        <div class="css-h"><b>${esc(r.selector)}</b>${r.media ? `<small>@media ${esc(r.media)}</small>` : ''}</div>
+        <textarea class="tx mono" data-ri="${i}" rows="${Math.min(10, Math.max(2, clean(r.body).split(/;|\n/).filter(x => x.trim()).length + 1))}" spellcheck="false">${esc(clean(r.body).replace(/;\s*(?=\S)/g, ';\n'))}</textarea>
+        <button class="btn mini white" data-ra="${i}">적용</button></div>`).join('')
+      : '<p class="lab-help">이 상자에 걸린 &lt;style&gt; 규칙이 없어요</p>';
+  }
+  $('cssRules').addEventListener('click', e => {
+    const b = e.target.closest('[data-ra]'); if (!b) return;
+    const r = ruleList[+b.dataset.ra]; const val = $('cssRules').querySelector(`[data-ri="${b.dataset.ra}"]`).value;
+    if (r.open < 0) { try { r.rule.style.cssText = val; } catch (er) {} toast('⚠️ 원본 위치를 못 찾아서 미리보기만 바꿨어요'); return; }
+    const text = r.st.textContent;
+    r.st.textContent = text.slice(0, r.open + 1) + '\n  ' + val.trim().split('\n').map(l => l.trim()).filter(Boolean).join('\n  ') + '\n' + text.slice(r.close);
+    commit(); fitFrame(); drawRules(); toast('✔ CSS 를 고쳤어요 · 마음에 안 들면 ↶');
+  });
   // 여백 숫자
   document.querySelectorAll('.bx-n').forEach(inp => {
     const apply = () => {
@@ -203,7 +260,7 @@ body[contenteditable]{outline:none}`;
       const targets = $('bxLink').checked ? ['top', 'right', 'bottom', 'left'].map(s => `${group}-${s}`) : [inp.dataset.p];
       targets.forEach(p => sel.style.setProperty(p, val));
       if ($('bxLink').checked) document.querySelectorAll(`.bx-n[data-p^="${group}-"]`).forEach(x => { if (x !== inp) x.value = v; });
-      fitFrame(); commitSoon(); $('bxStyle').value = sel.getAttribute('style') || '';
+      fitFrame(); commitSoon(); $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
     };
     inp.addEventListener('input', apply);
     inp.addEventListener('keydown', e => {
@@ -218,7 +275,7 @@ body[contenteditable]{outline:none}`;
       if (!sel) return;
       let v = inp.value.trim();
       if (/^-?\d+(\.\d+)?$/.test(v) && !['line-height'].includes(inp.dataset.p)) v += 'px';
-      sel.style.setProperty(inp.dataset.p, v); fitFrame(); commitSoon(); $('bxStyle').value = sel.getAttribute('style') || '';
+      sel.style.setProperty(inp.dataset.p, v); fitFrame(); commitSoon(); $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
     });
   });
   document.querySelectorAll('[data-colorto]').forEach(b => b.onclick = () => {
@@ -237,7 +294,7 @@ body[contenteditable]{outline:none}`;
     const c = sel.cloneNode(true); c.removeAttribute('data-lab-sel'); c.removeAttribute('data-lab-hov');
     sel.after(c); commit(); fitFrame(); select(c); toast('📄 복제했어요');
   };
-  $('bxStyleApply').onclick = () => { if (!sel) return; sel.setAttribute('style', $('bxStyle').value); commit(); fitFrame(); toast('적용했어요'); };
+  $('bxStyleApply').onclick = () => { if (!sel) return; sel.setAttribute('style', $('bxStyle').value.replace(/\n/g, ' ').trim()); commit(); fitFrame(); showBox(); toast('적용했어요'); };
 
   /* ---------------- ➕ 요소 넣기 · 📐 위치 ---------------- */
   const Pos = (() => {
@@ -475,7 +532,7 @@ body[contenteditable]{outline:none}`;
 
   /* ---------------- 🔤 폰트 ---------------- */
   $('fSample').value = ui.sample;
-  $('fSample').oninput = () => { ui.sample = $('fSample').value; saveUi(); document.querySelectorAll('.ft-it .sm').forEach(s => s.textContent = ui.sample || 'あいう 가나다 ABC'); };
+  $('fSample').oninput = () => { ui.sample = $('fSample').value; saveUi(); renderFonts(); };
   $('fQ').oninput = renderFonts;
   $('fReload').onclick = async () => {
     if (typeof Repo === 'undefined' || !Repo.info()) { toast('깃허브 페이지 주소에서만 다시 읽을 수 있어요'); return; }
@@ -493,12 +550,14 @@ body[contenteditable]{outline:none}`;
     const now = curFont();
     const all = FontLib.cached().filter(f => !q || (f.family + ' ' + (f.memo || '')).toLowerCase().includes(q));
     const fav = FontLib.favs();
-    const row = f => `<div class="ft-it ${f.family === now ? 'on' : ''}" data-f="${esc(f.family)}"><button class="st ${fav.includes(f.family) ? 'on' : ''}" data-star="${esc(f.family)}" title="즐겨찾기">★</button><span class="nm" title="${esc(f.family + (f.memo ? ' · ' + f.memo : ''))}">${f.family === now ? '✔ ' : ''}${esc(f.family)}</span><span class="sm" style="font-family:'${esc(f.family)}', sans-serif">${esc(ui.sample || 'あいう 가나다 ABC')}</span></div>`;
+    const dragged = ui.mode === 'text' && lastRange && !lastRange.collapsed ? lastRange.toString().replace(/\s+/g, ' ').trim().slice(0, 40) : '';
+    const sample = dragged || ui.sample || 'あいう 가나다 ABC';
+    const row = f => `<div class="ft-it ${f.family === now ? 'on' : ''}" data-f="${esc(f.family)}"><button class="st ${fav.includes(f.family) ? 'on' : ''}" data-star="${esc(f.family)}" title="즐겨찾기">★</button><span class="nm" title="${esc(f.family + (f.memo ? ' · ' + f.memo : ''))}">${f.family === now ? '✔ ' : ''}${esc(f.family)}</span><span class="sm" style="font-family:'${esc(f.family)}', sans-serif">${esc(sample)}</span></div>`;
     let html = '';
     const favs = all.filter(f => fav.includes(f.family));
     if (favs.length) html += `<div class="ft-g">★ 즐겨찾기</div>` + favs.map(row).join('');
     [...new Set(all.map(f => f.group))].forEach(g => { html += `<div class="ft-g">📁 ${esc(g)}</div>` + all.filter(f => f.group === g).map(row).join(''); });
-    $('fList').innerHTML = (now ? `<div class="ft-now">✔ 지금 폰트: <b style="font-family:'${esc(now)}'">${esc(now)}</b></div>` : '') + (html || '<div class="lab-empty">폰트가 없어요</div>');
+    $('fList').innerHTML = (dragged ? `<div class="ft-drag">✏️ 드래그한 글자로 미리보는 중 · <b>${esc(dragged)}</b></div>` : '') + (now ? `<div class="ft-now">✔ 지금 폰트: <b style="font-family:'${esc(now)}'">${esc(now)}</b></div>` : '') + (html || '<div class="lab-empty">폰트가 없어요</div>');
   }
   $('fList').onclick = e => {
     const st = e.target.closest('[data-star]'); if (st) { FontLib.toggleFav(st.dataset.star); renderFonts(); return; }
@@ -516,7 +575,7 @@ body[contenteditable]{outline:none}`;
   function onSel() {
     if (ui.mode !== 'text') return;
     const d = doc(); const s = d && d.getSelection();
-    if (!s || !s.rangeCount || s.isCollapsed || !s.toString().trim()) { hideFloat(); return; }
+    if (!s || !s.rangeCount || s.isCollapsed || !s.toString().trim()) { hideFloat(); if (lastRange) { lastRange = null; if (ui.tab === 'font') renderFonts(); } return; }
     lastRange = s.getRangeAt(0).cloneRange();
     if (ui.tab === 'font') renderFonts();
     const r = lastRange.getBoundingClientRect(), fr = frame.getBoundingClientRect();
