@@ -42,9 +42,13 @@
     font-display: swap;
 }
 
-/* 명조 | | KoPubWorld 바탕 · 굵기 300/500/700 · 묶음 CSS(@import) | KoPubWorld Batang */
-@import url("https://cdn.jsdelivr.net/npm/font-kopubworld@1.0/batang.min.css");
-
-
-/* 포인트 | | 체리밤 원 · 통통 귀여운 일본어 | Cherry Bomb One */
-@import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&display=swap');
+/* ---------------------------------------------------------
+   KoPubWorld 바탕 © 한국출판인회의 (디자인: FONTRIX)
+   무료 사용 가능 · 폰트 수정/변경 금지 · 폰트 자체 판매 금지 → 원본 TTF 를 손대지 않고 그대로 올렸어요
+   --------------------------------------------------------- */
+/* 명조 | | KoPubWorld 바탕 Medium · 원본 TTF(11.8MB, 처음 한 번 받는 데 시간이 걸려요) */
+@font-face {
+    font-family: 'KoPubWorld Batang';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/KoPubWorldBatang-Medium.ttf') format('truetype');
+    font-display: swap;
+}

@@ -313,3 +313,17 @@
 .css-blk textarea { font-size: 12px !important; line-height: 1.6; }
 .ft-drag { font-size: 12px; padding: 5px 8px; background: var(--pink-pale); border: 1px dashed var(--pink); word-break: break-all; }
 .ft-drag b { font-weight: 400; color: var(--pink); }
+
+/* ===== 4차: 꾸미기(테두리·스티커) · 보관함 동기화 ===== */
+.lab-sync { font-size: 11px; color: #6a9a6a; white-space: nowrap; }
+.lab-sync.bad { color: #c0392b; }
+.deco-tabs { border: 1px solid var(--line); }
+.deco-pane { display: flex; flex-direction: column; gap: 12px; }
+.deco-pane[hidden] { display: none; }
+.st-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.st-it { display: flex; flex-direction: column; border: 1px solid #bbb; background: #fff; min-width: 0; }
+.st-it:hover { outline: 2px solid var(--pink); }
+.st-th { min-height: 54px; display: flex; align-items: center; justify-content: center; padding: 6px; cursor: pointer; overflow: hidden;
+  background: repeating-conic-gradient(#f6f6f6 0 25%, #fff 0 50%) 0 0 / 10px 10px; }
+.st-th img { max-width: 100%; max-height: 80px; }
+.st-th div { display: flex; flex-wrap: wrap; justify-content: center; max-width: 100%; }

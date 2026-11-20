@@ -80,4 +80,5 @@
   };
 
   clearForm(); render();
+  LabSync.create('links.json', [KEY], { onPulled: () => { list = store.json(KEY, []) || []; render(); } }).sync($('syncSt'));
 })();

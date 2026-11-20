@@ -301,8 +301,8 @@ body[contenteditable]{outline:none}`;
     const isFloat = el => !!el && el.style.position === 'absolute';
     const num = v => { const m = String(v || '').match(/^(-?[\d.]+)(px|%)?$/); return m ? { n: +(+m[1]).toFixed(2), u: m[2] || 'px' } : null; };
     // 넣기
-    function insert() {
-      const code = $('insCode').value.trim(); if (!code) { toast('넣을 코드를 붙여 넣어 주세요'); return; }
+    function insert(given) {
+      const code = (typeof given === 'string' ? given : $('insCode').value).trim(); if (!code) { toast('넣을 코드를 붙여 넣어 주세요'); return; }
       const d = doc(); if (!d) return;
       let where = $('insWhere').value, base = sel;
       if (!base || base === d.body) { base = d.body; if (where === 'beforebegin') where = 'afterbegin'; if (where === 'afterend') where = 'beforeend'; }
@@ -312,7 +312,7 @@ body[contenteditable]{outline:none}`;
       ({ beforeend: () => base.append(frag), afterbegin: () => base.prepend(frag), beforebegin: () => base.before(frag), afterend: () => base.after(frag) })[where]();
       commit(); fitFrame(); if (first) select(first); toast('➕ 넣었어요 · 아래에서 위치를 잡아 보세요');
     }
-    $('insGo').onclick = insert;
+    $('insGo').onclick = () => insert();
     // 자주 쓰는 요소
     let snips = store.json('lab.snips', []) || [];
     const drawSnips = () => { $('insSnips').innerHTML = snips.map((x, i) => `<span class="ins-snip"><button data-si="${i}" title="${esc(x.code.slice(0, 120))}">${esc(x.name)}</button><button data-sd="${i}">✕</button></span>`).join(''); };
@@ -420,7 +420,7 @@ body[contenteditable]{outline:none}`;
       d.addEventListener('pointermove', move); d.addEventListener('pointerup', up);
     }
     const wasDrag = () => { const v = dragged; dragged = false; return v; };
-    return { show, down, wasDrag };
+    return { show, down, wasDrag, insert };
   })();
 
   /* ---------------- 📦 상자 안 "바로 꾸미기" ---------------- */
@@ -461,6 +461,110 @@ body[contenteditable]{outline:none}`;
   $('qkGal').addEventListener('mouseover', e => { const it = e.target.closest('[data-gid]'); if (!it) return; const x = Gal.get(it.dataset.gid); if (x) { peekOff(); peekOn({ ...x, mode: x.mode || ui.gMode }); } });
   $('qkGal').addEventListener('mouseleave', peekOff);
   $('qkBd').addEventListener('click', e => { const it = e.target.closest('[data-use]'); if (it) BD.use(it.dataset.use); });
+
+  /* ---------------- ✨ 꾸미기 → 🧩 테두리 / 🌟 스티커 ---------------- */
+  function showDeco(t) {
+    ui.dt = t; saveUi();
+    document.querySelectorAll('#decoTabs button').forEach(b => b.classList.toggle('on', b.dataset.dt === t));
+    document.querySelectorAll('.deco-pane').forEach(p => p.hidden = p.dataset.dp !== t);
+  }
+  $('decoTabs').onclick = e => { const b = e.target.closest('[data-dt]'); if (b) showDeco(b.dataset.dt); };
+
+  const ST = (() => {
+    let list = store.json('lab.stickers', []) || [];
+    let extra = store.json('lab.stTags', []) || [];
+    const save = () => store.setJson('lab.stickers', list);
+    const code = x => x.html || `<img src="${x.url}"${x.style ? ` style="${x.style}"` : ''}>`;
+    function draw() {
+      const tags = [...new Set(list.map(x => x.tag).filter(Boolean).concat(extra))].sort((a, b) => a.localeCompare(b, 'ko'));
+      if (ui.stTag && !tags.includes(ui.stTag)) ui.stTag = '';
+      $('stTags').innerHTML = [['', `전부 ${list.length}`], ...tags.map(t => [t, `📁 ${t} ${list.filter(x => x.tag === t).length}`])]
+        .map(([v, l]) => `<button class="lk-tag ${v === (ui.stTag || '') ? 'on' : ''}" data-st="${esc(v)}">${esc(l)}</button>`).join('') + `<button class="lk-tag add" data-st-new>＋ 새 분류</button>`;
+      const items = list.filter(x => !ui.stTag || x.tag === ui.stTag);
+      $('stGrid').innerHTML = items.map(x => `<div class="st-it" data-id="${x.id}"><div class="st-th" title="${esc(x.name || x.url || '코드')}">${code(x)}</div>
+        <div class="g-ft"><span>${esc(x.name || (x.tag ? '' : ''))}</span><button data-sted="${x.id}">✎</button><button data-stcp="${x.id}" title="코드 복사">📋</button><button data-stdel="${x.id}">✕</button></div></div>`).join('')
+        || '<div class="lab-empty">스티커 주소를 붙여 넣어 보세요 ♪</div>';
+    }
+    async function add(url) {
+      url = url.trim(); if (!/^(https?:)?\/\//.test(url) && !/^data:image/.test(url)) { toast('이미지 주소가 아니에요'); return false; }
+      if (list.some(x => x.url === url)) { toast('이미 있어요'); return false; }
+      const ok = await new Promise(res => { const im = new Image(); im.onload = () => res(true); im.onerror = () => res(false); im.src = url; setTimeout(() => res(false), 8000); });
+      if (!ok) { toast('⚠️ 이미지를 못 불러왔어요'); return false; }
+      list.unshift({ id: Date.now().toString(36), url, name: '', tag: ui.stTag || '', style: '' }); save(); draw(); toast('🌟 스티커 저장!'); return true;
+    }
+    $('stUrl').addEventListener('paste', () => setTimeout(async () => { if (await add($('stUrl').value)) $('stUrl').value = ''; }, 0));
+    $('stUrl').addEventListener('keydown', async e => { if (e.key === 'Enter' && await add($('stUrl').value)) $('stUrl').value = ''; });
+    $('stCode').onclick = async () => {
+      const r = await Modal.prompt('📝 코드로 스티커 추가', [
+        { name: 'html', label: '코드 (img 여러 개를 묶은 것도 OK)', type: 'textarea', rows: 4, placeholder: '<img src="..." style="filter: saturate(0.4)">' },
+        { name: 'name', label: '이름' }, { name: 'tag', label: '분류', value: ui.stTag || '' }]);
+      if (!r || !r.html.trim()) return;
+      list.unshift({ id: Date.now().toString(36), html: r.html.trim(), name: r.name.trim(), tag: r.tag.trim() }); save(); draw(); toast('🌟 저장!');
+    };
+    $('stTags').onclick = async e => {
+      if (e.target.closest('[data-st-new]')) {
+        const r = await Modal.prompt('📁 새 분류', [{ name: 'tag', label: '분류 이름', placeholder: '예: 구분선 / 리본 / 하트' }], { ok: '만들기 ♡' });
+        const t = r && r.tag.trim(); if (!t) return; if (!extra.includes(t)) { extra.push(t); store.setJson('lab.stTags', extra); } ui.stTag = t; saveUi(); draw(); return;
+      }
+      const b = e.target.closest('[data-st]'); if (!b) return; ui.stTag = b.dataset.st; saveUi(); draw();
+    };
+    $('stGrid').onclick = async e => {
+      const get = id => list.find(x => x.id === id);
+      const ed = e.target.closest('[data-sted]');
+      if (ed) {
+        const x = get(ed.dataset.sted);
+        const fields = x.html ? [{ name: 'html', label: '코드', type: 'textarea', rows: 4, value: x.html }] : [{ name: 'style', label: '꾸밈 style (예: filter: saturate(0.4))', value: x.style || '' }];
+        const r = await Modal.prompt('🌟 스티커 정보', [{ name: 'name', label: '이름', value: x.name || '' }, { name: 'tag', label: '분류', value: x.tag || '' }, ...fields]);
+        if (!r) return; x.name = r.name.trim(); x.tag = r.tag.trim(); if (x.html) x.html = r.html.trim(); else x.style = r.style.trim(); save(); draw(); return;
+      }
+      const cp = e.target.closest('[data-stcp]'); if (cp) { toast(await copyText(code(get(cp.dataset.stcp))) ? '📋 코드 복사!' : '⚠️ 복사 실패'); return; }
+      const dl = e.target.closest('[data-stdel]'); if (dl) { if (await Modal.confirm('이 스티커를 뺄까요?')) { list = list.filter(x => x.id !== dl.dataset.stdel); save(); draw(); } return; }
+      const it = e.target.closest('.st-th'); if (!it) return;
+      Pos.insert(code(get(it.parentElement.dataset.id)));
+    };
+    // 처음 한 번 기본 스티커 넣기 (같은 주소는 건너뛰어요)
+    function seed(items) {
+      let n = 0;
+      items.forEach(x => { const key = x.url || x.html; if (list.some(y => (y.url || y.html) === key)) return; list.push({ id: Date.now().toString(36) + (n++), name: '', style: '', ...x }); });
+      if (n) save();
+      draw();
+    }
+    return { draw, seed };
+  })();
+
+  /* ---------------- 기본 테두리 · 기본 스티커 ---------------- */
+  const GH = 'https://raw.githubusercontent.com/okayletsgo555/img/main/';
+  const PRESET_BORDERS = [
+    ['핑크 바탕 흰 레이스', 'https://i.ibb.co/fGPRTPf3/845a1b88f45093126c643cc449063282-2-1.png', 19, 16, true, 'round'],
+    ['핑크 레이스', 'https://i.pinimg.com/736x/28/bc/de/28bcde7d693b3af93ffbfd46bdf1b1bf.jpg', 29, 20, false, 'round'],
+    ['핑크 바탕 흰 프릴', 'https://i.ibb.co/0pqr6qj7/tumblr-4b6c9c0de67b030673c1e73b3bb9355b-d5e71ae6-1280-3-6-1.png', 33, 16, true, 'round'],
+    ['베개', 'https://i.ibb.co/7JhsDvHP/845a1b88f45093126c643cc449063282.png', 30, 16, false, 'round'],
+    ['하트 프레임', 'https://i.ibb.co/CKjD0HSw/borderhearts.png', 33, 10, false, 'round'],
+    ['흰 바탕 흰 레이스', 'https://i.ibb.co/B2V1n8Nh/tumblr-4b6c9c0de67b030673c1e73b3bb9355b-d5e71ae6-1280-3.png', 30, 18, false, 'round'],
+    ['식탁보', 'https://i.ibb.co/7dQ5p0W7/site-lace-alt-2.png', 15, 20, true, 'round'],
+    ['그레이 프레임 (회색 올록볼록)', GH + '%EA%B7%B8%EB%A0%88%EC%9D%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png', 8, 7, true, 'round'],
+    ['헤더용 프레임 (진함)', 'https://i.postimg.cc/RhJCpKqH/testborder3.png', 15, 9, false, 'round'],
+    ['손수건 (옅음)', 'https://i.postimg.cc/jdM6yh46/qoxgh5.png', 8, 9, false, 'round'],
+    ['흰 레이스', 'https://cdn.jsdelivr.net/gh/dearcoeur/coeur-assets@main/media/borders/renda-bg.png', 18, 26, false, 'repeat'],
+    ['모카 #1', 'https://mocha.crd.co/assets/images/gallery10/11b35e57.png?v=667e73fe', 16, 9, false, 'round'],
+    ['모카 #2', 'https://mocha.crd.co/assets/images/gallery06/08abca77.png?v=667e73fe', 18, 9, false, 'round'],
+    ['모카 #3', 'https://mocha.crd.co/assets/images/gallery06/1a15c3f7.png?v=667e73fe', 13, 9, false, 'round'],
+    ['모카 #4', 'https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe', 20, 9, false, 'round'],
+    ['모카 #5', 'https://mocha.crd.co/assets/images/gallery06/479c2895.png?v=667e73fe', 12, 9, false, 'round'],
+    ['모카 #6', 'https://mocha.crd.co/assets/images/gallery06/3c95f95f.png?v=667e73fe', 12, 9, false, 'round'],
+    ['모카 #7', 'https://mocha.crd.co/assets/images/gallery06/37e5b5a5.png?v=667e73fe', 7, 9, false, 'round'],
+    ['#8', 'https://i.imgur.com/cKNXWMc.png', 26, 9, false, 'round'],
+    ['#9', 'https://i.pinimg.com/736x/f5/0f/15/f50f15556f9389e6ebd39ad69cb55d72.jpg', 26, 9, false, 'round'],
+    ['#10 picmix', GH + 'picmix.com_2415834.png', 70, 9, false, 'round'],
+    ['#13 FsgoCPW', GH + 'FsgoCPW.png', 8, 7, true, 'round'],
+    ['#14 NJa4bp2', GH + 'NJa4bp2.png', 8, 7, true, 'round']
+  ].map(([name, url, slice, width, fill, rep]) => ({ name, url, slice: String(slice), width: String(width), out: '0', rep, fill }));
+  const D = 'https://decomail.space/dividers/';
+  const PRESET_STICKERS = [
+    ['grey/22.png', 'filter: saturate(0.4)'], ['pink/500.png', 'filter: saturate(0.4)'], ['pink/625.gif', 'filter: saturate(0.7)'], ['pink/694.png', ''],
+    ['red/240.png', 'filter: saturate(0.4)'], ['blue/145.png', 'filter: saturate(0.3)'], ['white/84.gif', ''], ['blue/168.gif', ''], ['blue/287.png', 'filter: saturate(0.5)']
+  ].map(([u, style]) => ({ url: D + u, style, tag: '구분선' }))
+    .concat([{ tag: '구분선', name: '파란 리본 두 개', html: `<div><img src="${D}blue/212.gif" style="filter: saturate(0.3)"><img src="${D}blue/212.gif" style="filter: saturate(0.3) brightness(1.1)"></div>` }]);
 
   /* ---------------- 탭 ---------------- */
   function showTab(t) {
@@ -775,7 +879,13 @@ body[contenteditable]{outline:none}`;
       const c = e.target.closest('[data-copy]'); if (c) { const b = list.find(x => x.id === c.dataset.copy); toast(await copyText(css(b).replace(/;/g, ';\n') + ';') ? '📋 CSS 복사!' : '⚠️ 복사 실패'); return; }
       const d = e.target.closest('[data-del]'); if (d && await Modal.confirm('이 테두리를 지울까요?')) { list = list.filter(x => x.id !== d.dataset.del); save(); draw(); }
     };
-    return { draw, prev, use: id => apply(list.find(x => x.id === id)) };
+    function seed(items) {
+      let n = 0;
+      items.forEach(b => { if (list.some(x => x.url === b.url)) return; list.push({ id: Date.now().toString(36) + (n++), ...b }); });
+      if (n) save();
+      draw();
+    }
+    return { draw, prev, seed, use: id => apply(list.find(x => x.id === id)) };
   })();
 
   /* ---------------- 🎨 컬러피커 ---------------- */
@@ -943,7 +1053,13 @@ body[contenteditable]{outline:none}`;
   $('cmpClose').onclick = () => { $('cmp').hidden = true; };
 
   /* ---------------- 시작 ---------------- */
-  showTab(ui.tab); showQk(ui.qk); drawQkWhere(); applyW(); drawGMode(); drawSize(); Gal.draw(); BD.draw(); BD.prev(); saveSnaps();
+  showTab(ui.tab); showQk(ui.qk); showDeco(ui.dt || 'border'); ST.draw(); drawQkWhere(); applyW();
+  // ☁️ 보관함과 맞춘 뒤, 처음 한 번 기본 테두리·스티커 넣기
+  const LS = LabSync.create('lab.json', ['lab.imgs', 'lab.imgTags', 'lab.borders', 'lab.stickers', 'lab.stTags', 'lab.colorHist', 'lab.palettes', 'lab.workPal', 'lab.snips', 'lab.snaps'],
+    { onPulled: () => { if (!sessionStorage.getItem('lab.pulled')) { sessionStorage.setItem('lab.pulled', '1'); location.reload(); } } });
+  LS.sync($('syncSt')).finally(() => {
+    if (store.get('lab.seed.v1') !== '1') { BD.seed(PRESET_BORDERS); ST.seed(PRESET_STICKERS); store.set('lab.seed.v1', '1'); }
+  }); drawGMode(); drawSize(); Gal.draw(); BD.draw(); BD.prev(); saveSnaps();
   render(cur); afterChange(); showBox();
   window.addEventListener('beforeunload', () => { clearTimeout(ct); commit(); });
 })();
