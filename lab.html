@@ -97,22 +97,61 @@
             </div>
             <label class="lab-chk"><input type="checkbox" id="bxLink"> 네 방향 한꺼번에 바꾸기</label>
             <div class="lab-props">
+              <label>너비<input class="tx" data-p="width" placeholder="auto"></label>
+              <label>높이<input class="tx" data-p="height" placeholder="auto"></label>
+              <label>최소 높이<input class="tx" data-p="min-height" placeholder="0"></label>
+              <label>둥글기<input class="tx" data-p="border-radius" placeholder="px"></label>
               <label>글자 크기<input class="tx" data-p="font-size" placeholder="px"></label>
               <label>줄 간격<input class="tx" data-p="line-height" placeholder="1.6"></label>
-              <label>둥글기<input class="tx" data-p="border-radius" placeholder="px"></label>
-              <label>너비<input class="tx" data-p="width" placeholder="auto"></label>
               <label>글자 간격<input class="tx" data-p="letter-spacing" placeholder="px"></label>
               <label>정렬<select class="tx" data-p="text-align"><option value="">-</option><option>left</option><option>center</option><option>right</option><option>justify</option></select></label>
             </div>
-            <div class="lab-row wrap">
-              <button class="btn mini white" data-colorto="color">🎨 지금 색 → 글자색</button>
-              <button class="btn mini white" data-colorto="background-color">🎨 지금 색 → 배경색</button>
-              <button class="btn mini white" data-colorto="border-color">🎨 지금 색 → 테두리색</button>
-              <span class="lab-cur-sw" id="curSw2" title="지금 색 (🎨 색 탭)"></span>
+            <p class="lab-help">숫자만 쓰면 px 로 들어가요 · <b>%</b>, <b>auto</b> 도 OK</p>
+
+            <!-- 바로 꾸미기 -->
+            <div class="qk">
+              <div class="qk-tabs" id="qkTabs">
+                <button data-qk="color" class="on">🎨 색</button>
+                <button data-qk="img">🖼 배경 이미지</button>
+                <button data-qk="border">🧩 테두리</button>
+              </div>
+              <div class="qk-pane" data-qkp="color">
+                <div class="lab-row wrap">
+                  <span class="lab-mini">칠할 곳</span>
+                  <div class="seg" id="qkWhere">
+                    <button data-w="background-color" class="on">배경색</button>
+                    <button data-w="color">글자색</button>
+                    <button data-w="border-color">테두리색</button>
+                  </div>
+                </div>
+                <div class="lab-row">
+                  <span class="lab-cur-sw big" id="curSw2" title="지금 색 · 누르면 🎨 색 탭으로"></span>
+                  <input class="tx mono" id="qkHex" placeholder="#f689b6">
+                  <button class="btn mini pink" id="qkApply">칠하기</button>
+                </div>
+                <p class="lab-help">아래 색을 누르면 <b>바로 칠해져요</b> · 칠한 색은 🕘 최근 색에 남아요</p>
+                <div class="lab-sw-list" id="qkSw"></div>
+                <label class="lab-chk"><input type="checkbox" id="qkBgOnly"> 배경색 칠할 때 배경 이미지·무늬는 빼기</label>
+              </div>
+              <div class="qk-pane" data-qkp="img" hidden>
+                <div class="lab-row wrap">
+                  <div class="seg small" id="qkMode">
+                    <button data-m="tile">타일</button><button data-m="stretch">늘이기</button><button data-m="cover">덮기</button><button data-m="one">한 장</button>
+                  </div>
+                  <select class="tx sel" id="qkTag"></select>
+                </div>
+                <div class="lab-gal small" id="qkGal"></div>
+              </div>
+              <div class="qk-pane" data-qkp="border" hidden>
+                <div class="bd-list" id="qkBd"></div>
+              </div>
             </div>
+
             <div class="lab-row wrap">
               <button class="btn mini white" id="bxNoBg">배경 이미지 빼기</button>
               <button class="btn mini white" id="bxNoBorder">테두리 이미지 빼기</button>
+              <button class="btn mini white" id="bxDup">📄 복제</button>
+              <button class="btn mini white danger" id="bxDel">🗑 상자 지우기</button>
             </div>
             <details class="lab-det"><summary>✍ 이 상자의 style 직접 고치기</summary>
               <textarea class="tx mono" id="bxStyle" rows="4" spellcheck="false"></textarea>
@@ -147,6 +186,7 @@
         <div class="lab-pane" data-pane="img" hidden>
           <div id="imgGoal"></div>
           <input class="tx" id="gUrl" placeholder="🔗 이미지 주소를 붙여 넣으면 바로 저장돼요">
+          <p class="lab-help" id="gWhere"></p>
           <div class="lab-row wrap">
             <span class="lab-mini">넣는 방식</span>
             <div class="seg small" id="gMode">
@@ -157,9 +197,7 @@
             </div>
           </div>
           <label class="lab-range">타일 크기 <input type="range" id="gSize" min="0" max="200" value="0"><b id="gSizeV">원래대로</b></label>
-          <div class="lab-row">
-            <select class="tx sel" id="gTag"></select>
-          </div>
+          <div class="lk-tags" id="gTags"></div>
           <p class="lab-help">PC에선 마우스를 올리면 잠깐 미리 입혀 보고, 누르면 확정돼요. 마음에 안 들면 ↶</p>
           <div class="lab-gal" id="gal"></div>
         </div>
