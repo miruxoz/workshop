@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>♡ ろぐ こうぼう ♡ GIF 이모지</title>
   <link rel="stylesheet" href="css/site.css">
+  <style>@font-face { font-family: 'EmojiFont'; src: url('fonts/EmojiFont.woff') format('woff'); font-display: block; }</style>
 </head>
 <body>
 
@@ -34,6 +35,25 @@
         <div class="emo-info" id="info"></div>
         <div id="grid" class="emo-grid"></div>
         <div class="pager" id="pager"></div>
+      </div>
+    </section>
+
+
+    <section class="win">
+      <div class="win-t"><span>🔤 이모지 폰트 <small>EmojiFont · 영문을 치면 그림</small></span><button class="btn mini white" id="efToggle">접기</button></div>
+      <div class="win-b" id="efBody">
+        <p class="ef-help">그림을 누르면 아래 칸에 모여요 → <b>코드 복사</b>로 한꺼번에 가져가요. 대문자·소문자가 서로 다른 그림이에요.</p>
+        <div class="ef-grid" id="efGrid"></div>
+        <div class="ef-tray">
+          <input class="tx ef-in" id="efIn" placeholder="여기 글자가 모여요 (직접 쳐도 돼요)" autocomplete="off" spellcheck="false">
+          <span class="ef-prev" id="efPrev"></span>
+        </div>
+        <div class="ef-btns">
+          <button class="btn" id="efCopy">📋 코드 복사</button>
+          <button class="btn white" id="efClear">지우기</button>
+          <button class="btn white" id="efFace">@font-face 복사</button>
+        </div>
+        <p class="ef-note">티스토리·러브로그에서는 <b>@font-face 복사</b>로 받은 코드를 스타일에 한 번 넣어 둬야 그림으로 보여요. 폰트: さつやこ · <a href="https://www.asterism-m.com/" target="_blank" rel="noopener">Asterism</a></p>
       </div>
     </section>
 
@@ -126,6 +146,29 @@
       toast('저장했어요'); reload(false);
     };
     render(); reload(false);
+  })();
+
+  // ===== 이모지 폰트 (EmojiFont) =====
+  (() => {
+    const $ = id => document.getElementById(id);
+    const URL_CDN = 'https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/EmojiFont.woff';
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+    $('efGrid').innerHTML = letters.map(c => `<button class="ef-it" data-c="${c}" title="${c}"><b>${c}</b><i>${c}</i></button>`).join('');
+    const sync = () => { $('efIn').value = $('efIn').value.replace(/[^A-Za-z ]/g, ''); $('efPrev').textContent = $('efIn').value; };
+    $('efGrid').onclick = e => { const b = e.target.closest('.ef-it'); if (!b) return; $('efIn').value += b.dataset.c; sync(); };
+    $('efIn').oninput = sync;
+    $('efClear').onclick = () => { $('efIn').value = ''; sync(); };
+    $('efCopy').onclick = async () => {
+      const v = $('efIn').value; if (!v) { toast('그림을 먼저 골라 주세요'); return; }
+      toast(await copyText(`<span style="font-family:'EmojiFont';">${v}</span>`) ? '📋 코드를 복사했어요!' : '⚠️ 복사 실패');
+    };
+    $('efFace').onclick = async () => {
+      toast(await copyText(`@font-face { font-family: 'EmojiFont'; src: url('${URL_CDN}') format('woff'); font-display: swap; }`) ? '📋 @font-face 를 복사했어요!' : '⚠️ 복사 실패');
+    };
+    const k = 'emo.efOpen';
+    const set = open => { $('efBody').hidden = !open; $('efToggle').textContent = open ? '접기' : '펼치기'; store.set(k, open ? '1' : '0'); };
+    $('efToggle').onclick = () => set($('efBody').hidden);
+    set(store.get(k) !== '0');
   })();
 </script>
 <script src="js/widget.js"></script>
