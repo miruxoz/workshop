@@ -116,3 +116,44 @@
     src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x10y12pxDonguriDuel.woff') format('woff');
     font-display: swap;
 }
+
+/* ---------------------------------------------------------
+   さつやこ (Satsuyako) · Asterism https://www.asterism-m.com/
+   웹폰트 사용 OK · 2차 배포 시 링크/URL 표기 필요 (← 이 주석이 출처 표기)
+   폰트 데이터 개변 금지 → 서브셋 없이 TTF를 woff로 형식만 변환
+   --------------------------------------------------------- */
+
+/* 픽셀 | | ゆるもじ 유루모지 · 일본어(한자 포함) · 한글 없음 */
+@font-face {
+    font-family: 'Yurumoji';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/Yurumoji.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | まめもじ 마메모지 · 작은 글씨용 · 한글 없음 */
+@font-face {
+    font-family: 'Mamemoji';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/Mamemoji.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | Cherish 체리시 · 통통한 영문·숫자 */
+@font-face {
+    font-family: 'Cherish';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/Cherish.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | KakomiC 카코미 · 테두리 상자 영문·숫자 */
+@font-face {
+    font-family: 'KakomiC';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/KakomiC.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | EmojiFont 이모지폰트 · 영문 자판을 치면 그림이 나와요 */
+@font-face {
+    font-family: 'EmojiFont';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/EmojiFont.woff') format('woff');
+    font-display: swap;
+}

@@ -44,3 +44,7 @@
 
 /* 명조 | | KoPubWorld 바탕 · 굵기 300/500/700 · 묶음 CSS(@import) | KoPubWorld Batang */
 @import url("https://cdn.jsdelivr.net/npm/font-kopubworld@1.0/batang.min.css");
+
+
+/* 포인트 | | 체리밤 원 · 통통 귀여운 일본어 | Cherry Bomb One */
+@import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&display=swap');
