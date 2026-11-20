@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 꾸미기 실험실</title>
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+
+<div class="page wide">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>🎨 꾸미기 실험실 ♪ 이것저것 바꿔 보고 마음에 들면 코드를 가져가요</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="vault.html">🗂 보관함</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+    <a href="fonts.html">🔤 폰트</a>
+    <a href="lab.html" class="on">♡ 실험실 ♡</a>
+    <a href="links.html">🔗 링크</a>
+  </nav>
+
+  <main class="main">
+    <!-- 위 도구막대 -->
+    <div class="lab-bar">
+      <div class="lab-grp">
+        <button class="btn mini pink" id="bCode">🧾 코드</button>
+        <button class="btn mini" id="bCopy">📋 코드 복사</button>
+      </div>
+      <div class="lab-grp">
+        <button class="btn mini white" id="bUndo" title="되돌리기 (Ctrl+Z)">↶</button>
+        <button class="btn mini white" id="bRedo" title="다시 하기 (Ctrl+Y)">↷</button>
+      </div>
+      <div class="lab-grp">
+        <button class="btn mini white" id="bSnap">📸 찍기</button>
+        <button class="btn mini white" id="bSnaps">🗂 스냅샷 <small id="snapN"></small></button>
+      </div>
+      <div class="lab-grp seg" id="modeSeg">
+        <button data-mode="pick" class="on" title="눌러서 상자 고르기">👆 상자</button>
+        <button data-mode="text" title="미리보기에서 글자 고치기 · 드래그해서 폰트/색 바꾸기">✏️ 글자</button>
+        <button data-mode="view" title="탭 누르기 등 원래대로 써 보기">👀 보기</button>
+      </div>
+      <div class="lab-grp seg" id="wSeg">
+        <button data-w="pc" class="on">🖥 PC</button>
+        <button data-w="phone">📱 폰</button>
+      </div>
+    </div>
+
+    <!-- 코드 칸 (접었다 폈다) -->
+    <div class="lab-code" id="codeBox" hidden>
+      <textarea class="tx" id="codeTa" rows="10" spellcheck="false" placeholder="상태창·관찰일지 html 을 통째로 붙여 넣으세요"></textarea>
+      <div class="lab-row">
+        <button class="btn pink" id="codeApply">✔ 이 코드로 미리보기</button>
+        <button class="btn white" id="codeClose">접기</button>
+      </div>
+    </div>
+
+    <div class="lab-wrap">
+      <!-- 미리보기 -->
+      <section class="lab-stage">
+        <div class="lab-target" id="target">👆 미리보기에서 상자를 눌러 고르세요</div>
+        <div class="lab-scroll" id="scroll">
+          <div class="lab-frame-wrap" id="frameWrap"><iframe id="frame" title="미리보기"></iframe></div>
+        </div>
+      </section>
+
+      <!-- 도구 -->
+      <aside class="lab-tools">
+        <div class="lab-tabs" id="tabs">
+          <button data-tab="box" class="on">📦 상자</button>
+          <button data-tab="list">🔍 목록</button>
+          <button data-tab="font">🔤 폰트</button>
+          <button data-tab="img">🖼 이미지</button>
+          <button data-tab="border">🧩 테두리</button>
+          <button data-tab="color">🎨 색</button>
+        </div>
+
+        <!-- 📦 상자 -->
+        <div class="lab-pane" data-pane="box">
+          <div class="lab-empty" id="boxEmpty">미리보기에서 상자를 하나 눌러 주세요 ♪</div>
+          <div id="boxBody" hidden>
+            <div class="lab-crumb" id="crumb"></div>
+            <div class="lab-kids" id="kids"></div>
+            <div class="bx-model">
+              <div class="bx-m"><span class="bx-tag">margin 바깥 여백</span>
+                <input class="bx-n t" data-p="margin-top"><input class="bx-n r" data-p="margin-right"><input class="bx-n b" data-p="margin-bottom"><input class="bx-n l" data-p="margin-left">
+                <div class="bx-p"><span class="bx-tag">padding 안쪽 여백</span>
+                  <input class="bx-n t" data-p="padding-top"><input class="bx-n r" data-p="padding-right"><input class="bx-n b" data-p="padding-bottom"><input class="bx-n l" data-p="padding-left">
+                  <div class="bx-c" id="bxSize">내용</div>
+                </div>
+              </div>
+            </div>
+            <label class="lab-chk"><input type="checkbox" id="bxLink"> 네 방향 한꺼번에 바꾸기</label>
+            <div class="lab-props">
+              <label>글자 크기<input class="tx" data-p="font-size" placeholder="px"></label>
+              <label>줄 간격<input class="tx" data-p="line-height" placeholder="1.6"></label>
+              <label>둥글기<input class="tx" data-p="border-radius" placeholder="px"></label>
+              <label>너비<input class="tx" data-p="width" placeholder="auto"></label>
+              <label>글자 간격<input class="tx" data-p="letter-spacing" placeholder="px"></label>
+              <label>정렬<select class="tx" data-p="text-align"><option value="">-</option><option>left</option><option>center</option><option>right</option><option>justify</option></select></label>
+            </div>
+            <div class="lab-row wrap">
+              <button class="btn mini white" data-colorto="color">🎨 지금 색 → 글자색</button>
+              <button class="btn mini white" data-colorto="background-color">🎨 지금 색 → 배경색</button>
+              <button class="btn mini white" data-colorto="border-color">🎨 지금 색 → 테두리색</button>
+              <span class="lab-cur-sw" id="curSw2" title="지금 색 (🎨 색 탭)"></span>
+            </div>
+            <div class="lab-row wrap">
+              <button class="btn mini white" id="bxNoBg">배경 이미지 빼기</button>
+              <button class="btn mini white" id="bxNoBorder">테두리 이미지 빼기</button>
+            </div>
+            <details class="lab-det"><summary>✍ 이 상자의 style 직접 고치기</summary>
+              <textarea class="tx mono" id="bxStyle" rows="4" spellcheck="false"></textarea>
+              <button class="btn mini pink" id="bxStyleApply">적용</button>
+            </details>
+          </div>
+        </div>
+
+        <!-- 🔍 목록 -->
+        <div class="lab-pane" data-pane="list" hidden>
+          <p class="lab-help">코드 안의 색·이미지·폰트를 모았어요. 하나를 누르면 그게 <b>바꿀 대상</b>이 돼요 → 🎨 색 / 🖼 이미지 / 🔤 폰트 탭에서 고르면 <b>쓰인 곳이 전부</b> 바뀌어요.</p>
+          <div class="lab-sub">🎨 색 <small id="lcN"></small></div>
+          <div class="lab-sw-list" id="lColors"></div>
+          <div class="lab-sub">🖼 이미지 <small id="liN"></small></div>
+          <div class="lab-img-list" id="lImgs"></div>
+          <div class="lab-sub">🔤 폰트 <small id="lfN"></small></div>
+          <div class="lab-font-list" id="lFonts"></div>
+        </div>
+
+        <!-- 🔤 폰트 -->
+        <div class="lab-pane" data-pane="font" hidden>
+          <div id="fontGoal"></div>
+          <div class="lab-row">
+            <input class="tx" id="fQ" placeholder="🔍 폰트 찾기">
+            <button class="btn mini white" id="fReload" title="fonts 폴더 다시 읽기">🔄</button>
+          </div>
+          <input class="tx" id="fSample" placeholder="미리보기 문구">
+          <div class="lab-fonts" id="fList"></div>
+        </div>
+
+        <!-- 🖼 이미지 -->
+        <div class="lab-pane" data-pane="img" hidden>
+          <div id="imgGoal"></div>
+          <input class="tx" id="gUrl" placeholder="🔗 이미지 주소를 붙여 넣으면 바로 저장돼요">
+          <div class="lab-row wrap">
+            <span class="lab-mini">넣는 방식</span>
+            <div class="seg small" id="gMode">
+              <button data-m="tile" class="on">타일</button>
+              <button data-m="stretch">늘이기</button>
+              <button data-m="cover">덮기</button>
+              <button data-m="one">한 장</button>
+            </div>
+          </div>
+          <label class="lab-range">타일 크기 <input type="range" id="gSize" min="0" max="200" value="0"><b id="gSizeV">원래대로</b></label>
+          <div class="lab-row">
+            <select class="tx sel" id="gTag"></select>
+          </div>
+          <p class="lab-help">PC에선 마우스를 올리면 잠깐 미리 입혀 보고, 누르면 확정돼요. 마음에 안 들면 ↶</p>
+          <div class="lab-gal" id="gal"></div>
+        </div>
+
+        <!-- 🧩 테두리 -->
+        <div class="lab-pane" data-pane="border" hidden>
+          <div id="bdGoal"></div>
+          <div class="bd-prev-wrap"><div class="bd-prev" id="bdPrev">미리보기 ♡</div></div>
+          <input class="tx" id="bdUrl" placeholder="🔗 border-image 이미지 주소">
+          <div class="lab-props">
+            <label>자르기(slice)<input class="tx" id="bdSlice" value="8"></label>
+            <label>두께 px<input class="tx" id="bdWidth" value="8"></label>
+            <label>바깥으로 px<input class="tx" id="bdOut" value="0"></label>
+            <label>반복<select class="tx" id="bdRep"><option>round</option><option>repeat</option><option>stretch</option><option>space</option></select></label>
+          </div>
+          <label class="lab-chk"><input type="checkbox" id="bdFill" checked> 가운데도 채우기 (fill)</label>
+          <div class="lab-row wrap">
+            <button class="btn mini pink" id="bdApply">선택한 상자에 입히기</button>
+            <button class="btn mini white" id="bdSave">💾 모음에 저장</button>
+            <button class="btn mini white" id="bdFrom">선택한 상자에서 가져오기</button>
+            <button class="btn mini white" id="bdPaste">코드로 붙여넣기</button>
+          </div>
+          <div class="lab-sub">🧩 모아둔 테두리</div>
+          <div class="bd-list" id="bdList"></div>
+        </div>
+
+        <!-- 🎨 색 -->
+        <div class="lab-pane" data-pane="color" hidden>
+          <div id="colorGoal"></div>
+          <canvas class="cp-sv" id="cpSv" width="300" height="170"></canvas>
+          <label class="cp-bar"><span>색조</span><input type="range" id="cpH" min="0" max="360"></label>
+          <label class="cp-bar"><span>채도</span><input type="range" id="cpS" min="0" max="100"></label>
+          <label class="cp-bar"><span>밝기</span><input type="range" id="cpV" min="0" max="100"></label>
+          <div class="cp-out">
+            <span class="cp-big" id="cpBig"></span>
+            <label>HEX<input class="tx mono" id="cpHex"></label>
+            <label>R<input class="tx mono" id="cpR"></label>
+            <label>G<input class="tx mono" id="cpG"></label>
+            <label>B<input class="tx mono" id="cpB"></label>
+          </div>
+          <div class="lab-row wrap">
+            <button class="btn mini pink" id="cpCopy">📋 HEX 복사</button>
+            <button class="btn mini white" id="cpCopyRgb">📋 rgb() 복사</button>
+            <button class="btn mini white" id="cpScreen" hidden>💧 화면에서 뽑기</button>
+            <button class="btn mini white" id="cpSel">✏️ 드래그한 글자에 색</button>
+          </div>
+          <div class="lab-sub">💧 이미지에서 뽑기</div>
+          <div class="cp-drop" id="cpDrop" tabindex="0">
+            <canvas id="cpImg" hidden></canvas>
+            <span id="cpDropMsg">여기를 누르고 <b>Ctrl+V</b> 로 이미지 붙여넣기<br>또는 이미지를 끌어다 놓기 / <label class="lab-link">파일 고르기<input type="file" id="cpFile" accept="image/*" hidden></label></span>
+          </div>
+          <div class="lab-row wrap">
+            <button class="btn mini white" id="cpPal">🎨 이 이미지 팔레트 뽑기</button>
+            <button class="btn mini white" id="cpImgClear">이미지 지우기</button>
+          </div>
+          <div class="lab-sw-list" id="cpPalOut"></div>
+          <div class="lab-sub">🕘 최근 색 <button class="lab-x" id="cpHistClear" title="기록 지우기">✕</button></div>
+          <div class="lab-sw-list" id="cpHist"></div>
+          <div class="lab-sub">🎀 팔레트</div>
+          <div class="lab-row"><div class="lab-sw-list grow" id="cpWork"></div><button class="btn mini white" id="cpWorkAdd" title="지금 색 넣기">＋</button><button class="btn mini pink" id="cpWorkSave">저장</button></div>
+          <div id="cpPals"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <footer class="foot">실험실 작업은 이 브라우저에만 저장돼요 · 새로고침해도 이어서 할 수 있어요 ♡</footer>
+</div>
+
+<!-- 드래그한 글자 위에 뜨는 작은 도구 -->
+<div class="lab-float" id="float" hidden>
+  <select class="tx sel" id="flFont"></select>
+  <select class="tx sel" id="flSize"><option value="">크기</option></select>
+  <button class="btn mini white" id="flColor" title="🎨 색 탭의 지금 색">🎨</button>
+  <button class="btn mini white" id="flBold"><b>B</b></button>
+  <button class="btn mini white" id="flClear" title="꾸밈 지우기">⌫</button>
+</div>
+
+<!-- 비교 화면 -->
+<div class="lab-cmp" id="cmp" hidden>
+  <div class="lab-cmp-bar"><span id="cmpTitle"></span><button class="btn mini white" id="cmpClose">✕ 닫기</button></div>
+  <div class="lab-cmp-body">
+    <div><div class="lab-cmp-t" id="cmpA"></div><iframe id="cmpFa"></iframe></div>
+    <div><div class="lab-cmp-t">지금</div><iframe id="cmpFb"></iframe></div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/repo.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/fonts.js"></script>
+<script src="js/lab.js"></script>
+<script src="js/widget.js"></script>
+</body>
+</html>

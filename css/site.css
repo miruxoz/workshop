@@ -42,6 +42,10 @@ button, input, textarea { font: inherit; color: inherit; }
 .menu a:last-child { border-right: 0; }
 .menu a.on { background: var(--pink-bg); box-shadow: inset 2px 2px 0 rgba(0,0,0,.12); }
 .menu a .soon { font-size: 9px; color: var(--ink-soft); }
+@media (max-width: 640px) {
+  .menu { flex-wrap: wrap; }
+  .menu a { flex: 1 1 25%; font-size: 11px; padding: 3px 2px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+}
 
 .main { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
 

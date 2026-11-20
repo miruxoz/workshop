@@ -1,0 +1,206 @@
+/* =========================================================
+   🎨 꾸미기 실험실 (lab.html) · 🔗 링크 모음 (links.html)
+   ========================================================= */
+.page.wide { max-width: 1240px; }
+.mono { font-family: Consolas, 'Courier New', monospace !important; font-size: 11px !important; }
+
+/* 위 도구막대 */
+.lab-bar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 6px 8px; background: var(--pink-pale); border: 1px dashed var(--line);
+  position: sticky; top: 0; z-index: 30; }
+.lab-grp { display: flex; gap: 3px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); background: #fff; }
+.seg button { font-family: var(--title-font); font-size: 11px; padding: 2px 8px; cursor: pointer; background: #fff; border: 0; border-right: 1px solid #ccc; }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--pink-bg); box-shadow: inset 1px 1px 0 rgba(0,0,0,.15); }
+.seg.small button { padding: 1px 7px; }
+.lab-code { display: flex; flex-direction: column; gap: 6px; }
+.lab-code[hidden] { display: none; }
+.lab-code textarea { font-family: Consolas, monospace; font-size: 11px; line-height: 1.5; }
+.lab-row { display: flex; gap: 6px; align-items: center; }
+.lab-row.wrap { flex-wrap: wrap; }
+.lab-row .tx { flex: 1; min-width: 0; }
+
+/* 큰 틀 */
+.lab-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; align-items: start; }
+.lab-stage { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.lab-target { font-family: var(--title-font); font-size: 11px; padding: 3px 8px; background: #fff; border: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-target b { color: var(--pink); font-weight: 400; }
+.lab-scroll { border: 1px solid var(--line); background: repeating-conic-gradient(#f4f4f4 0 25%, #fff 0 50%) 0 0 / 16px 16px; overflow: auto; }
+.lab-frame-wrap { margin: 0 auto; width: 100%; transition: width .2s; }
+.lab-frame-wrap.phone { width: 375px; max-width: 100%; box-shadow: 0 0 0 1px #ccc; }
+#frame { display: block; width: 100%; height: 400px; border: 0; background: transparent; }
+
+.lab-tools { position: sticky; top: 46px; max-height: calc(100vh - 56px); overflow: auto; border: 3px double var(--line); background: #fff; }
+.lab-tabs { display: grid; grid-template-columns: repeat(3, 1fr); position: sticky; top: 0; z-index: 2; background: #fff; border-bottom: 1px solid var(--line); }
+.lab-tabs button { font-family: var(--title-font); font-size: 11px; padding: 4px 2px; cursor: pointer; background: #fff; border: 0; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+.lab-tabs button:nth-child(3n) { border-right: 0; }
+.lab-tabs button.on { background: var(--pink-bg); box-shadow: inset 1px 1px 0 rgba(0,0,0,.12); }
+.lab-pane { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.lab-pane[hidden] { display: none; }
+.lab-empty { padding: 26px 8px; text-align: center; font-family: var(--title-font); font-size: 12px; color: var(--ink-soft); }
+.lab-help { margin: 0; font-size: 11px; color: #777; line-height: 1.6; }
+.lab-help b { color: var(--pink); font-weight: 400; }
+.lab-sub { display: flex; align-items: center; gap: 6px; font-family: var(--title-font); font-size: 11px; color: var(--pink); border-bottom: 1px dotted var(--pink-bg); padding-bottom: 1px; margin-top: 4px; }
+.lab-sub small { color: var(--ink-soft); }
+.lab-mini { font-family: var(--title-font); font-size: 11px; }
+.lab-x { margin-left: auto; font-size: 10px; padding: 0 5px; cursor: pointer; background: #fff; border: 1px solid #ccc; }
+.lab-chk { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+.lab-chk input { accent-color: var(--pink); }
+.lab-link { color: var(--pink); text-decoration: underline; cursor: pointer; }
+.lab-det summary { cursor: pointer; font-family: var(--title-font); font-size: 11px; }
+.lab-det[open] { display: flex; flex-direction: column; gap: 4px; }
+.lab-det[open] summary { margin-bottom: 2px; }
+.lab-goal { font-size: 11px; padding: 4px 8px; background: var(--blue-pale); border: 1px dashed var(--blue); line-height: 1.5; word-break: break-all; }
+.lab-goal b { font-family: var(--title-font); font-weight: 400; color: var(--blue); }
+.lab-goal.rep { background: #fff8dc; border-color: #e3b341; }
+.lab-goal.rep b { color: #b8860b; }
+.lab-goal button { margin-left: 4px; font-size: 10px; padding: 0 5px; cursor: pointer; background: #fff; border: 1px solid #ccc; }
+
+/* 📦 상자 */
+.lab-crumb { display: flex; flex-wrap: wrap; gap: 2px; font-size: 10px; }
+.lab-crumb button, .lab-kids button { font-family: Consolas, monospace; font-size: 10px; padding: 0 4px; cursor: pointer; background: #fff; border: 1px solid #ccc; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lab-crumb button.on { background: var(--pink-bg); border-color: var(--line); }
+.lab-crumb i { font-style: normal; color: #bbb; }
+.lab-kids { display: flex; flex-wrap: wrap; gap: 2px; padding-left: 8px; border-left: 2px solid var(--pink-bg); }
+.lab-kids:empty { display: none; }
+.lab-kids::before { content: "안쪽 ▸"; font-size: 10px; color: #aaa; }
+.bx-model { font-size: 10px; }
+.bx-m, .bx-p { position: relative; padding: 22px 34px; border: 1px dashed #e3b341; background: #fff8dc; }
+.bx-p { border-color: #6fbf73; background: #edf8ee; }
+.bx-c { padding: 6px; text-align: center; background: #e7f1fb; border: 1px solid var(--blue); font-family: Consolas, monospace; font-size: 10px; }
+.bx-tag { position: absolute; top: 2px; left: 4px; font-family: var(--title-font); font-size: 9px; color: #777; }
+.bx-n { position: absolute; width: 34px; padding: 0 2px; text-align: center; font-family: Consolas, monospace; font-size: 11px; border: 1px solid #ccc; background: #fff; outline: none; }
+.bx-n:focus { border-color: var(--pink); }
+.bx-n.t { top: 3px; left: 50%; margin-left: -17px; } .bx-n.b { bottom: 3px; left: 50%; margin-left: -17px; }
+.bx-n.l { left: 1px; top: 50%; margin-top: -9px; } .bx-n.r { right: 1px; top: 50%; margin-top: -9px; }
+.lab-props { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 8px; }
+.lab-props label { display: flex; flex-direction: column; gap: 1px; font-family: var(--title-font); font-size: 10px; }
+.lab-props .tx { padding: 3px 6px; font-size: 11px; width: 100%; border: 1px solid #bbb; }
+.lab-cur-sw { width: 20px; height: 20px; border: 1px solid var(--line); flex: none; }
+
+/* 🔍 목록 · 색 칸 */
+.lab-sw-list { display: flex; flex-wrap: wrap; gap: 4px; min-height: 4px; }
+.lab-sw-list.grow { flex: 1; min-height: 22px; padding: 2px; border: 1px dashed #ccc; }
+.sw { position: relative; width: 26px; height: 26px; cursor: pointer; border: 1px solid #999; padding: 0; background-clip: padding-box; }
+.sw:hover { outline: 2px solid var(--pink); z-index: 1; }
+.sw.on { outline: 2px solid #e3b341; outline-offset: 1px; }
+.sw small { position: absolute; right: -4px; bottom: -5px; font-size: 8px; line-height: 1; padding: 1px 2px; background: #fff; border: 1px solid #ccc; color: #666; font-family: Consolas, monospace; }
+.lab-img-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 4px; }
+.li-it { position: relative; aspect-ratio: 1; cursor: pointer; border: 1px solid #999; background: #fff center / auto repeat; }
+.li-it.on { outline: 2px solid #e3b341; outline-offset: 1px; }
+.li-it small { position: absolute; left: 0; bottom: 0; font-size: 9px; padding: 0 3px; background: rgba(255,255,255,.9); }
+.li-it .sv { position: absolute; right: 0; top: 0; font-size: 10px; padding: 0 3px; background: #fff; border: 0; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; cursor: pointer; }
+.lab-font-list { display: flex; flex-direction: column; gap: 3px; }
+.lf-it { display: flex; justify-content: space-between; gap: 6px; padding: 3px 8px; cursor: pointer; background: #fff; border: 1px solid #ccc; text-align: left; font-size: 13px; }
+.lf-it.on { outline: 2px solid #e3b341; }
+.lf-it small { font-family: Consolas, monospace; font-size: 10px; color: #999; }
+
+/* 🔤 폰트 */
+.lab-fonts { display: flex; flex-direction: column; gap: 3px; }
+.ft-g { font-family: var(--title-font); font-size: 10px; color: var(--ink-soft); margin-top: 4px; }
+.ft-it { display: flex; align-items: center; gap: 6px; padding: 4px 6px; background: #fff; border: 1px solid #ccc; cursor: pointer; }
+.ft-it:hover { background: var(--pink-pale); border-color: var(--line); }
+.ft-it .nm { flex: none; width: 92px; font-family: var(--title-font); font-size: 10px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ft-it .sm { flex: 1; min-width: 0; font-size: 16px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ft-it .st { flex: none; font-size: 13px; color: #ccc; cursor: pointer; background: none; border: 0; padding: 0 2px; }
+.ft-it .st.on { color: #f0a500; }
+
+/* 🖼 갤러리 */
+.lab-range { display: flex; align-items: center; gap: 6px; font-family: var(--title-font); font-size: 11px; }
+.lab-range input { flex: 1; accent-color: var(--pink); }
+.lab-range b { font-weight: 400; min-width: 54px; text-align: right; color: var(--pink); }
+.lab-gal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.g-it { position: relative; display: flex; flex-direction: column; border: 1px solid #999; background: #fff; }
+.g-th { aspect-ratio: 1; cursor: pointer; background: #fff center / auto repeat; }
+.g-it[data-mode="stretch"] .g-th { background-size: 100% 100%; background-repeat: no-repeat; }
+.g-it[data-mode="cover"] .g-th { background-size: cover; background-repeat: no-repeat; }
+.g-it[data-mode="one"] .g-th { background-size: contain; background-repeat: no-repeat; }
+.g-it:hover { outline: 2px solid var(--pink); z-index: 1; }
+.g-ft { display: flex; align-items: center; gap: 2px; padding: 1px 2px; border-top: 1px solid #ddd; font-size: 9px; }
+.g-ft span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.g-ft button { font-size: 9px; padding: 0 3px; cursor: pointer; background: #fff; border: 1px solid #ddd; }
+.g-badge { position: absolute; left: 2px; top: 2px; font-family: var(--title-font); font-size: 8px; padding: 0 3px; background: rgba(255,255,255,.9); border: 1px solid #ccc; }
+
+/* 🧩 테두리 */
+.bd-prev-wrap { padding: 14px; background: repeating-conic-gradient(#f4f4f4 0 25%, #fff 0 50%) 0 0 / 12px 12px; border: 1px solid #ddd; }
+.bd-prev { min-height: 60px; display: flex; align-items: center; justify-content: center; font-family: var(--title-font); font-size: 12px; }
+.bd-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.bd-it { display: flex; flex-direction: column; border: 1px solid #ccc; background: #fff; }
+.bd-th { height: 54px; margin: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.bd-ft { display: flex; gap: 2px; align-items: center; padding: 1px 3px; border-top: 1px solid #ddd; font-size: 10px; }
+.bd-ft span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-ft button { font-size: 9px; padding: 0 3px; cursor: pointer; background: #fff; border: 1px solid #ddd; }
+
+/* 🎨 컬러피커 */
+.cp-sv { width: 100%; height: 160px; cursor: crosshair; border: 1px solid var(--line); touch-action: none; display: block; }
+.cp-bar { display: flex; align-items: center; gap: 6px; font-family: var(--title-font); font-size: 11px; }
+.cp-bar span { flex: none; width: 26px; }
+.cp-bar input { flex: 1; -webkit-appearance: none; appearance: none; height: 14px; border: 1px solid var(--line); background: #ddd; margin: 0; }
+.cp-bar input::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 18px; background: #fff; border: 1px solid var(--line); box-shadow: 0 0 0 1px #fff; cursor: pointer; }
+.cp-bar input::-moz-range-thumb { width: 8px; height: 18px; background: #fff; border: 1px solid var(--line); border-radius: 0; cursor: pointer; }
+#cpH { background: linear-gradient(90deg, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00); }
+.cp-out { display: grid; grid-template-columns: 40px 1.6fr 1fr 1fr 1fr; gap: 4px; align-items: end; }
+.cp-out label { display: flex; flex-direction: column; font-family: var(--title-font); font-size: 9px; gap: 1px; }
+.cp-out .tx { padding: 3px 4px; border: 1px solid #bbb; }
+.cp-big { height: 40px; border: 1px solid var(--line); }
+.cp-drop { position: relative; min-height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px; font-size: 11px; color: #888; border: 1px dashed var(--line); background: var(--pink-pale); outline: none; }
+.cp-drop:focus { box-shadow: 0 0 0 2px var(--pink-bg); }
+.cp-drop.drag { background: var(--pink-bg); }
+.cp-drop canvas { max-width: 100%; cursor: crosshair; display: block; image-rendering: pixelated; }
+.cp-drop.has { padding: 0; background: repeating-conic-gradient(#f4f4f4 0 25%, #fff 0 50%) 0 0 / 12px 12px; }
+.cp-drop.has #cpDropMsg { display: none; }
+.cp-pal { display: flex; align-items: center; gap: 4px; padding: 3px 4px; border: 1px solid #ddd; margin-top: 3px; }
+.cp-pal b { flex: none; width: 70px; font-family: var(--title-font); font-weight: 400; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-pal .lab-sw-list { flex: 1; }
+.cp-pal .sw { width: 20px; height: 20px; }
+
+/* 드래그 도구 */
+.lab-float { position: fixed; z-index: 60; display: flex; gap: 3px; align-items: center; padding: 3px; background: #fff; border: 2px solid var(--line); box-shadow: 3px 3px 0 var(--pink-bg); }
+.lab-float[hidden] { display: none; }
+.lab-float select.tx.sel { min-width: 0; width: 120px; flex: none; font-size: 11px; padding: 2px; }
+.lab-float #flSize { width: 58px; }
+
+/* 비교 */
+.lab-cmp { position: fixed; inset: 0; z-index: 1500; display: flex; flex-direction: column; background: rgba(255,255,255,.97); }
+.lab-cmp[hidden] { display: none; }
+.lab-cmp-bar { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 3px double var(--line); font-family: var(--title-font); font-size: 12px; background: var(--pink-pale); }
+.lab-cmp-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
+.lab-cmp-body > div { display: flex; flex-direction: column; min-height: 0; border: 1px solid var(--line); }
+.lab-cmp-t { font-family: var(--title-font); font-size: 11px; padding: 2px 8px; background: var(--pink-bg); border-bottom: 1px solid var(--line); }
+.lab-cmp-body iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+
+/* 스냅샷 목록 (모달 안) */
+.snap-it { display: flex; align-items: center; gap: 4px; padding: 4px 6px; border: 1px solid #ddd; background: var(--blue-pale); }
+.snap-it b { flex: 1; min-width: 0; font-family: var(--title-font); font-weight: 400; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.snap-it small { font-size: 9px; color: #999; }
+.snap-it button { font-size: 10px; padding: 1px 5px; cursor: pointer; background: #fff; border: 1px solid #bbb; }
+
+@media (max-width: 860px) {
+  .lab-wrap { grid-template-columns: 1fr; }
+  .lab-scroll { max-height: 58vh; }
+  .lab-tools { position: static; max-height: none; }
+  .lab-bar { position: static; }
+  .lab-cmp-body { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+}
+
+/* ================= 🔗 링크 모음 ================= */
+.lk-form { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.lk-form .full { grid-column: 1 / -1; }
+.lk-bar { display: flex; gap: 6px; flex-wrap: wrap; }
+.lk-bar .tx { flex: 1 1 160px; width: auto; }
+.lk-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.lk-tag { font-family: var(--title-font); font-size: 11px; padding: 1px 8px; cursor: pointer; background: #fff; border: 1px solid #bbb; border-radius: 10px; }
+.lk-tag.on { background: var(--pink-bg); border-color: var(--line); }
+.lk-list { display: flex; flex-direction: column; gap: 8px; }
+.lk-it { display: flex; gap: 10px; padding: 8px 10px; background: #fff; border: 1px solid var(--line); box-shadow: 3px 3px 0 var(--pink-bg); }
+.lk-ic { flex: none; width: 20px; height: 20px; margin-top: 2px; image-rendering: pixelated; }
+.lk-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.lk-title { font-family: var(--title-font); font-size: 13px; color: var(--ink); text-decoration: none; word-break: break-all; }
+.lk-title:hover { color: var(--pink); text-decoration: underline; }
+.lk-url { font-size: 10px; color: #999; word-break: break-all; }
+.lk-memo { margin: 2px 0 0; padding: 5px 8px; font-size: 12px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; background: var(--pink-pale); border-left: 3px solid var(--pink-bg); }
+.lk-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 10px; color: #999; }
+.lk-meta .lk-tag { font-size: 10px; padding: 0 6px; cursor: default; }
+.lk-btns { flex: none; display: flex; flex-direction: column; gap: 3px; }
+.lk-btns button { font-size: 10px; padding: 1px 6px; cursor: pointer; background: #fff; border: 1px solid #bbb; }
+.lk-empty { padding: 30px; text-align: center; font-family: var(--title-font); font-size: 12px; color: var(--ink-soft); }

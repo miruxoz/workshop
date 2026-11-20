@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 링크 모음</title>
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>🔗 도움 되는 사이트 ♪ 링크랑 메모를 같이 모아둬요</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="vault.html">🗂 보관함</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+    <a href="fonts.html">🔤 폰트</a>
+    <a href="lab.html">🎨 실험실</a>
+    <a href="links.html" class="on">♡ 링크 ♡</a>
+  </nav>
+
+  <main class="main">
+    <section class="win">
+      <div class="win-t pink"><span id="formTitle">✏️ 새 링크</span><button class="btn mini white" id="formToggle">접기</button></div>
+      <div class="win-b" id="formBody">
+        <div class="lk-form">
+          <label class="md-field full"><span>주소 (없으면 메모만 저장돼요)</span><input class="tx" id="fUrl" placeholder="https://" autocomplete="off"></label>
+          <label class="md-field"><span>이름</span><input class="tx" id="fTitle" placeholder="비우면 주소로 채워요" autocomplete="off"></label>
+          <label class="md-field"><span>분류</span><input class="tx" id="fTag" list="tagList" placeholder="예: 배경 / 폰트 / 공부" autocomplete="off"><datalist id="tagList"></datalist></label>
+          <label class="md-field full"><span>메모</span><textarea class="tx" id="fMemo" rows="3" placeholder="여기서 뭘 찾았는지, 쓰는 법, 주의할 점…"></textarea></label>
+        </div>
+        <div class="lab-row">
+          <button class="btn pink" id="fSave">💾 저장</button>
+          <button class="btn white" id="fCancel" hidden>고치기 그만</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="win">
+      <div class="win-t"><span>🔗 모아둔 링크 <small id="count"></small></span>
+        <span class="lab-grp"><button class="btn mini white" id="bExport" title="백업 파일로 받기">⬇ 백업</button><label class="btn mini white" title="백업 파일 불러오기">⬆ 불러오기<input type="file" id="bImport" accept=".json,application/json" hidden></label></span></div>
+      <div class="win-b">
+        <div class="lk-bar">
+          <input class="tx" id="q" placeholder="🔍 이름·주소·메모에서 찾기">
+          <select class="tx sel" id="sort"><option value="new">새로 넣은 순</option><option value="old">오래된 순</option><option value="name">이름 순</option></select>
+        </div>
+        <div class="lk-tags" id="tags"></div>
+        <div class="lk-list" id="list"></div>
+      </div>
+    </section>
+  </main>
+  <footer class="foot">링크는 이 브라우저에만 저장돼요 · 가끔 ⬇ 백업 해두세요 ♡</footer>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/repo.js"></script>
+<script src="js/vault.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/links.js"></script>
+<script src="js/widget.js"></script>
+</body>
+</html>
