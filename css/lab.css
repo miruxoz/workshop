@@ -384,3 +384,16 @@
 #qkNow b { font-family: Consolas, monospace; }
 .g-it.repo .g-badge.rp, .st-it.repo .rp { position: absolute; top: 2px; right: 2px; font-size: 9px; padding: 0 4px; background: rgba(255,255,255,.9); border: 1px solid #ccc; border-radius: 6px; }
 .st-it.repo { position: relative; }
+
+/* ✥ 십자키 */
+.bx-nudge { display: flex; gap: 12px; align-items: center; margin: 8px 0 4px; }
+.nd-pad { flex: none; display: grid; grid-template-columns: repeat(3, 30px); grid-template-rows: repeat(3, 30px); gap: 2px; }
+.nd-pad button { font-size: 12px; color: #6f8fb0; cursor: pointer; background: #f6f7fb; border: 1px solid #b4b4b4; box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #d6d6d6; padding: 0; user-select: none; touch-action: manipulation; }
+.nd-pad button:active { box-shadow: inset 2px 2px 0 #d6d6d6, inset -2px -2px 0 #fff; color: #e0507f; }
+.nd-pad .u { grid-area: 1 / 2; } .nd-pad .l { grid-area: 2 / 1; } .nd-pad .c { grid-area: 2 / 2; font-size: 9px; } .nd-pad .r { grid-area: 2 / 3; } .nd-pad .d { grid-area: 3 / 2; }
+.nd-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.nd-side .lab-help { margin: 0; }
+.nd-now { font-family: Consolas, monospace; font-size: 11px; color: #888; }
+.lab-cur-sw.qk-pick { overflow: hidden; }
+#qkWhere { flex-wrap: wrap; }
+#qkWhere button { white-space: nowrap; padding-left: 7px; padding-right: 7px; }

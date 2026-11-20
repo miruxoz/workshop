@@ -116,6 +116,7 @@ body[contenteditable]{outline:none}`;
     }, true);
     d.addEventListener('input', commitSoon);
     d.addEventListener('keydown', keyHandler);
+    d.addEventListener('keydown', e => arrowHandler(e));
     d.addEventListener('selectionchange', onSel);
     d.addEventListener('mouseup', () => setTimeout(onSel, 0));
     d.addEventListener('scroll', () => hideFloat());
@@ -199,10 +200,66 @@ body[contenteditable]{outline:none}`;
     document.querySelectorAll('.lab-props [data-p]').forEach(inp => { inp.value = sel.style.getPropertyValue(inp.dataset.p) || ''; inp.placeholder = cs.getPropertyValue(inp.dataset.p); });
     $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
     if ($('cssDet').open) drawRules();
-    drawCur();
+    drawCur(); drawNd();
   }
 
-  /* ---- ↕ 상자 옮기기 ---- */
+
+  /* ---- ✥ 십자키로 옮기기 ---- */
+  let ndStep = 1;
+  const trXY = el => { const m = String(el.style.getPropertyValue('translate') || '').match(/(-?[\d.]+)px(?:\s+(-?[\d.]+)px)?/); return m ? [+m[1], +(m[2] || 0)] : [0, 0]; };
+  function drawNd() {
+    if (!sel) return;
+    const fl = sel.style.position === 'absolute';
+    $('ndNow').textContent = fl ? `🎈 띄움 · 왼쪽 ${sel.style.left || 0} · 위 ${sel.style.top || 0}`
+      : (() => { const [x, y] = trXY(sel); return x || y ? `가로 ${x}px · 세로 ${y}px` : '제자리'; })();
+  }
+  function nudge(dx, dy) {
+    const d = doc(); if (!sel || sel === d.body) { toast('옮길 상자를 골라 주세요'); return; }
+    const w = frame.contentWindow;
+    if (sel.style.position === 'absolute') {
+      const par = sel.parentElement || d.body;
+      const lv = sel.style.left || '0px', tv = sel.style.top || '0px';
+      if (/%$/.test(lv)) sel.style.setProperty('left', +(parseFloat(lv) + (par.clientWidth ? dx / par.clientWidth * 100 : 0)).toFixed(2) + '%');
+      else sel.style.setProperty('left', (parseFloat(lv) || 0) + dx + 'px');
+      if (/%$/.test(tv)) sel.style.setProperty('top', +(parseFloat(tv) + (par.clientHeight ? dy / par.clientHeight * 100 : 0)).toFixed(2) + '%');
+      else sel.style.setProperty('top', (parseFloat(tv) || 0) + dy + 'px');
+    } else {
+      // 원래 자리는 그대로 두고 눈에 보이는 위치만 옮겨요 (translate)
+      const [ox, oy] = trXY(sel), nx = ox + dx, ny = oy + dy;
+      if (nx || ny) sel.style.setProperty('translate', `${nx}px ${ny}px`); else sel.style.removeProperty('translate');
+    }
+    fitFrame(); commitSoon(); drawNd(); Pos.show();
+    $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
+  }
+  function nudgeReset() {
+    if (!sel) return;
+    if (sel.style.position === 'absolute') { toast('🎈 띄운 상자는 📐 위치에서 "띄우기"를 꺼 주세요'); return; }
+    sel.style.removeProperty('translate');
+    commit(); fitFrame(); showBox(); toast('● 제자리로');
+  }
+  // 누르고 있으면 계속 움직여요
+  let ndTimer = null;
+  const ndStop = () => { clearTimeout(ndTimer); clearInterval(ndTimer); ndTimer = null; };
+  $('ndPad').addEventListener('pointerdown', e => {
+    const b = e.target.closest('[data-d]'); if (!b) return; e.preventDefault();
+    if (b.dataset.d === 'reset') { nudgeReset(); return; }
+    const [x, y] = b.dataset.d.split(',').map(Number);
+    nudge(x * ndStep, y * ndStep);
+    ndStop(); ndTimer = setTimeout(() => { ndTimer = setInterval(() => nudge(x * ndStep, y * ndStep), 60); }, 380);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => $('ndPad').addEventListener(t, ndStop));
+  $('ndStep').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return; ndStep = +b.dataset.s; $('ndStep').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); };
+  const arrowHandler = e => {
+    if (!/^Arrow(Up|Down|Left|Right)$/.test(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!sel || ui.mode === 'text' || e.target.closest?.('textarea, input, select, [contenteditable="true"]')) return;
+    if (sel === doc()?.body) return;
+    e.preventDefault();
+    const st = e.shiftKey ? 10 : ndStep;
+    nudge(e.key === 'ArrowLeft' ? -st : e.key === 'ArrowRight' ? st : 0, e.key === 'ArrowUp' ? -st : e.key === 'ArrowDown' ? st : 0);
+  };
+  document.addEventListener('keydown', arrowHandler);
+
+  /* ---- ↕ 상자 순서 ---- */
   let kidsNow = [], dragK = -1;
   const isReal = n => n && n.tagName && !n.hasAttribute('data-lab') && !/^(STYLE|SCRIPT|BR)$/.test(n.tagName);
   const sib = (el, dir) => { let n = el[dir]; while (n && !isReal(n)) n = n[dir]; return n; };
