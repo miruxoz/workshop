@@ -104,7 +104,9 @@ body[contenteditable]{outline:none}`;
     try { new ResizeObserver(fitFrame).observe(d.documentElement); } catch (e) {}
     d.addEventListener('mouseover', e => { if (ui.mode !== 'pick') return; d.querySelectorAll('[data-lab-hov]').forEach(n => n.removeAttribute('data-lab-hov')); if (e.target !== d.body && e.target !== d.documentElement) e.target.setAttribute('data-lab-hov', ''); });
     d.addEventListener('mouseout', e => e.target.removeAttribute?.('data-lab-hov'));
+    d.addEventListener('pointerdown', e => Pos.down(e), true);
     d.addEventListener('click', e => {
+      if (Pos.wasDrag()) { e.preventDefault(); e.stopPropagation(); return; }
       if (ui.mode === 'view') return;
       if (ui.mode === 'pick') { e.preventDefault(); e.stopPropagation(); }
       const t = e.target.nodeType === 1 ? e.target : e.target.parentElement;
@@ -174,6 +176,7 @@ body[contenteditable]{outline:none}`;
   }
   function showBox() {
     const has = !!sel;
+    Pos.show();
     $('boxEmpty').hidden = has; $('boxBody').hidden = !has;
     $('target').innerHTML = has ? `👆 고른 상자: <b>${esc(label(sel))}</b>` : '👆 미리보기에서 상자를 눌러 고르세요';
     goals();
@@ -236,6 +239,133 @@ body[contenteditable]{outline:none}`;
   };
   $('bxStyleApply').onclick = () => { if (!sel) return; sel.setAttribute('style', $('bxStyle').value); commit(); fitFrame(); toast('적용했어요'); };
 
+  /* ---------------- ➕ 요소 넣기 · 📐 위치 ---------------- */
+  const Pos = (() => {
+    const isFloat = el => !!el && el.style.position === 'absolute';
+    const num = v => { const m = String(v || '').match(/^(-?[\d.]+)(px|%)?$/); return m ? { n: +(+m[1]).toFixed(2), u: m[2] || 'px' } : null; };
+    // 넣기
+    function insert() {
+      const code = $('insCode').value.trim(); if (!code) { toast('넣을 코드를 붙여 넣어 주세요'); return; }
+      const d = doc(); if (!d) return;
+      let where = $('insWhere').value, base = sel;
+      if (!base || base === d.body) { base = d.body; if (where === 'beforebegin') where = 'afterbegin'; if (where === 'afterend') where = 'beforeend'; }
+      const tpl = d.createElement('template'); tpl.innerHTML = code;
+      const first = [...tpl.content.childNodes].find(n => n.nodeType === 1);
+      const frag = tpl.content;
+      ({ beforeend: () => base.append(frag), afterbegin: () => base.prepend(frag), beforebegin: () => base.before(frag), afterend: () => base.after(frag) })[where]();
+      commit(); fitFrame(); if (first) select(first); toast('➕ 넣었어요 · 아래에서 위치를 잡아 보세요');
+    }
+    $('insGo').onclick = insert;
+    // 자주 쓰는 요소
+    let snips = store.json('lab.snips', []) || [];
+    const drawSnips = () => { $('insSnips').innerHTML = snips.map((x, i) => `<span class="ins-snip"><button data-si="${i}" title="${esc(x.code.slice(0, 120))}">${esc(x.name)}</button><button data-sd="${i}">✕</button></span>`).join(''); };
+    $('insSave').onclick = async () => {
+      const code = $('insCode').value.trim(); if (!code) { toast('저장할 코드를 먼저 붙여 넣어 주세요'); return; }
+      const r = await Modal.prompt('💾 자주 쓰는 요소', [{ name: 'name', label: '이름', placeholder: '예: 분홍 리본 버튼' }]); if (!r) return;
+      snips.unshift({ name: r.name.trim() || '요소', code }); store.setJson('lab.snips', snips); drawSnips(); toast('💾 저장했어요');
+    };
+    $('insSnips').onclick = async e => {
+      const a = e.target.closest('[data-si]'); if (a) { $('insCode').value = snips[+a.dataset.si].code; return; }
+      const dl = e.target.closest('[data-sd]'); if (dl && await Modal.confirm('이 요소를 목록에서 뺄까요?')) { snips.splice(+dl.dataset.sd, 1); store.setJson('lab.snips', snips); drawSnips(); }
+    };
+    drawSnips();
+
+    // 위치 칸 보여주기
+    function show() {
+      const d = doc(); const ok = !!sel && d && sel !== d.body;
+      $('posEmpty').hidden = ok; $('posBody').hidden = !ok; if (!ok) return;
+      const fl = isFloat(sel); $('posFloat').checked = fl; $('posFree').hidden = !fl;
+      const ml = sel.style.marginLeft, mr = sel.style.marginRight;
+      const a = ml === 'auto' && mr === 'auto' ? 'center' : ml === 'auto' ? 'right' : mr === 'auto' ? 'left' : '';
+      document.querySelectorAll('#posAlign button').forEach(b => b.classList.toggle('on', !fl && b.dataset.a === a));
+      if (fl) {
+        const x = num(sel.style.left), y = num(sel.style.top);
+        $('posX').value = x ? x.n : 0; $('posXu').value = x ? x.u : '%';
+        $('posY').value = y ? y.n : 0; $('posYu').value = y ? y.u : 'px';
+        $('posZ').value = sel.style.zIndex || '';
+      }
+    }
+    const parentOf = el => el.parentElement || doc().body;
+    function unfloat(el) { ['position', 'left', 'top', 'right', 'bottom', 'transform'].forEach(p => el.style.removeProperty(p)); }
+    $('posAlign').onclick = e => {
+      const b = e.target.closest('[data-a]'); if (!b || !sel) return;
+      unfloat(sel);
+      const cs = frame.contentWindow.getComputedStyle(sel);
+      if (/^inline/.test(cs.display)) sel.style.setProperty('display', 'block');
+      if (!sel.style.width) sel.style.setProperty('width', 'fit-content');
+      const [l, r] = { left: ['0', 'auto'], center: ['auto', 'auto'], right: ['auto', '0'] }[b.dataset.a];
+      sel.style.setProperty('margin-left', l); sel.style.setProperty('margin-right', r);
+      commit(); fitFrame(); showBox();
+    };
+    $('posFloat').onchange = () => {
+      if (!sel) return;
+      if ($('posFloat').checked) {
+        const par = parentOf(sel), w = frame.contentWindow;
+        if (w.getComputedStyle(par).position === 'static') par.style.setProperty('position', 'relative');
+        const r = sel.getBoundingClientRect(), pr = par.getBoundingClientRect();
+        const x = r.left - pr.left - par.clientLeft, y = r.top - pr.top - par.clientTop;
+        sel.style.setProperty('margin', '0'); sel.style.setProperty('position', 'absolute');
+        sel.style.setProperty('left', (par.clientWidth ? (x / par.clientWidth * 100).toFixed(2) : 0) + '%');
+        sel.style.setProperty('top', Math.round(y) + 'px');
+        if (!sel.style.zIndex) sel.style.setProperty('z-index', '5');
+        toast('🎈 띄웠어요 · 끌어서 옮겨 보세요');
+      } else { unfloat(sel); sel.style.removeProperty('z-index'); }
+      commit(); fitFrame(); showBox();
+    };
+    function setXY() {
+      if (!isFloat(sel)) return;
+      sel.style.setProperty('left', (+$('posX').value || 0) + $('posXu').value);
+      sel.style.setProperty('top', (+$('posY').value || 0) + $('posYu').value);
+      commitSoon();
+    }
+    ['posX', 'posY'].forEach(id => {
+      $(id).addEventListener('input', setXY);
+      $(id).addEventListener('keydown', e => { if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return; e.preventDefault(); $(id).value = +((+$(id).value || 0) + (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? 10 : 1)).toFixed(2); setXY(); });
+    });
+    // 단위를 바꾸면 같은 자리를 새 단위로 다시 계산
+    ['posXu', 'posYu'].forEach(id => $(id).onchange = () => {
+      if (!isFloat(sel)) return;
+      const par = parentOf(sel), cs = frame.contentWindow.getComputedStyle(sel);
+      const isX = id === 'posXu', px = parseFloat(isX ? cs.left : cs.top), size = isX ? par.clientWidth : par.clientHeight;
+      $(isX ? 'posX' : 'posY').value = $(id).value === '%' ? (size ? +(px / size * 100).toFixed(2) : 0) : Math.round(px);
+      setXY();
+    });
+    $('posZ').oninput = () => { if (!sel) return; sel.style.setProperty('z-index', $('posZ').value.trim()); commitSoon(); };
+    $('posUp').onclick = () => { $('posZ').value = (parseInt($('posZ').value) || 0) + 1; $('posZ').oninput(); };
+    $('posDown').onclick = () => { $('posZ').value = (parseInt($('posZ').value) || 0) - 1; $('posZ').oninput(); };
+    $('posGrid').onclick = e => {
+      const b = e.target.closest('[data-g]'); if (!b || !sel) return;
+      if (!isFloat(sel)) { $('posFloat').checked = true; $('posFloat').onchange(); }
+      const [gx, gy] = b.dataset.g.split(',').map(Number);
+      sel.style.setProperty('left', gx + '%'); sel.style.setProperty('top', gy + '%');
+      sel.style.setProperty('transform', gx || gy ? `translate(-${gx}%, -${gy}%)` : 'none');
+      if (!gx && !gy) sel.style.removeProperty('transform');
+      commit(); showBox();
+    };
+
+    // 끌어서 옮기기
+    let drag = null, dragged = false;
+    function down(e) {
+      if (ui.mode !== 'pick' || !isFloat(sel) || !sel.contains(e.target) || e.button !== 0) return;
+      e.preventDefault();
+      const cs = frame.contentWindow.getComputedStyle(sel), par = parentOf(sel);
+      drag = { x: e.clientX, y: e.clientY, l: parseFloat(cs.left) || 0, t: parseFloat(cs.top) || 0, W: par.clientWidth, H: par.clientHeight, moved: false };
+      const d = doc();
+      const move = ev => {
+        const dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+        if (!drag.moved && Math.hypot(dx, dy) < 3) return; drag.moved = true;
+        const L = drag.l + dx, T = drag.t + dy;
+        sel.style.setProperty('left', $('posXu').value === '%' && drag.W ? (L / drag.W * 100).toFixed(2) + '%' : Math.round(L) + 'px');
+        sel.style.setProperty('top', $('posYu').value === '%' && drag.H ? (T / drag.H * 100).toFixed(2) + '%' : Math.round(T) + 'px');
+        show();
+      };
+      const up = () => { d.removeEventListener('pointermove', move); d.removeEventListener('pointerup', up); if (drag.moved) { dragged = true; commit(); fitFrame(); } drag = null; };
+      d.addEventListener('pointermove', move); d.addEventListener('pointerup', up);
+    }
+    const wasDrag = () => { const v = dragged; dragged = false; return v; };
+    return { show, down, wasDrag };
+  })();
+
   /* ---------------- 📦 상자 안 "바로 꾸미기" ---------------- */
   function showQk(t) {
     ui.qk = t; saveUi();
@@ -279,7 +409,7 @@ body[contenteditable]{outline:none}`;
   function showTab(t) {
     ui.tab = t; saveUi();
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
-    document.querySelectorAll('.lab-pane').forEach(p => p.hidden = p.dataset.pane !== t);
+    document.querySelectorAll('.lab-tools .lab-pane').forEach(p => p.hidden = p.dataset.pane !== t);
     if (t === 'font') renderFonts();
   }
   $('tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); };

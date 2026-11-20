@@ -70,6 +70,7 @@
       </section>
 
       <!-- 도구 -->
+      <div class="lab-side">
       <aside class="lab-tools">
         <div class="lab-tabs" id="tabs">
           <button data-tab="box" class="on">📦 상자</button>
@@ -261,6 +262,53 @@
           <div id="cpPals"></div>
         </div>
       </aside>
+
+      <!-- ➕ 요소 넣기 · 위치 -->
+      <section class="lab-ins">
+        <div class="lab-ins-t">➕ 요소 넣기 · 위치 잡기</div>
+        <div class="lab-pane">
+          <textarea class="tx mono" id="insCode" rows="4" spellcheck="false" placeholder="버튼·이미지·글상자 같은 코드를 붙여 넣으세요&#10;예) <button class=&quot;my-btn&quot;>♡ 눌러줘</button>"></textarea>
+          <div class="lab-row wrap">
+            <select class="tx sel" id="insWhere">
+              <option value="beforeend">고른 상자 안 · 맨 끝</option>
+              <option value="afterbegin">고른 상자 안 · 맨 앞</option>
+              <option value="beforebegin">고른 상자 바로 앞</option>
+              <option value="afterend">고른 상자 바로 뒤</option>
+            </select>
+            <button class="btn mini pink" id="insGo">➕ 넣기</button>
+            <button class="btn mini white" id="insSave" title="자주 쓰는 요소로 저장">💾</button>
+          </div>
+          <div class="ins-snips" id="insSnips"></div>
+
+          <div class="lab-sub">📐 고른 요소 위치</div>
+          <div class="lab-empty small" id="posEmpty">미리보기에서 요소를 골라 주세요</div>
+          <div id="posBody" hidden>
+            <div class="lab-row wrap">
+              <span class="lab-mini">줄 맞춤</span>
+              <div class="seg" id="posAlign">
+                <button data-a="left">⇤ 왼쪽</button><button data-a="center">↔ 가운데</button><button data-a="right">오른쪽 ⇥</button>
+              </div>
+            </div>
+            <label class="lab-chk big"><input type="checkbox" id="posFloat"> 🎈 띄우기 (드래그로 자유롭게 옮기기)</label>
+            <div id="posFree" hidden>
+              <div class="pos-wrap">
+                <div class="pos-grid" id="posGrid">
+                  <button data-g="0,0">↖</button><button data-g="50,0">↑</button><button data-g="100,0">↗</button>
+                  <button data-g="0,50">←</button><button data-g="50,50">●</button><button data-g="100,50">→</button>
+                  <button data-g="0,100">↙</button><button data-g="50,100">↓</button><button data-g="100,100">↘</button>
+                </div>
+                <div class="pos-nums">
+                  <label>가로 (왼쪽에서)<span class="lab-row"><input class="tx mono" id="posX"><select class="tx" id="posXu"><option>%</option><option>px</option></select></span></label>
+                  <label>세로 (위에서)<span class="lab-row"><input class="tx mono" id="posY"><select class="tx" id="posYu"><option>px</option><option>%</option></select></span></label>
+                  <label>겹침 순서<span class="lab-row"><input class="tx mono" id="posZ" placeholder="auto"><button class="btn mini white" id="posUp" title="앞으로">▲</button><button class="btn mini white" id="posDown" title="뒤로">▼</button></span></label>
+                </div>
+              </div>
+              <p class="lab-help">👆상자 모드에서 띄운 요소를 <b>끌어서</b> 옮겨요 · 숫자 칸에서 ↑↓ 키 = 1씩 (Shift = 10씩) · 9칸 버튼 = 모서리·정중앙에 착 붙이기</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      </div>
     </div>
   </main>
   <footer class="foot">실험실 작업은 이 브라우저에만 저장돼요 · 새로고침해도 이어서 할 수 있어요 ♡</footer>
