@@ -100,6 +100,14 @@
           <div id="boxBody" hidden>
             <div class="lab-crumb" id="crumb"></div>
             <div class="lab-kids" id="kids"></div>
+            <div class="lab-row wrap bx-move">
+              <span class="lab-mini">↕ 옮기기</span>
+              <button class="btn mini white" id="mvUp" title="같은 줄에서 한 칸 앞(위)으로">⬆ 앞으로</button>
+              <button class="btn mini white" id="mvDown" title="같은 줄에서 한 칸 뒤(아래)로">⬇ 뒤로</button>
+              <button class="btn mini white" id="mvIn" title="바로 앞 상자의 맨 끝으로 쏙">⤵ 앞 상자 안으로</button>
+              <button class="btn mini white" id="mvOut" title="감싸고 있는 상자 바로 뒤로">⤴ 밖으로 꺼내기</button>
+            </div>
+            <p class="lab-help">"안쪽 ▸" 목록의 상자는 끌어다 놓아서 순서를 바꿀 수도 있어요</p>
             <div class="bx-model">
               <div class="bx-m"><span class="bx-tag">margin 바깥 여백</span>
                 <input class="bx-n t" data-p="margin-top"><input class="bx-n r" data-p="margin-right"><input class="bx-n b" data-p="margin-bottom"><input class="bx-n l" data-p="margin-left">
@@ -141,11 +149,12 @@
                   </div>
                 </div>
                 <div class="lab-row">
-                  <span class="lab-cur-sw big" id="curSw2" title="지금 색 · 누르면 🎨 색 탭으로"></span>
+                  <label class="lab-cur-sw big qk-pick" id="curSw2" title="지금 색 · 누르면 컬러피커"><input type="color" id="qkPick"></label>
                   <input class="tx mono" id="qkHex" placeholder="#f689b6">
                   <button class="btn mini pink" id="qkApply">칠하기</button>
                 </div>
-                <p class="lab-help">아래 색을 누르면 <b>바로 칠해져요</b> · 칠한 색은 🕘 최근 색에 남아요</p>
+                <p class="lab-help" id="qkNow"></p>
+                <p class="lab-help">아래 색을 누르면 <b>바로 칠해져요</b> · 왼쪽 네모를 누르면 컬러피커 · 칠한 색은 🕘 최근 색에 남아요</p>
                 <div class="lab-sw-list" id="qkSw"></div>
                 <label class="lab-chk"><input type="checkbox" id="qkBgOnly"> 배경색 칠할 때 배경 이미지·무늬는 빼기</label>
               </div>
@@ -218,7 +227,7 @@
           </div>
           <label class="lab-range">타일 크기 <input type="range" id="gSize" min="0" max="200" value="0"><b id="gSizeV">원래대로</b></label>
           <div class="lk-tags" id="gTags"></div>
-          <p class="lab-help">PC에선 마우스를 올리면 잠깐 미리 입혀 보고, 누르면 확정돼요. 마음에 안 들면 ↶</p>
+          <p class="lab-help">PC에선 마우스를 올리면 잠깐 미리 입혀 보고, 누르면 확정돼요. 마음에 안 들면 ↶ · <b>📦 pattern 폴더</b> 사진도 같이 떠요</p>
           <div class="lab-gal" id="gal"></div>
         </div>
 
@@ -255,7 +264,7 @@
               <span class="lab-mini">넣을 자리 → 아래 ➕ 칸의 "고른 상자 안/앞/뒤"를 따라가요</span>
             </div>
             <div class="lk-tags" id="stTags"></div>
-            <p class="lab-help">누르면 고른 상자에 쏙 들어가요 · 넣은 뒤엔 📐 위치에서 줄 맞춤·띄우기</p>
+            <p class="lab-help">누르면 고른 상자에 쏙 들어가요 · 넣은 뒤엔 📐 위치에서 줄 맞춤·띄우기 · <b>📦 stickers 폴더</b> 사진도 같이 떠요</p>
             <div class="st-grid" id="stGrid"></div>
           </div>
         </div>

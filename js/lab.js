@@ -190,15 +190,50 @@ body[contenteditable]{outline:none}`;
     $('crumb').innerHTML = chain.map((x, i) => `${i ? '<i>›</i>' : ''}<button data-i="${i}" class="${x === sel ? 'on' : ''}">${esc(label(x))}</button>`).join('');
     $('crumb').onclick = e => { const b = e.target.closest('[data-i]'); if (b) select(chain[+b.dataset.i]); };
     const kids = [...sel.children].filter(k => !k.hasAttribute('data-lab') && !/^(STYLE|SCRIPT|BR)$/.test(k.tagName));
-    $('kids').innerHTML = kids.slice(0, 30).map((k, i) => `<button data-k="${i}">${esc(label(k))}</button>`).join('');
+    $('kids').innerHTML = kids.slice(0, 30).map((k, i) => `<button data-k="${i}" draggable="true">${esc(label(k))}</button>`).join('');
     $('kids').onclick = e => { const b = e.target.closest('[data-k]'); if (b) select(kids[+b.dataset.k]); };
+    kidsNow = kids;
     const cs = frame.contentWindow.getComputedStyle(sel);
     document.querySelectorAll('.bx-n').forEach(inp => { inp.value = parseFloat(cs.getPropertyValue(inp.dataset.p)) || 0; });
     $('bxSize').textContent = `${Math.round(sel.getBoundingClientRect().width)} × ${Math.round(sel.getBoundingClientRect().height)}`;
     document.querySelectorAll('.lab-props [data-p]').forEach(inp => { inp.value = sel.style.getPropertyValue(inp.dataset.p) || ''; inp.placeholder = cs.getPropertyValue(inp.dataset.p); });
     $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
     if ($('cssDet').open) drawRules();
+    drawCur();
   }
+
+  /* ---- ↕ 상자 옮기기 ---- */
+  let kidsNow = [], dragK = -1;
+  const isReal = n => n && n.tagName && !n.hasAttribute('data-lab') && !/^(STYLE|SCRIPT|BR)$/.test(n.tagName);
+  const sib = (el, dir) => { let n = el[dir]; while (n && !isReal(n)) n = n[dir]; return n; };
+  function moved(msg) { commit(); fitFrame(); const el = sel; select(el); toast(msg); }
+  $('mvUp').onclick = () => { if (!sel || sel === doc().body) return; const p = sib(sel, 'previousElementSibling'); if (!p) { toast('맨 앞이에요'); return; } p.before(sel); moved('⬆ 한 칸 앞으로'); };
+  $('mvDown').onclick = () => { if (!sel || sel === doc().body) return; const n = sib(sel, 'nextElementSibling'); if (!n) { toast('맨 뒤예요'); return; } n.after(sel); moved('⬇ 한 칸 뒤로'); };
+  $('mvIn').onclick = () => {
+    if (!sel || sel === doc().body) return; const p = sib(sel, 'previousElementSibling');
+    if (!p || /^(IMG|INPUT|BR|HR)$/.test(p.tagName)) { toast('바로 앞에 들어갈 상자가 없어요'); return; }
+    p.appendChild(sel); moved(`⤵ ${label(p)} 안으로 넣었어요`);
+  };
+  $('mvOut').onclick = () => {
+    if (!sel) return; const par = sel.parentElement;
+    if (!par || par === doc().body || par.tagName === 'HTML') { toast('더 밖으로는 못 꺼내요'); return; }
+    par.after(sel); moved('⤴ 밖으로 꺼냈어요');
+  };
+  $('kids').addEventListener('dragstart', e => { const b = e.target.closest('[data-k]'); if (!b) return; dragK = +b.dataset.k; b.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', ''); } catch (er) {} });
+  const clearDrop = () => $('kids').querySelectorAll('button').forEach(b => b.classList.remove('drop-a', 'drop-b', 'dragging'));
+  $('kids').addEventListener('dragover', e => {
+    const b = e.target.closest('[data-k]'); if (!b || dragK < 0) return; e.preventDefault();
+    const r = b.getBoundingClientRect(), after = e.clientX > r.left + r.width / 2;
+    $('kids').querySelectorAll('button').forEach(x => x.classList.remove('drop-a', 'drop-b')); b.classList.add(after ? 'drop-a' : 'drop-b');
+  });
+  $('kids').addEventListener('drop', e => {
+    const b = e.target.closest('[data-k]'); if (!b || dragK < 0) return; e.preventDefault();
+    const from = kidsNow[dragK], to = kidsNow[+b.dataset.k]; const after = b.classList.contains('drop-a'); clearDrop(); dragK = -1;
+    if (!from || !to || from === to) return;
+    if (after) to.after(from); else to.before(from);
+    commit(); fitFrame(); showBox(); toast('↕ 순서를 바꿨어요');
+  });
+  $('kids').addEventListener('dragend', () => { clearDrop(); dragK = -1; });
   $('cssDet').addEventListener('toggle', () => { if ($('cssDet').open) drawRules(); });
 
   /* ---- 고른 상자에 걸린 <style> 규칙 찾기 · 고치기 ---- */
@@ -476,19 +511,52 @@ body[contenteditable]{outline:none}`;
   }
   $('qkTabs').onclick = e => { const b = e.target.closest('[data-qk]'); if (b) showQk(b.dataset.qk); };
   const drawQkWhere = () => document.querySelectorAll('#qkWhere button').forEach(b => b.classList.toggle('on', b.dataset.w === ui.qkWhere));
-  $('qkWhere').onclick = e => { const b = e.target.closest('[data-w]'); if (!b) return; ui.qkWhere = b.dataset.w; saveUi(); drawQkWhere(); };
-  function paint(color) {
+  $('qkWhere').onclick = e => { const b = e.target.closest('[data-w]'); if (!b) return; ui.qkWhere = b.dataset.w; saveUi(); drawQkWhere(); drawCur(); };
+  const WHERE = { 'background-color': '배경색', color: '글자색', 'border-color': '테두리색', 'box-shadow': '그림자색' };
+  // live = 컬러피커를 끄는 중 (되돌리기 기록 없이 미리 칠해 보기)
+  function paint(color, live) {
     if (!sel) { toast('상자를 먼저 골라 주세요'); return; }
+    const cs = frame.contentWindow.getComputedStyle(sel);
     if (ui.qkWhere === 'background-color' && $('qkBgOnly').checked) sel.style.setProperty('background-image', 'none');
-    if (ui.qkWhere === 'border-color') { const cs = frame.contentWindow.getComputedStyle(sel); if (cs.borderTopStyle === 'none') { sel.style.setProperty('border-style', 'solid'); sel.style.setProperty('border-width', '1px'); } }
+    if (ui.qkWhere === 'border-color' && cs.borderTopStyle === 'none') { sel.style.setProperty('border-style', 'solid'); sel.style.setProperty('border-width', '1px'); }
     if (ui.qkWhere === 'box-shadow') {
-      const cur = frame.contentWindow.getComputedStyle(sel).boxShadow;
-      const v = !cur || cur === 'none' ? `3px 3px 0 ${color}` : cur.replace(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/gi, color);
-      sel.style.setProperty('box-shadow', v); CP.set(color); CP.pushHist(); commit(); showBox(); drawQkSw(); toast(`🎨 그림자색 ${color}`); return;
-    }
-    sel.style.setProperty(ui.qkWhere, color); CP.set(color); CP.pushHist(); commit(); showBox(); drawQkSw();
-    toast(`🎨 ${({ 'background-color': '배경색', color: '글자색', 'border-color': '테두리색', 'box-shadow': '그림자색' })[ui.qkWhere]} ${color}`);
+      const c0 = cs.boxShadow;
+      sel.style.setProperty('box-shadow', !c0 || c0 === 'none' ? `3px 3px 0 ${color}` : c0.replace(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/gi, color));
+    } else sel.style.setProperty(ui.qkWhere, color);
+    if (live) { drawCur(); return; }
+    CP.set(color); CP.pushHist(); commit(); showBox(); drawQkSw();
+    toast(`🎨 ${WHERE[ui.qkWhere]} ${color}`);
   }
+  // 고른 상자에 지금 칠해진 색 (없으면 null)
+  const toHex6 = (r, g, b) => '#' + [r, g, b].map(x => (+x).toString(16).padStart(2, '0')).join('');
+  function curColor(where) {
+    if (!sel) return null;
+    const cs = frame.contentWindow.getComputedStyle(sel);
+    let v;
+    if (where === 'background-color') v = cs.backgroundColor;
+    else if (where === 'color') v = cs.color;
+    else if (where === 'border-color') { if (cs.borderTopStyle === 'none' || !parseFloat(cs.borderTopWidth)) return null; v = cs.borderTopColor; }
+    else { if (!cs.boxShadow || cs.boxShadow === 'none') return null; v = (cs.boxShadow.match(/rgba?\([^)]*\)/) || [])[0]; }
+    const m = String(v || '').match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?/);
+    if (!m) return null;
+    const a = m[4] === undefined ? 1 : +m[4];
+    if (a === 0) return null;
+    const hex = toHex6(Math.round(m[1]), Math.round(m[2]), Math.round(m[3]));
+    return { hex, a, css: a < 1 ? `rgba(${Math.round(m[1])}, ${Math.round(m[2])}, ${Math.round(m[3])}, ${+a.toFixed(2)})` : hex };
+  }
+  function drawCur() {
+    const c = curColor(ui.qkWhere), sw = $('curSw2');
+    sw.classList.toggle('none', !c); sw.style.background = c ? c.css : '';
+    if (document.activeElement !== $('qkHex')) { $('qkHex').value = c ? c.css : ''; $('qkHex').placeholder = c ? '#f689b6' : '없음 · 색 코드를 넣어 칠하기'; }
+    $('qkPick').value = c ? c.hex : '#ffffff';
+    document.querySelectorAll('#qkWhere button').forEach(b => {
+      const x = curColor(b.dataset.w);
+      b.innerHTML = `<i class="qw-dot${x ? '' : ' none'}" style="${x ? `background:${x.css}` : ''}"></i>${WHERE[b.dataset.w]}`;
+    });
+    $('qkNow').innerHTML = sel ? '지금 → ' + Object.keys(WHERE).map(w => { const x = curColor(w); return `${WHERE[w]} <b>${x ? esc(x.css) : '없음'}</b>`; }).join(' · ') : '';
+  }
+  $('qkPick').addEventListener('input', () => paint($('qkPick').value, true));
+  $('qkPick').addEventListener('change', () => paint($('qkPick').value));
   function drawQkSw() {
     const used = [...new Set((cur.replace(/<style data-fontface[^>]*>[\s\S]*?<\/style>/gi, '').match(COLOR_RE) || []).map(c => c.toLowerCase().replace(/\s+/g, '')))].slice(0, 24);
     const hist = store.json(K.hist, []) || [], pals = store.json(K.pals, []) || [];
@@ -501,9 +569,8 @@ body[contenteditable]{outline:none}`;
   }
   $('qkSw').onclick = e => { const b = e.target.closest('[data-q]'); if (b) paint(b.dataset.q); };
   $('qkHex').addEventListener('keydown', e => { if (e.key === 'Enter') $('qkApply').click(); });
-  $('qkHex').addEventListener('input', () => CP.set($('qkHex').value));
+  $('qkHex').addEventListener('input', () => { const v = $('qkHex').value.trim(); if (CP.set(v)) { $('curSw2').classList.remove('none'); $('curSw2').style.background = v.startsWith('#') || v.startsWith('rgb') ? v : '#' + v; } });
   $('qkApply').onclick = () => { const v = $('qkHex').value.trim(); if (v && !CP.set(v)) { toast('색 코드를 확인해 주세요'); return; } paint(CP.hex()); };
-  $('curSw2').onclick = () => showTab('color');
   $('qkMode').onclick = e => $('gMode').querySelector(`[data-m="${e.target.closest('[data-m]')?.dataset.m}"]`)?.click();
   $('qkTag').onchange = () => { ui.gTag = $('qkTag').value; saveUi(); Gal.draw(); };
   $('qkGal').addEventListener('click', e => { const it = e.target.closest('[data-gid]'); if (!it) return; const x = Gal.get(it.dataset.gid); if (x) { if (x.mode) { ui.gMode = x.mode; saveUi(); drawGMode(); } applyImg(x, true); } });
@@ -524,14 +591,17 @@ body[contenteditable]{outline:none}`;
     let extra = store.json('lab.stTags', []) || [];
     const save = () => store.setJson('lab.stickers', list);
     const code = x => x.html || `<img src="${x.url}"${x.style ? ` style="${x.style}"` : ''}>`;
+    const all = () => list.concat(repoStks());
     function draw() {
+      const A = all();
       const tags = [...new Set(list.map(x => x.tag).filter(Boolean).concat(extra))].sort((a, b) => a.localeCompare(b, 'ko'));
+      if (repoStks().length) tags.push(STK_TAG);
       if (ui.stTag && !tags.includes(ui.stTag)) ui.stTag = '';
-      $('stTags').innerHTML = [['', `전부 ${list.length}`], ...tags.map(t => [t, `📁 ${t} ${list.filter(x => x.tag === t).length}`])]
+      $('stTags').innerHTML = [['', `전부 ${A.length}`], ...tags.map(t => [t, `${t === STK_TAG ? '' : '📁 '}${t} ${A.filter(x => x.tag === t).length}`])]
         .map(([v, l]) => `<button class="lk-tag ${v === (ui.stTag || '') ? 'on' : ''}" data-st="${esc(v)}">${esc(l)}</button>`).join('') + `<button class="lk-tag add" data-st-new>＋ 새 분류</button>`;
-      const items = list.filter(x => !ui.stTag || x.tag === ui.stTag);
-      $('stGrid').innerHTML = items.map(x => `<div class="st-it" data-id="${x.id}"><div class="st-th" title="${esc(x.name || x.url || '코드')}">${code(x)}</div>
-        <div class="g-ft"><span>${esc(x.name || (x.tag ? '' : ''))}</span><button data-sted="${x.id}">✎</button><button data-stcp="${x.id}" title="코드 복사">📋</button><button data-stdel="${x.id}">✕</button></div></div>`).join('')
+      const items = A.filter(x => !ui.stTag || x.tag === ui.stTag);
+      $('stGrid').innerHTML = items.map(x => `<div class="st-it${x.repo ? ' repo' : ''}" data-id="${esc(x.id)}">${x.repo ? '<span class="rp">📦</span>' : ''}<div class="st-th" title="${esc(x.name || x.url || '코드')}">${code(x)}</div>
+        <div class="g-ft"><span>${esc(x.name || '')}</span>${x.repo ? '' : `<button data-sted="${x.id}">✎</button>`}<button data-stcp="${esc(x.id)}" title="코드 복사">📋</button>${x.repo ? '' : `<button data-stdel="${x.id}">✕</button>`}</div></div>`).join('')
         || '<div class="lab-empty">스티커 주소를 붙여 넣어 보세요 ♪</div>';
     }
     async function add(url) {
@@ -539,7 +609,7 @@ body[contenteditable]{outline:none}`;
       if (list.some(x => x.url === url)) { toast('이미 있어요'); return false; }
       const ok = await new Promise(res => { const im = new Image(); im.onload = () => res(true); im.onerror = () => res(false); im.src = url; setTimeout(() => res(false), 8000); });
       if (!ok) { toast('⚠️ 이미지를 못 불러왔어요'); return false; }
-      list.unshift({ id: Date.now().toString(36), url, name: '', tag: ui.stTag || '', style: '' }); save(); draw(); toast('🌟 스티커 저장!'); return true;
+      list.unshift({ id: Date.now().toString(36), url, name: '', tag: ui.stTag === STK_TAG ? '' : (ui.stTag || ''), style: '' }); save(); draw(); toast('🌟 스티커 저장!'); return true;
     }
     $('stUrl').addEventListener('paste', () => setTimeout(async () => { if (await add($('stUrl').value)) $('stUrl').value = ''; }, 0));
     $('stUrl').addEventListener('keydown', async e => { if (e.key === 'Enter' && await add($('stUrl').value)) $('stUrl').value = ''; });
@@ -558,7 +628,7 @@ body[contenteditable]{outline:none}`;
       const b = e.target.closest('[data-st]'); if (!b) return; ui.stTag = b.dataset.st; saveUi(); draw();
     };
     $('stGrid').onclick = async e => {
-      const get = id => list.find(x => x.id === id);
+      const get = id => all().find(x => x.id === id);
       const ed = e.target.closest('[data-sted]');
       if (ed) {
         const x = get(ed.dataset.sted);
@@ -931,6 +1001,24 @@ body[contenteditable]{outline:none}`;
     return { state, fillFonts };
   })();
 
+  /* ---------------- 📦 저장소 폴더 사진 (pattern/ · stickers/) ---------------- */
+  const RepoImg = (() => {
+    const IMG = /\.(png|jpe?g|gif|webp|svg|bmp)$/i;
+    const key = f => 'lab.repo.' + f;
+    const get = folder => store.json(key(folder), []) || [];
+    async function load(folder) {
+      if (typeof Repo === 'undefined' || !Repo.info()) return false;
+      try {
+        const files = (await Repo.list(folder)).filter(f => IMG.test(f.name)).map(f => ({ name: f.name, url: f.url }));
+        store.setJson(key(folder), files); return true;
+      } catch (e) { console.warn(e); return false; }
+    }
+    return { get, load };
+  })();
+  const PAT_TAG = '📦 pattern 폴더', STK_TAG = '📦 stickers 폴더';
+  const repoPats = () => RepoImg.get('pattern').map(f => ({ id: 'rp:' + f.name, url: f.url, name: f.name.replace(/\.[^.]+$/, ''), tag: PAT_TAG, mode: 'tile', repo: true }));
+  const repoStks = () => RepoImg.get('stickers').map(f => ({ id: 'rs:' + f.name, url: f.url, name: f.name.replace(/\.[^.]+$/, ''), tag: STK_TAG, style: '', repo: true }));
+
   /* ---------------- 🖼 이미지 갤러리 ---------------- */
   const Gal = (() => {
     let list = store.json(K.imgs, []) || [];
@@ -941,22 +1029,25 @@ body[contenteditable]{outline:none}`;
       url = url.trim(); if (!/^(https?:)?\/\//.test(url) && !/^data:image/.test(url)) { if (!quiet) toast('이미지 주소가 아니에요'); return false; }
       if (list.some(x => x.url === url)) { if (!quiet) toast('이미 저장돼 있어요'); return false; }
       if (!(await check(url))) { toast('⚠️ 이미지를 못 불러왔어요 (주소 확인!)'); return false; }
-      list.unshift({ id: Date.now().toString(36), url, name: '', tag: ui.gTag || '', mode: ui.gMode }); save(); draw(); toast('💾 갤러리에 저장했어요'); return true;
+      list.unshift({ id: Date.now().toString(36), url, name: '', tag: ui.gTag === PAT_TAG ? '' : (ui.gTag || ''), mode: ui.gMode }); save(); draw(); toast('💾 갤러리에 저장했어요'); return true;
     }
+    const all = () => list.concat(repoPats());
     function draw() {
+      const A = all();
       const tags = [...new Set(list.map(x => x.tag).filter(Boolean).concat(extraTags))].sort((a, b) => a.localeCompare(b, 'ko'));
+      if (repoPats().length) tags.push(PAT_TAG);
       if (ui.gTag && !tags.includes(ui.gTag)) ui.gTag = '';
-      $('gTags').innerHTML = [['', `전부 ${list.length}`], ...tags.map(t => [t, `📁 ${t} ${list.filter(x => x.tag === t).length}`])]
+      $('gTags').innerHTML = [['', `전부 ${A.length}`], ...tags.map(t => [t, `${t === PAT_TAG ? '' : '📁 '}${t} ${A.filter(x => x.tag === t).length}`])]
         .map(([v, l]) => `<button class="lk-tag ${v === ui.gTag ? 'on' : ''}" data-gt="${esc(v)}">${esc(l)}</button>`).join('') + `<button class="lk-tag add" data-gt-new>＋ 새 분류</button>`;
-      $('qkTag').innerHTML = `<option value="">📁 전부 (${list.length})</option>` + tags.map(t => `<option value="${esc(t)}" ${t === ui.gTag ? 'selected' : ''}>📁 ${esc(t)}</option>`).join('');
-      $('gWhere').innerHTML = ui.gTag ? `새로 저장하면 <b>📁 ${esc(ui.gTag)}</b> 분류에 들어가요` : '분류를 고른 채로 저장하면 그 분류에 들어가요 · ✎ 로 나중에 옮길 수도 있어요';
-      const items = list.filter(x => !ui.gTag || x.tag === ui.gTag);
-      $('gal').innerHTML = items.map(x => `<div class="g-it" data-id="${x.id}" data-mode="${x.mode || 'tile'}">
-        <span class="g-badge">${({ tile: '타일', stretch: '늘이기', cover: '덮기', one: '한 장' })[x.mode || 'tile']}</span>
-        <div class="g-th" style="background-image:url('${esc(x.url)}')" title="${esc(x.url)}"></div>
-        <div class="g-ft"><span>${esc(x.name || '')}</span><button data-ed="${x.id}">✎</button><button data-cp="${x.id}" title="주소 복사">🔗</button><button data-del="${x.id}">✕</button></div></div>`).join('')
+      $('qkTag').innerHTML = `<option value="">📁 전부 (${A.length})</option>` + tags.map(t => `<option value="${esc(t)}" ${t === ui.gTag ? 'selected' : ''}>${t === PAT_TAG ? '' : '📁 '}${esc(t)}</option>`).join('');
+      $('gWhere').innerHTML = ui.gTag && ui.gTag !== PAT_TAG ? `새로 저장하면 <b>📁 ${esc(ui.gTag)}</b> 분류에 들어가요` : '분류를 고른 채로 저장하면 그 분류에 들어가요 · ✎ 로 나중에 옮길 수도 있어요';
+      const items = A.filter(x => !ui.gTag || x.tag === ui.gTag);
+      $('gal').innerHTML = items.map(x => `<div class="g-it${x.repo ? ' repo' : ''}" data-id="${esc(x.id)}" data-mode="${x.mode || 'tile'}">
+        <span class="g-badge">${({ tile: '타일', stretch: '늘이기', cover: '덮기', one: '한 장' })[x.mode || 'tile']}</span>${x.repo ? '<span class="g-badge rp">📦</span>' : ''}
+        <div class="g-th" style="background-image:url('${esc(x.url)}')" title="${esc(x.name || x.url)}"></div>
+        <div class="g-ft"><span>${esc(x.name || '')}</span>${x.repo ? '' : `<button data-ed="${x.id}">✎</button>`}<button data-cp="${esc(x.id)}" title="주소 복사">🔗</button>${x.repo ? '' : `<button data-del="${x.id}">✕</button>`}</div></div>`).join('')
         || '<div class="lab-empty" style="grid-column:1/-1">위 칸에 이미지 주소를 붙여 넣어 보세요 ♪</div>';
-      $('qkGal').innerHTML = items.map(x => `<div class="g-it" data-mode="${x.mode || 'tile'}"><div class="g-th" data-gid="${x.id}" style="background-image:url('${esc(x.url)}')" title="${esc(x.name || x.url)}"></div></div>`).join('')
+      $('qkGal').innerHTML = items.map(x => `<div class="g-it" data-mode="${x.mode || 'tile'}"><div class="g-th" data-gid="${esc(x.id)}" style="background-image:url('${esc(x.url)}')" title="${esc(x.name || x.url)}"></div></div>`).join('')
         || '<div class="lab-help" style="grid-column:1/-1">🖼 이미지 탭에서 주소를 저장하면 여기에 떠요</div>';
     }
     async function newTag() {
@@ -965,9 +1056,9 @@ body[contenteditable]{outline:none}`;
       if (!extraTags.includes(t)) { extraTags.push(t); store.setJson('lab.imgTags', extraTags); }
       ui.gTag = t; saveUi(); draw();
     }
-    const get = id => list.find(x => x.id === id);
+    const get = id => all().find(x => x.id === id);
     async function edit(id) {
-      const x = get(id); if (!x) return;
+      const x = get(id); if (!x || x.repo) return;
       const r = await Modal.prompt('🖼 이미지 정보', [
         { name: 'name', label: '이름', value: x.name },
         { name: 'tag', label: '분류 (같은 이름끼리 묶여요)', value: x.tag, placeholder: '예: 배경 / 타일 / 구분선' },
@@ -1131,8 +1222,7 @@ body[contenteditable]{outline:none}`;
       $('cpV').style.background = `linear-gradient(90deg, #000, ${toHex(hsv2rgb(h, s, 100))})`;
       if (from !== 'hex') $('cpHex').value = hx;
       if (from !== 'rgb') { $('cpR').value = c[0]; $('cpG').value = c[1]; $('cpB').value = c[2]; }
-      $('cpBig').style.background = hx; $('curSw2').style.background = hx;
-      if (document.activeElement !== $('qkHex')) $('qkHex').value = hx;
+      $('cpBig').style.background = hx;
       store.set('lab.cpCur', hx);
     }
     function set(str, opt) { const c = parse(str); if (!c) return false; [h, s, v] = rgb2hsv(...c); exact = c; update(opt); return true; }
@@ -1269,6 +1359,8 @@ body[contenteditable]{outline:none}`;
   LS.sync($('syncSt')).finally(() => {
     if (store.get('lab.seed.v1') !== '1') { BD.seed(PRESET_BORDERS); ST.seed(PRESET_STICKERS); store.set('lab.seed.v1', '1'); }
   }); drawGMode(); drawSize(); Gal.draw(); BD.draw(); BD.prev(); saveSnaps();
+  RepoImg.load('pattern').then(ok => ok && Gal.draw());
+  RepoImg.load('stickers').then(ok => ok && ST.draw());
   render(cur); afterChange(); showBox();
   window.addEventListener('beforeunload', () => { clearTimeout(ct); commit(); });
 })();
