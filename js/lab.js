@@ -50,6 +50,7 @@ body[contenteditable]{outline:none}`;
     }
     sel = null; lastRange = null;
     frame.srcdoc = src;
+    if (typeof Pos !== 'undefined' && Pos.unlink) Pos.unlink();
   }
 
   function serialize() {
@@ -307,11 +308,41 @@ body[contenteditable]{outline:none}`;
       let where = $('insWhere').value, base = sel;
       if (!base || base === d.body) { base = d.body; if (where === 'beforebegin') where = 'afterbegin'; if (where === 'afterend') where = 'beforeend'; }
       const tpl = d.createElement('template'); tpl.innerHTML = code;
-      const first = [...tpl.content.childNodes].find(n => n.nodeType === 1);
+      const nodes = [...tpl.content.childNodes];
+      const first = nodes.find(n => n.nodeType === 1 && n.tagName !== 'STYLE') || nodes.find(n => n.nodeType === 1);
       const frag = tpl.content;
       ({ beforeend: () => base.append(frag), afterbegin: () => base.prepend(frag), beforebegin: () => base.before(frag), afterend: () => base.after(frag) })[where]();
-      commit(); fitFrame(); if (first) select(first); toast('➕ 넣었어요 · 아래에서 위치를 잡아 보세요');
+      link(nodes.filter(n => n.nodeType === 1 || n.textContent.trim()));
+      commit(); fitFrame(); if (first) select(first); toast('➕ 넣었어요 · 코드를 고치면 바로 바뀌어요');
     }
+    // 🔗 넣은 요소 ↔ 코드 칸 연결: 코드를 고치면 미리보기도 바로 바뀌어요
+    let linked = [];
+    function link(nodes) {
+      linked = nodes;
+      const els = nodes.filter(n => n.nodeType === 1 && n.tagName !== 'STYLE');
+      $('insLink').hidden = !nodes.length;
+      $('insLink').innerHTML = nodes.length ? `🔗 연결됨: <b>${esc(els.map(label).slice(0, 3).join(', ') || 'style')}</b>${els.length > 3 ? ` 외 ${els.length - 3}개` : ''} · 위 코드를 고치면 바로 바뀌어요 <button id="insUnlink">끊기</button>` : '';
+      if (nodes.length) $('insUnlink').onclick = () => link([]);
+    }
+    let lt = null;
+    $('insCode').addEventListener('input', () => {
+      if (!linked.length) return;
+      clearTimeout(lt);
+      lt = setTimeout(() => {
+        const alive = linked.filter(n => n.isConnected); if (!alive.length) { link([]); return; }
+        const d = doc(); const tpl = d.createElement('template'); tpl.innerHTML = $('insCode').value;
+        const nodes = [...tpl.content.childNodes];
+        alive[0].before(tpl.content); alive.forEach(n => n.remove());
+        const keep = nodes.filter(n => n.nodeType === 1 || n.textContent.trim());
+        linked = keep; const first = keep.find(n => n.nodeType === 1 && n.tagName !== 'STYLE');
+        fitFrame(); commitSoon(); if (first) select(first); link(keep);
+      }, 350);
+    });
+    $('insGrab').onclick = () => {
+      const d = doc(); if (!sel || sel === d.body) { toast('미리보기에서 요소를 먼저 골라 주세요'); return; }
+      const c = sel.cloneNode(true); c.removeAttribute('data-lab-sel'); c.querySelectorAll('[data-lab-hov],[data-lab-sel]').forEach(n => { n.removeAttribute('data-lab-hov'); n.removeAttribute('data-lab-sel'); });
+      $('insCode').value = c.outerHTML; link([sel]); toast('📥 코드를 가져왔어요 · 고치면 바로 바뀌어요');
+    };
     $('insGo').onclick = () => insert();
     // 자주 쓰는 요소
     let snips = store.json('lab.snips', []) || [];
@@ -420,7 +451,7 @@ body[contenteditable]{outline:none}`;
       d.addEventListener('pointermove', move); d.addEventListener('pointerup', up);
     }
     const wasDrag = () => { const v = dragged; dragged = false; return v; };
-    return { show, down, wasDrag, insert };
+    return { show, down, wasDrag, insert, unlink: () => link([]) };
   })();
 
   /* ---------------- 📦 상자 안 "바로 꾸미기" ---------------- */
@@ -437,8 +468,13 @@ body[contenteditable]{outline:none}`;
     if (!sel) { toast('상자를 먼저 골라 주세요'); return; }
     if (ui.qkWhere === 'background-color' && $('qkBgOnly').checked) sel.style.setProperty('background-image', 'none');
     if (ui.qkWhere === 'border-color') { const cs = frame.contentWindow.getComputedStyle(sel); if (cs.borderTopStyle === 'none') { sel.style.setProperty('border-style', 'solid'); sel.style.setProperty('border-width', '1px'); } }
+    if (ui.qkWhere === 'box-shadow') {
+      const cur = frame.contentWindow.getComputedStyle(sel).boxShadow;
+      const v = !cur || cur === 'none' ? `3px 3px 0 ${color}` : cur.replace(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/gi, color);
+      sel.style.setProperty('box-shadow', v); CP.set(color); CP.pushHist(); commit(); showBox(); drawQkSw(); toast(`🎨 그림자색 ${color}`); return;
+    }
     sel.style.setProperty(ui.qkWhere, color); CP.set(color); CP.pushHist(); commit(); showBox(); drawQkSw();
-    toast(`🎨 ${({ 'background-color': '배경색', color: '글자색', 'border-color': '테두리색' })[ui.qkWhere]} ${color}`);
+    toast(`🎨 ${({ 'background-color': '배경색', color: '글자색', 'border-color': '테두리색', 'box-shadow': '그림자색' })[ui.qkWhere]} ${color}`);
   }
   function drawQkSw() {
     const used = [...new Set((cur.replace(/<style data-fontface[^>]*>[\s\S]*?<\/style>/gi, '').match(COLOR_RE) || []).map(c => c.toLowerCase().replace(/\s+/g, '')))].slice(0, 24);

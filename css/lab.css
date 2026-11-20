@@ -327,3 +327,11 @@
   background: repeating-conic-gradient(#f6f6f6 0 25%, #fff 0 50%) 0 0 / 10px 10px; }
 .st-th img { max-width: 100%; max-height: 80px; }
 .st-th div { display: flex; flex-wrap: wrap; justify-content: center; max-width: 100%; }
+
+/* ===== 6차: 코드 연결 · 그림자 ===== */
+.lab-props label.full { grid-column: 1 / -1; }
+.lab-props label small { font-family: var(--body-font); font-size: 10px; color: #999; }
+.ins-link { font-size: 12px; padding: 6px 8px; background: #eef8ee; border: 1px dashed #6fbf73; line-height: 1.6; word-break: break-all; }
+.ins-link b { font-weight: 400; font-family: Consolas, monospace; color: #3f8f43; }
+.ins-link button { margin-left: 4px; font-size: 11px; padding: 0 6px; cursor: pointer; background: #fff; border: 1px solid #bbb; }
+.ins-link[hidden] { display: none; }

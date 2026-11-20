@@ -106,6 +106,7 @@
               <label>글자 크기<input class="tx" data-p="font-size" placeholder="px"></label>
               <label>줄 간격<input class="tx" data-p="line-height" placeholder="1.6"></label>
               <label>글자 간격<input class="tx" data-p="letter-spacing" placeholder="px"></label>
+              <label class="full">그림자 <small>(가로 세로 번짐 색 · 예: 3px 3px 0 #f689b6)</small><input class="tx" data-p="box-shadow" placeholder="none"></label>
               <label>정렬<select class="tx" data-p="text-align"><option value="">-</option><option>left</option><option>center</option><option>right</option><option>justify</option></select></label>
             </div>
             <p class="lab-help">숫자만 쓰면 px 로 들어가요 · <b>%</b>, <b>auto</b> 도 OK</p>
@@ -124,6 +125,7 @@
                     <button data-w="background-color" class="on">배경색</button>
                     <button data-w="color">글자색</button>
                     <button data-w="border-color">테두리색</button>
+                    <button data-w="box-shadow">그림자색</button>
                   </div>
                 </div>
                 <div class="lab-row">
@@ -299,6 +301,10 @@
             <button class="btn mini pink" id="insGo">➕ 넣기</button>
             <button class="btn mini white" id="insSave" title="자주 쓰는 요소로 저장">💾</button>
           </div>
+          <div class="lab-row wrap">
+            <button class="btn mini white" id="insGrab">📥 고른 요소 코드 가져오기</button>
+          </div>
+          <div class="ins-link" id="insLink" hidden></div>
           <div class="ins-snips" id="insSnips"></div>
 
           <div class="lab-sub">📐 고른 요소 위치</div>
