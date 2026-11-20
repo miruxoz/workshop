@@ -82,3 +82,37 @@
     font-weight: normal;
     font-display: swap;
 }
+
+/* ---------------------------------------------------------
+   hicc (患者長ひっく) · x0y0pxFreeFont https://hicchicc.github.io/00ff/
+   독자 라이선스: 상업 이용·가공·임베드·웹폰트 변환 가능 → TTF를 woff로 형식만 변환
+   일본어 전용(한글 없음) · 픽셀이 또렷하려면 폰트 이름의 y값 배수 크기로 쓰기
+   --------------------------------------------------------- */
+
+/* 픽셀 | | マルモニカ 마루모니카 · 16px 배수 · 일본어(한자 6410자) */
+@font-face {
+    font-family: 'MaruMonica';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x12y16pxMaruMonica.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | ザ・ストロングゲーマー 스트롱게이머 · 12px 배수 · 가나·영숫자 */
+@font-face {
+    font-family: 'TheStrongGamer';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x8y12pxTheStrongGamer.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | ヘッドアップデイジー 헤드업데이지 · 24px 배수 · 가나·영숫자 */
+@font-face {
+    font-family: 'HeadUpDaisy';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x14y24pxHeadUpDaisy.woff') format('woff');
+    font-display: swap;
+}
+
+/* 픽셀 | | どんぐりデュエル 돈구리듀엘 · 12px 배수 · 가나·영숫자 */
+@font-face {
+    font-family: 'DonguriDuel';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x10y12pxDonguriDuel.woff') format('woff');
+    font-display: swap;
+}
