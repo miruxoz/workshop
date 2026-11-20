@@ -29,6 +29,7 @@
   const undo = [], redo = [];
   let sel = null;          // 미리보기에서 고른 상자
   let lastRange = null;    // 미리보기에서 드래그한 글자 범위
+  let caret = null;        // 마지막 커서 위치 (이모지 넣기용)
   let rep = null;          // 목록에서 고른 "바꿀 대상" { type: 'color'|'img'|'font', value }
   const frame = $('frame');
   const doc = () => frame.contentDocument;
@@ -130,9 +131,11 @@ body[contenteditable]{outline:none}`;
   function applyMode() {
     const d = doc();
     document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === ui.mode));
+    $('tbar').hidden = ui.mode !== 'text';
     if (!d || !d.body) return;
     if (ui.mode === 'text') { d.body.setAttribute('contenteditable', 'true'); d.body.setAttribute('spellcheck', 'false'); }
     else { d.body.removeAttribute('contenteditable'); d.body.removeAttribute('spellcheck'); hideFloat(); }
+    $('tbar').hidden = ui.mode !== 'text'; if (ui.mode !== 'text') $('tbPop').hidden = true;
     d.querySelectorAll('[data-lab-hov]').forEach(n => n.removeAttribute('data-lab-hov'));
   }
   $('modeSeg').onclick = e => { const b = e.target.closest('[data-mode]'); if (!b) return; ui.mode = b.dataset.mode; saveUi(); applyMode(); };
@@ -321,10 +324,20 @@ body[contenteditable]{outline:none}`;
       linked = nodes;
       const els = nodes.filter(n => n.nodeType === 1 && n.tagName !== 'STYLE');
       $('insLink').hidden = !nodes.length;
-      $('insLink').innerHTML = nodes.length ? `🔗 연결됨: <b>${esc(els.map(label).slice(0, 3).join(', ') || 'style')}</b>${els.length > 3 ? ` 외 ${els.length - 3}개` : ''} · 위 코드를 고치면 바로 바뀌어요 <button id="insUnlink">끊기</button>` : '';
-      if (nodes.length) $('insUnlink').onclick = () => link([]);
+      $('insLink').innerHTML = nodes.length ? `🔗 연결됨: <b>${esc(els.map(label).slice(0, 3).join(', ') || 'style')}</b>${els.length > 3 ? ` 외 ${els.length - 3}개` : ''} · 위 코드를 고치면 바로 바뀌어요<span class="ins-btns"><button id="insDone" class="ok">✔ 이대로 적용</button><button id="insUnlink">연결만 끊기</button></span>` : '';
+      if (nodes.length) {
+        $('insUnlink').onclick = () => link([]);
+        $('insDone').onclick = () => { clearTimeout(lt); commit(); link([]); $('insCode').value = ''; toast('✔ 적용했어요 · 다음 블럭을 넣어 보세요'); };
+      }
     }
     let lt = null;
+    // 연결된 상태에서 코드를 "통째로" 새로 붙여 넣으면 → 새 블럭으로 보고 연결을 끊어요 (앞에 넣은 게 안 바뀌게)
+    $('insCode').addEventListener('paste', () => {
+      const ta = $('insCode');
+      if (linked.length && (!ta.value.trim() || (ta.selectionStart === 0 && ta.selectionEnd === ta.value.length))) {
+        clearTimeout(lt); commit(); link([]); toast('새 코드라서 앞 블럭은 그대로 두었어요 · ➕ 넣기를 눌러 주세요');
+      }
+    });
     $('insCode').addEventListener('input', () => {
       if (!linked.length) return;
       clearTimeout(lt);
@@ -715,9 +728,12 @@ body[contenteditable]{outline:none}`;
   function onSel() {
     if (ui.mode !== 'text') return;
     const d = doc(); const s = d && d.getSelection();
-    if (!s || !s.rangeCount || s.isCollapsed || !s.toString().trim()) { hideFloat(); if (lastRange) { lastRange = null; if (ui.tab === 'font') renderFonts(); } return; }
+    if (s && s.rangeCount && d.body.contains(s.getRangeAt(0).startContainer)) caret = s.getRangeAt(0).cloneRange();
+    if (!s || !s.rangeCount || s.isCollapsed || !s.toString().trim()) { hideFloat(); if (lastRange) { lastRange = null; if (ui.tab === 'font') renderFonts(); } TB.state(); return; }
     lastRange = s.getRangeAt(0).cloneRange();
     if (ui.tab === 'font') renderFonts();
+    TB.state();
+    return; // (예전 떠다니는 도구는 위 글자 도구막대로 옮겼어요)
     const r = lastRange.getBoundingClientRect(), fr = frame.getBoundingClientRect();
     const fl = $('float'); fl.hidden = false;
     const top = fr.top + r.top - fl.offsetHeight - 8, left = Math.min(Math.max(8, fr.left + r.left), window.innerWidth - fl.offsetWidth - 8);
@@ -757,6 +773,163 @@ body[contenteditable]{outline:none}`;
   };
   $('cpSel').onclick = () => { if (wrapSel({ color: CP.hex() })) { CP.pushHist(); commit(); toast('🎨 칠했어요'); } else toast('✏️ 글자 모드에서 글자를 먼저 드래그해 주세요'); };
   document.addEventListener('mousedown', e => { if (!e.target.closest('#float')) hideFloat(); });
+
+  /* ---------------- ✏️ 글자 도구막대 ---------------- */
+  const TB = (() => {
+    const pop = $('tbPop');
+    const MARKS = ['#fff3a8', '#ffd6e6', '#cfeaff', '#d6f5d6', '#e8dcff', '#ffe0c2'];
+    const INKS = ['#333333', '#5a4a44', '#f689b6', '#e0434f', '#3f88c4', '#4f9a5c', '#9b7fd1', '#ffffff'];
+    let colorNow = store.get('lab.tbColor', '#f689b6'), markNow = store.get('lab.tbMark', '#fff3a8');
+    const bars = () => { $('tbColBar').style.background = colorNow; $('tbMarkBar').style.background = markNow; };
+    // 폰트 · 크기
+    const fillFonts = () => { $('tbFont').innerHTML = '<option value="">폰트</option>' + FontLib.optionsHtml('', []); };
+    fillFonts();
+    $('tbFont').onchange = () => { const v = $('tbFont').value.replace(/^lib:/, ''); if (v) applyFont(v); $('tbFont').value = ''; };
+    $('tbSize').innerHTML += [8, 9, 10, 10.5, 11, 12, 13, 14, 16, 18, 20, 24, 28, 32, 40].map(n => `<option>${n}px</option>`).join('');
+    $('tbSize').onchange = () => { if ($('tbSize').value && need()) { wrapSel({ 'font-size': $('tbSize').value }); commit(); } $('tbSize').value = ''; };
+    const need = () => { if (lastRange && !lastRange.collapsed) return true; toast('글자를 먼저 드래그해 주세요'); return false; };
+    const startEl = () => { const r = lastRange || caret; if (!r) return sel; let n = r.startContainer; if (n.nodeType !== 1) n = n.parentElement; return n; };
+    const blockOf = () => {
+      const w = frame.contentWindow, d = doc(); let n = startEl();
+      while (n && n !== d.body && /^inline/.test(w.getComputedStyle(n).display)) n = n.parentElement;
+      return n && n !== d.body ? n : sel;
+    };
+    function state() {
+      const el = startEl(); if (!el || !frame.contentWindow) return;
+      const cs = frame.contentWindow.getComputedStyle(el);
+      $('tbSize').options[0].textContent = Math.round(parseFloat(cs.fontSize) * 10) / 10 + 'px';
+      $('tbFont').options[0].textContent = cs.fontFamily.split(',')[0].replace(/['"]/g, '').trim() || '폰트';
+    }
+    // 팝업
+    function openPop(btn, html, onPick) {
+      if (!pop.hidden && pop.dataset.for === btn.dataset.tb) { pop.hidden = true; return; }
+      pop.innerHTML = html; pop.dataset.for = btn.dataset.tb; pop.hidden = false;
+      const r = btn.getBoundingClientRect();
+      pop.style.top = (r.bottom + 4) + 'px'; pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - pop.offsetWidth - 8)) + 'px';
+      pop.onclick = e => onPick(e);
+    }
+    document.addEventListener('mousedown', e => { if (!e.target.closest('#tbPop, #tbar')) pop.hidden = true; });
+    const swRow = (cols, attr = 'data-c') => cols.map(c => `<button class="sw" ${attr}="${c}" style="background:${c}" title="${c}"></button>`).join('');
+    function colorHtml(title, base) {
+      const hist = (store.json(K.hist, []) || []).slice(0, 12), pals = store.json(K.pals, []) || [];
+      return `<div class="tp-t">${title}</div><div class="lab-sw-list">${swRow(base)}</div>
+        ${hist.length ? `<div class="tp-s">🕘 최근</div><div class="lab-sw-list">${swRow(hist)}</div>` : ''}
+        ${pals.map(p => `<div class="tp-s">🎀 ${esc(p.name)}</div><div class="lab-sw-list">${swRow(p.colors)}</div>`).join('')}
+        <div class="tp-row"><span class="lab-cur-sw" style="background:${CP.hex()}"></span><button class="btn mini white" data-c="${CP.hex()}">🎨 색 탭의 지금 색</button></div>`;
+    }
+    // 테두리 · 외곽선 모양
+    const BOX = { sq: { border: '1px solid currentColor', padding: '0 3px' }, rd: { border: '1px solid currentColor', padding: '0 5px', 'border-radius': '8px' }, dot: { border: '1px dashed currentColor', padding: '0 3px' }, dbl: { border: '3px double currentColor', padding: '0 3px' } };
+    function act(k, btn) {
+      const d = doc(); if (!d) return;
+      const done = () => { commit(); fitFrame(); state(); };
+      switch (k) {
+        case 'size-': case 'size+': {
+          if (!need()) return; const cs = frame.contentWindow.getComputedStyle(startEl());
+          wrapSel({ 'font-size': Math.max(6, parseFloat(cs.fontSize) + (k === 'size+' ? 1 : -1)) + 'px' }); done(); break;
+        }
+        case 'b': if (need()) { wrapSel({ 'font-weight': 'bold' }); done(); } break;
+        case 'i': if (need()) { wrapSel({ 'font-style': 'italic' }); done(); } break;
+        case 's': if (need()) { wrapSel({ 'text-decoration': 'line-through' }); done(); } break;
+        case 'u': if (need()) { wrapSel({ 'text-decoration': 'underline', 'text-underline-offset': '2px' }); done(); } break;
+        case 'color':
+          openPop(btn, colorHtml('글자색', INKS), e => { const c = e.target.closest('[data-c]'); if (!c) return; colorNow = c.dataset.c; store.set('lab.tbColor', colorNow); bars(); if (need()) { wrapSel({ color: colorNow }); CP.pushHist(colorNow); done(); } pop.hidden = true; });
+          break;
+        case 'mark':
+          openPop(btn, colorHtml('형광펜', MARKS) + `<div class="tp-row"><label class="lab-chk"><input type="checkbox" id="tpFull" ${store.get('lab.tbMarkFull') === '1' ? 'checked' : ''}> 글자 전체 칠하기 (끄면 아래 반만)</label></div>`, e => {
+            if (e.target.id === 'tpFull') { store.set('lab.tbMarkFull', e.target.checked ? '1' : '0'); return; }
+            const c = e.target.closest('[data-c]'); if (!c) return; markNow = c.dataset.c; store.set('lab.tbMark', markNow); bars();
+            if (need()) { wrapSel(store.get('lab.tbMarkFull') === '1' ? { 'background-color': markNow } : { background: `linear-gradient(transparent 55%, ${markNow} 55%)` }); done(); }
+            pop.hidden = true;
+          });
+          break;
+        case 'box':
+          openPop(btn, `<div class="tp-t">글자 테두리</div><div class="tp-boxes">${Object.keys(BOX).map(t => `<button data-bx="${t}"><span style="${Object.entries(BOX[t]).map(([a, b]) => a + ':' + b).join(';')}">가나</span></button>`).join('')}</div>`, e => {
+            const b = e.target.closest('[data-bx]'); if (!b) return; if (need()) { wrapSel(BOX[b.dataset.bx]); done(); } pop.hidden = true;
+          });
+          break;
+        case 'outline':
+          openPop(btn, `<div class="tp-t">외곽선 색</div><div class="lab-sw-list">${swRow(['#ffffff', '#fff6fa', '#333333', '#f689b6', CP.hex()])}</div>`, e => {
+            const c = e.target.closest('[data-c]'); if (!c) return; const o = c.dataset.c;
+            if (need()) { wrapSel({ 'text-shadow': [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]].map(([x, y]) => `${x}px ${y}px 0 ${o}`).join(', ') }); done(); }
+            pop.hidden = true;
+          });
+          break;
+        case 'ruby': {
+          if (!need()) return; const text = lastRange.toString();
+          Modal.prompt('ルビ 후리가나 달기', [{ name: 'rt', label: `「${text}」 위에 작게 올릴 글자`, placeholder: '예: かんさつにっき' }], { ok: '달기 ♡' }).then(r => {
+            if (!r || !r.rt.trim() || !lastRange) return;
+            const ru = d.createElement('ruby'); ru.textContent = text; const rt = d.createElement('rt'); rt.textContent = r.rt.trim(); ru.appendChild(rt);
+            lastRange.deleteContents(); lastRange.insertNode(ru); done();
+          });
+          break;
+        }
+        case 'al-left': case 'al-center': case 'al-right': case 'al-justify': {
+          const b = blockOf(); if (!b) { toast('글자나 상자를 먼저 골라 주세요'); return; }
+          const a = k.slice(3);
+          b.style.setProperty('text-align', a);
+          if (a === 'justify') { b.style.setProperty('word-break', 'break-word'); b.style.setProperty('overflow-wrap', 'anywhere'); }
+          done(); break;
+        }
+        case 'vert': case 'horiz': {
+          const v = k === 'vert';
+          if (lastRange && !lastRange.collapsed && v) { wrapSel({ display: 'inline-block', 'writing-mode': 'vertical-rl', 'vertical-align': 'top' }); done(); break; }
+          const b = blockOf(); if (!b) { toast('글자나 상자를 먼저 골라 주세요'); return; }
+          if (v) b.style.setProperty('writing-mode', 'vertical-rl'); else { b.style.removeProperty('writing-mode'); let n = startEl(); while (n && n !== b) { n.style && n.style.removeProperty('writing-mode'); n = n.parentElement; } }
+          done(); break;
+        }
+        case 'ls-': case 'ls+': {
+          if (!need()) return; const cs = frame.contentWindow.getComputedStyle(startEl());
+          const now = cs.letterSpacing === 'normal' ? 0 : parseFloat(cs.letterSpacing);
+          wrapSel({ 'letter-spacing': (Math.round((now + (k === 'ls+' ? .5 : -.5)) * 10) / 10) + 'px' }); done(); break;
+        }
+        case 'lh':
+          openPop(btn, `<div class="tp-t">줄 간격 (글자가 있는 줄 덩어리에)</div><div class="tp-row wrap">${[1.2, 1.4, 1.6, 1.8, 2, 2.4].map(v => `<button class="btn mini white" data-lh="${v}">${v}</button>`).join('')}</div>`, e => {
+            const b2 = e.target.closest('[data-lh]'); if (!b2) return; const b = blockOf(); if (b) { b.style.setProperty('line-height', b2.dataset.lh); done(); } pop.hidden = true;
+          });
+          break;
+        case 'emoji': emojiPop(btn); break;
+        case 'clear': {
+          if (!need()) return; const t = lastRange.toString(); lastRange.deleteContents(); lastRange.insertNode(d.createTextNode(t)); done(); break;
+        }
+      }
+    }
+    // 🖼 텍스트 이모지 팔레트
+    async function emojiPop(btn) {
+      let list = Emoji.cached();
+      if (!list.length && typeof Repo !== 'undefined' && Repo.info()) { try { list = await Emoji.refresh(); } catch (e) {} }
+      if (!list.length) { toast('등록된 GIF 이모지가 없어요 (🖼 이모지 페이지 참고)'); return; }
+      const groups = [...new Set(list.map(x => x.group))];
+      let g = store.get('lab.tbEmoG', groups[0]); if (!groups.includes(g)) g = groups[0];
+      const recent = store.json('lab.tbEmoRecent', []) || [];
+      const grid = gg => list.filter(x => x.group === gg).map(x => `<button class="tp-emo" data-u="${esc(x.url)}" title="${esc(x.name || '')}"><img src="${esc(x.url)}" loading="lazy" alt=""></button>`).join('');
+      openPop(btn, `<div class="tp-t">🖼 텍스트 이모지 <small>누르면 커서 자리에 쏙</small></div>
+        ${recent.length ? `<div class="tp-s">🕘 최근</div><div class="tp-emos">${recent.map(u => `<button class="tp-emo" data-u="${esc(u)}"><img src="${esc(u)}" alt=""></button>`).join('')}</div>` : ''}
+        <select class="tx sel" id="tpEmoG">${groups.map(x => `<option ${x === g ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
+        <div class="tp-emos big" id="tpEmoGrid">${grid(g)}</div>`, e => {
+        const b = e.target.closest('[data-u]'); if (!b) return; insertEmoji(b.dataset.u);
+        store.setJson('lab.tbEmoRecent', [b.dataset.u, ...recent.filter(u => u !== b.dataset.u)].slice(0, 16));
+      });
+      $('tpEmoG').onchange = () => { store.set('lab.tbEmoG', $('tpEmoG').value); $('tpEmoGrid').innerHTML = grid($('tpEmoG').value); };
+    }
+    function insertEmoji(url) {
+      const d = doc(); const r = (lastRange && !lastRange.collapsed ? lastRange : caret);
+      if (!r || !d.body.contains(r.startContainer)) { toast('글자 사이에 커서를 먼저 놓아 주세요'); return; }
+      if (!d.querySelector('style[data-textemoji]') && !/\.text-emoji\s*\{/.test(cur)) {
+        const st = d.createElement('style'); st.setAttribute('data-textemoji', '');
+        st.textContent = '.text-emoji { display: inline-block !important; float: none !important; clear: none !important; height: 1.2em; width: auto; vertical-align: middle; margin: 0 2px; }';
+        (isDoc ? d.head : d.body).prepend(st);
+      }
+      const img = d.createElement('img'); img.className = 'text-emoji'; img.src = url;
+      if (!r.collapsed) r.collapse(false);   // 드래그한 글자는 지우지 않고 그 뒤에 넣어요
+      r.insertNode(img); r.setStartAfter(img); r.collapse(true); caret = r.cloneRange();
+      const s2 = d.getSelection(); s2.removeAllRanges(); s2.addRange(r);
+      commit(); fitFrame();
+    }
+    $('tbar').addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });   // 버튼 눌러도 드래그 유지
+    $('tbar').addEventListener('click', e => { const b = e.target.closest('[data-tb]'); if (b) act(b.dataset.tb, b); });
+    bars();
+    return { state, fillFonts };
+  })();
 
   /* ---------------- 🖼 이미지 갤러리 ---------------- */
   const Gal = (() => {

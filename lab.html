@@ -50,6 +50,18 @@
         <button data-w="pc" class="on">🖥 PC</button>
         <button data-w="phone">📱 폰</button>
       </div>
+      <!-- ✏️ 글자 도구 (글자 모드일 때만) -->
+      <div class="lab-tbar" id="tbar" hidden>
+        <select class="tx sel tb-font" id="tbFont" title="폰트"></select>
+        <span class="tb-g"><button data-tb="size-" title="작게">A−</button><select class="tx sel tb-size" id="tbSize" title="글자 크기"><option value="">크기</option></select><button data-tb="size+" title="크게">A＋</button></span>
+        <span class="tb-g"><button data-tb="color" class="tb-col" title="글자색"><b>가</b><i id="tbColBar"></i></button><button data-tb="mark" class="tb-col" title="형광펜"><b>🖍</b><i id="tbMarkBar"></i></button></span>
+        <span class="tb-g"><button data-tb="b" title="굵게"><b>B</b></button><button data-tb="i" title="기울임"><i>I</i></button><button data-tb="s" title="취소선"><s>S</s></button><button data-tb="u" title="밑줄"><u>U</u></button></span>
+        <span class="tb-g"><button data-tb="box" title="글자 테두리">▢ 테두리</button><button data-tb="outline" title="흰 외곽선">外 외곽선</button><button data-tb="ruby" title="후리가나(루비)">ルビ</button></span>
+        <span class="tb-g"><button data-tb="al-left" title="왼쪽">⇤</button><button data-tb="al-center" title="가운데">↔</button><button data-tb="al-right" title="오른쪽">⇥</button><button data-tb="al-justify" title="양쪽 정렬">☰</button></span>
+        <span class="tb-g"><button data-tb="vert" title="세로쓰기">縦</button><button data-tb="horiz" title="가로쓰기">横</button></span>
+        <span class="tb-g"><button data-tb="ls-" title="자간 좁게">자간−</button><button data-tb="ls+" title="자간 넓게">자간＋</button><button data-tb="lh" title="줄 간격">줄간격</button></span>
+        <span class="tb-g"><button data-tb="emoji" title="텍스트 이모지">🖼 이모지</button><button data-tb="clear" title="드래그한 글자 꾸밈 지우기">⌫ 지우기</button></span>
+      </div>
     </div>
 
     <!-- 코드 칸 (접었다 폈다) -->
@@ -349,6 +361,8 @@
   <button class="btn mini white" id="flBold"><b>B</b></button>
   <button class="btn mini white" id="flClear" title="꾸밈 지우기">⌫</button>
 </div>
+
+<div class="tb-pop" id="tbPop" hidden></div>
 
 <!-- 비교 화면 -->
 <div class="lab-cmp" id="cmp" hidden>
