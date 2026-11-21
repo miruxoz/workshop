@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 스케치북</title>
+  <link rel="stylesheet" href="css/site.css?v=1121c">
+  <style>
+    .text-emoji { display: inline-block !important; float: none !important; clear: none !important; height: 1.2em; width: auto; vertical-align: middle; margin: 0 2px; }
+    /* 위 요약 · 거르기 */
+    .sk-sum { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sk-sum span { flex: 1; min-width: 70px; text-align: center; padding: 4px 2px; font-size: 11px; border: 1px solid var(--line); background: #fff; box-shadow: 2px 2px 0 var(--blue-bg); }
+    .sk-sum b { display: block; font-family: var(--title-font); font-size: 18px; font-weight: 400; line-height: 1.2; }
+    .sk-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .sk-chips button { padding: 2px 9px; font-size: 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer; font-family: inherit; }
+    .sk-chips button.on { background: var(--pink-bg); border-color: var(--pink); color: #b4436f; }
+    .sk-tools { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .sk-tools .tx { flex: 1; min-width: 140px; }
+    .sk-tools .btn { flex: none; }
+    /* 묶음 */
+    .sk-group > .win-t { cursor: pointer; user-select: none; }
+    .sk-group > .win-t small { font-size: 10px; color: var(--ink-soft); margin-left: 4px; }
+    .sk-group.fold > .win-b { display: none; }
+    .sk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+    .sk-empty { font-size: 11px; color: var(--ink-soft); text-align: center; padding: 10px; }
+    /* 카드 */
+    .sk-card { position: relative; display: flex; flex-direction: column; gap: 5px; padding: 8px 9px 9px; background: #fff; border: 1px solid var(--line); box-shadow: 3px 3px 0 #eee; }
+    .sk-card[data-pri="star"] { border-color: var(--pink); box-shadow: 3px 3px 0 var(--pink-bg); }
+    .sk-card[data-pri="later"] { box-shadow: 3px 3px 0 var(--blue-bg); }
+    .sk-card[data-pri="drop"] { opacity: .5; }
+    .sk-card[data-pri="drop"] .sk-name { text-decoration: line-through; }
+    .sk-head { display: flex; align-items: flex-start; gap: 6px; }
+    .sk-ic { font-size: 18px; line-height: 1.2; flex: none; }
+    .sk-name { flex: 1; font-family: var(--title-font); font-size: 13px; line-height: 1.4; }
+    .sk-name small { display: block; font-family: var(--body-font); font-size: 10.5px; color: var(--ink-soft); }
+    .sk-edit, .sk-del { flex: none; border: 0; background: none; cursor: pointer; font-size: 12px; color: var(--ink-soft); padding: 0 2px; }
+    .sk-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+    .sk-tags i { font-style: normal; font-size: 9.5px; padding: 0 6px; border-radius: 8px; border: 1px solid #ccc; background: #fafafa; }
+    .sk-tags i.w { border-color: #9cc5e6; background: var(--blue-pale); }
+    .sk-tags i.s { border-color: #e9b3c9; background: var(--pink-pale); }
+    .sk-desc { font-size: 11.5px; line-height: 1.6; color: #444; text-align: justify; word-break: break-word; overflow-wrap: anywhere; white-space: pre-wrap; }
+    /* 우선도 · 진행 */
+    .sk-ctl { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+    .sk-pri { display: flex; border: 1px solid var(--line); }
+    .sk-pri button { padding: 1px 6px; font-size: 10.5px; border: 0; border-right: 1px solid #ddd; background: #fff; cursor: pointer; font-family: inherit; }
+    .sk-pri button:last-child { border-right: 0; }
+    .sk-pri button.on[data-v="star"] { background: #ffe0ec; }
+    .sk-pri button.on[data-v="later"] { background: var(--blue-bg); }
+    .sk-pri button.on[data-v="drop"] { background: #e8e8e8; }
+    .sk-st { font-size: 10.5px; padding: 1px 2px; border: 1px solid var(--line); background: #fff; font-family: inherit; }
+    .sk-memo { width: 100%; min-height: 30px; padding: 4px 6px; font-size: 11px; line-height: 1.5; resize: vertical; font-family: var(--body-font);
+      border: 1px dashed #ccc; background: repeating-linear-gradient(transparent 0 16px, #f1f1f1 16px 17px) #fffef6; }
+    .sk-memo:focus { outline: none; border-color: var(--pink); }
+    /* 고치기 칸 */
+    .sk-form { display: grid; grid-template-columns: 52px 1fr; gap: 4px 6px; align-items: center; font-size: 11px; }
+    .sk-form .tx, .sk-form select { padding: 3px 5px; font-size: 11px; }
+    .sk-form textarea.tx { min-height: 50px; }
+    .sk-form .full { grid-column: 1 / -1; display: flex; gap: 4px; justify-content: flex-end; }
+    .sk-notes { min-height: 140px; }
+    .sk-cloud { font-size: 11px; color: var(--ink-soft); }
+    @media (max-width: 520px) { .sk-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>📒 스케치북 ♪ 쿄냐통신 아이디어 모아두는 곳</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="lab.html">🎨 실험실</a>
+    <a href="sketch.html" class="on">📒 스케치북</a>
+  </nav>
+
+  <main class="main">
+    <section class="win">
+      <div class="win-t pink"><span>📒 쿄냐통신 아이디어 정리</span><span class="sk-cloud" id="skSaved">자동 저장 ♡</span></div>
+      <div class="win-b">
+        <div class="sk-sum" id="skSum"></div>
+        <div class="sk-chips" id="skFilter"></div>
+        <div class="sk-tools">
+          <input class="tx" id="skSearch" placeholder="🔍 찾기 (이름·설명·메모)">
+          <button class="btn pink" id="skAdd">＋ 아이디어</button>
+        </div>
+        <div class="sk-tools">
+          <button class="btn white mini" id="skPush">☁ 보관함에 저장</button>
+          <button class="btn white mini" id="skPull">☁ 보관함에서 불러오기</button>
+          <button class="btn white mini" id="skExport">⤓ 파일로 내보내기</button>
+          <button class="btn white mini" id="skImport">⤒ 파일 가져오기</button>
+          <input type="file" id="skFile" accept=".json" hidden>
+          <button class="btn white mini" id="skFoldAll">접기/펼치기</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="skGroups" style="display:flex;flex-direction:column;gap:14px"></div>
+
+    <section class="win">
+      <div class="win-t"><span>📝 자유 메모</span><span class="sk-cloud">떠오르는 대로 막 적기</span></div>
+      <div class="win-b"><textarea class="tx sk-notes" id="skNotes" placeholder="아이디어, 레퍼 주소, 정할 것…"></textarea></div>
+    </section>
+  </main>
+  <footer class="foot">메모는 이 브라우저에 자동 저장돼요 · ☁ 보관함은 내 비공개 저장소의 sketch.json ♡</footer>
+</div>
+
+<script src="js/common.js?v=1121c"></script>
+<script src="js/vault.js"></script>
+<script src="js/sketch.js?v=1121c"></script>
+</body>
+</html>
