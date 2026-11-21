@@ -144,6 +144,9 @@
       var d=Math.floor(h/24); return d<7? d+'일 전' : ''; }
     function md(dt){ return ('0'+(dt.getMonth()+1)).slice(-2)+'.'+('0'+dt.getDate()).slice(-2); }
     function prefix(t){ var m=t.match(/^\s*\[([^\]]+)\]\s*/); return m?{p:m[1],t:t.slice(m[0].length)}:{p:'',t:t}; }
+    /* &quot; &hellip; 같은 글자를 원래 문장부호로 */
+    var _ta=document.createElement('textarea');
+    function unent(t){ _ta.innerHTML=t; return _ta.value; }
     function loadPosts(cb){
       if(PREVIEW){ cb((KY.DEMO_RSS||[]).map(function(x){ var dt=new Date(Date.now()-x.ago*60000);
         return {title:x.title,link:'#',cat:x.cat,date:dt,img:x.img||''}; })); return; }
@@ -152,7 +155,7 @@
         cb([].slice.call(doc.querySelectorAll('item')).map(function(it){
           var g=function(s){ var e=it.querySelector(s); return e?e.textContent:''; };
           var desc=g('description'), im=desc.match(/<img[^>]+src=["']([^"']+)/i);
-          return {title:g('title'),link:g('link'),cat:g('category'),date:new Date(g('pubDate')),img:im?im[1]:''}; }));
+          return {title:unent(g('title')),link:g('link'),cat:unent(g('category')),date:new Date(g('pubDate')),img:im?unent(im[1]):''}; }));
       }).catch(function(){ cb([]); });
     }
     loadPosts(function(all){
