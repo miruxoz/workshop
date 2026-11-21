@@ -368,6 +368,8 @@
       const css = it.editedCss != null ? it.editedCss : (window.LOG_CSS || '').trim();
       return { body, css, html: body + styleBlock(css), stats: { images: (body.match(/<img(?![^>]*text-emoji)/g) || []).length, status: (body.match(/class="cs-wrap"|data-status/g) || []).length } };
     }
+    // 📓 관찰일지(칸 채우기 양식) → 일지 틀로 (journal.js 가 있을 때만)
+    if (it.type === 'journal' && window.Journal) { const j = Journal.renderForItem(it.text); if (j) return j; }
     return convert(it.text, { title });
   }
 

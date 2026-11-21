@@ -501,3 +501,49 @@ textarea.tx { line-height: 1.7; }
 .ef-prev { flex: 1 1 120px; min-height: 30px; padding: 2px 8px; font-family: 'EmojiFont', monospace; font-size: 24px; line-height: 1.2; color: #333; background: #fff; border: 1px dashed var(--line); word-break: break-all; }
 .ef-btns { display: flex; gap: 6px; flex-wrap: wrap; }
 @media (max-width: 560px) { .ef-grid { grid-template-columns: repeat(7, 1fr); } }
+
+/* =========================================================
+   🧭 드롭다운 메뉴 (common.js 의 SITE_MENU 가 그려요)
+   ========================================================= */
+.menu.mn { position: relative; z-index: 50; display: flex; }
+.menu.mn .mn-g { position: relative; flex: 1; border-right: 1px solid var(--line); }
+.menu.mn .mn-g:last-child { border-right: 0; }
+.menu.mn .mn-h { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 5px 6px; cursor: pointer;
+  border: 0; background: #fff; font-family: var(--title-font); font-size: 12px; color: var(--ink);
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,.12), inset 2px 2px 0 #fff; }
+.menu.mn .mn-g.on .mn-h { background: var(--pink-bg); }
+.menu.mn .mn-g.open .mn-h { box-shadow: inset 2px 2px 0 rgba(0,0,0,.12); }
+.menu.mn .mn-cur { font-size: 9.5px; color: var(--pink); background: #fff; border: 1px solid #f0c2d4; border-radius: 8px; padding: 0 6px; line-height: 1.5; }
+.menu.mn .mn-ar { font-style: normal; font-size: 9px; color: var(--ink-soft); transition: transform .2s; }
+.menu.mn .mn-g.open .mn-ar { transform: rotate(180deg); }
+/* 펼친 상자 */
+.menu.mn .mn-p { position: absolute; top: calc(100% + 6px); left: 50%; min-width: 132px; padding: 5px; display: flex; flex-direction: column; gap: 3px;
+  background: #fff; border: 3px double var(--line); box-shadow: 3px 3px 0 var(--blue-bg);
+  opacity: 0; visibility: hidden; transform: translate(-50%, -4px); transition: opacity .15s, transform .15s, visibility .15s; }
+.menu.mn .mn-p::before { content: ""; position: absolute; top: -9px; left: 50%; margin-left: -6px; border: 6px solid transparent; border-bottom-color: var(--line); border-top: 0; }
+.menu.mn .mn-g.open .mn-p { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+@media (hover: hover) {
+  .menu.mn .mn-g:hover .mn-p { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+  .menu.mn .mn-g:hover .mn-ar { transform: rotate(180deg); }
+}
+.menu.mn .mn-p a { display: block; padding: 4px 10px; font-size: 12px; color: var(--ink); text-decoration: none; white-space: nowrap;
+  border: 1px dashed transparent; border-radius: 4px; }
+.menu.mn .mn-p a:hover { background: var(--pink-pale); border-color: #f0c2d4; }
+.menu.mn .mn-p a.on { background: var(--pink-bg); border-color: var(--pink); }
+.menu.mn .mn-p a.on::after { content: " ♡"; color: var(--pink); }
+/* 맨 끝 상자는 화면 밖으로 안 나가게 */
+.menu.mn .mn-g:last-child .mn-p { left: auto; right: 4px; transform: translate(0, -4px); }
+.menu.mn .mn-g:last-child.open .mn-p { transform: none; }
+.menu.mn .mn-g:first-child .mn-p { left: 4px; transform: translate(0, -4px); }
+.menu.mn .mn-g:first-child.open .mn-p { transform: none; }
+.menu.mn .mn-g:last-child .mn-p::before { left: auto; right: 24px; }
+.menu.mn .mn-g:first-child .mn-p::before { left: 24px; }
+@media (hover: hover) {
+  .menu.mn .mn-g:first-child:hover .mn-p, .menu.mn .mn-g:last-child:hover .mn-p { transform: none; }
+}
+@media (max-width: 640px) {
+  .menu.mn { flex-wrap: nowrap; }
+  .menu.mn .mn-h { flex-direction: column; gap: 0; padding: 4px 2px; font-size: 11px; }
+  .menu.mn .mn-cur { font-size: 9px; }
+  .menu.mn .mn-ar { display: none; }
+}

@@ -61,7 +61,7 @@ const Steps = (() => {
     $('edState').textContent = it ? `— ${titleOf(it)}${it.edited ? ' · 고친 적 있음' : ''}` : '';
     if (!it) { body.innerHTML = ''; return; }
     if (it.edited) { body.innerHTML = it.edited; css = it.editedCss != null ? it.editedCss : (window.LOG_CSS || ''); }
-    else { const r = LogConverter.convert(it.text, { title: Drawer.fullTitle(it) }); body.innerHTML = r.body; css = r.css; }
+    else { const r = LogConverter.renderItem(it, Drawer.fullTitle(it)); body.innerHTML = r.body; css = r.css; }
     styleEl.textContent = css + HL_CSS;
     // 책갈피 표시
     body.querySelectorAll('.bm').forEach(x => x.classList.remove('bm'));

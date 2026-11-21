@@ -3,7 +3,7 @@
    ---------------------------------------------------------
    📖 본편     : [ T66 | … ] 헤더로 시작          → 붙여넣기 칸에 남김
    🗑 요약본   : 🔸[ 로 시작 / 📋유저노트 / 💬세션명대사 → 지움
-   📓 관찰일지 : 첫 줄이 '관찰일지' 또는 바로 앞 내 메시지에 📔 → 관찰일지 서랍
+   📓 관찰일지 : 첫 줄(코드블록 표시 빼고)이 '관찰일지' · 바로 앞 내 메시지에 📔 또는 「세이 관찰일지」 → 관찰일지 서랍
    💬 OOC     : 그 밖의 AI 메시지 (바로 앞 내 메시지 = 요청문) → OOC 서랍
    본편에 쓴 내 메시지는 버려요
    ========================================================= */
@@ -43,9 +43,11 @@ const Classifier = (() => {
       if (m.who === 'PRE') { res.main.push(m.text); return; }   // 표시 줄 앞에 원래 있던 글은 그대로
       if (m.who === 'ME') { prevMe = m.text; return; }
       const first = m.text.split('\n')[0].trim();
+      // 코드블록(```) 줄은 건너뛴 진짜 첫 줄 (관찰일지는 코드블록 안에 오기도 해요)
+      const firstReal = (m.text.split('\n').map(l => l.trim()).find(l => l && !/^```/.test(l)) || '');
       if (HEADER_RE.test(first)) { res.main.push(m.text); res.mainCount++; }
       else if (first.startsWith('🔸[') || m.text.includes('📋유저노트') || m.text.includes('💬세션명대사')) res.removed++;
-      else if (/^관찰\s*일지/.test(first) || prevMe.includes('📔')) res.journals.push({ text: m.text, request: prevMe, storyDate: journalDate(m.text) });
+      else if (/^(세이\s*)?관찰\s*일지/.test(firstReal) || prevMe.includes('📔') || /「세이 관찰일지」/.test(prevMe)) res.journals.push({ text: m.text, request: prevMe, storyDate: journalDate(m.text) });
       else res.oocs.push({ text: m.text, request: prevMe });
       prevMe = '';
     });

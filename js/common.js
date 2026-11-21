@@ -122,3 +122,43 @@ function pagerHtml(page, pages) {
       .join('') +
     `<button data-page="${page + 1}" ${page === pages ? 'disabled' : ''}>▶</button>`;
 }
+
+/* =========================================================
+   🧭 사이트 메뉴 (드롭다운) — 모든 페이지의 <nav class="menu"> 를 이걸로 바꿔요
+   · 메뉴 묶음·순서는 아래 SITE_MENU 만 고치면 돼요
+   · [주소, 이름, 같이 켜질 주소들]
+   ========================================================= */
+const SITE_MENU = [
+  { name: '작업대', icon: '🧺', items: [['index.html', '🧺 작업대'], ['journal.html', '📔 일지'], ['vault.html', '🗂 보관함', ['view.html']]] },
+  { name: '실험실', icon: '🎨', items: [['lab.html', '🎨 실험실'], ['emoji.html', '🖼 이모지'], ['fonts.html', '🔤 폰트']] },
+  { name: 'ETC', icon: '🎀', items: [['commands.html', '⌨ 명령어'], ['links.html', '🔗 링크']] },
+];
+(function siteMenu() {
+  const nav = document.querySelector('nav.menu');
+  if (!nav) return;
+  const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const isOn = it => it[0] === here || (it[2] || []).includes(here);
+  nav.classList.add('mn');
+  nav.innerHTML = SITE_MENU.map((g, gi) => {
+    const cur = g.items.find(isOn);
+    return `<div class="mn-g${cur ? ' on' : ''}">
+      <button type="button" class="mn-h" aria-expanded="false" data-g="${gi}">
+        <span class="mn-n">${g.icon} ${esc(g.name)}</span>${cur ? `<small class="mn-cur">${esc(cur[1].replace(/^\S+\s/, ''))}</small>` : ''}<i class="mn-ar">▾</i>
+      </button>
+      <div class="mn-p" role="menu">
+        ${g.items.map(it => `<a href="${it[0]}" role="menuitem"${isOn(it) ? ' class="on" aria-current="page"' : ''}>${esc(it[1])}</a>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  const closeAll = except => nav.querySelectorAll('.mn-g.open').forEach(g => { if (g !== except) { g.classList.remove('open'); g.querySelector('.mn-h').setAttribute('aria-expanded', 'false'); } });
+  nav.addEventListener('click', e => {
+    const h = e.target.closest('.mn-h');
+    if (!h) return;
+    const g = h.parentElement;
+    closeAll(g);
+    const open = g.classList.toggle('open');
+    h.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', e => { if (!nav.contains(e.target)) closeAll(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+})();

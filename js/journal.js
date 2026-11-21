@@ -250,9 +250,11 @@ const Journal = (() => {
     const rv = lines('review');
     if (rv.length && /[|｜]/.test(rv[0])) {
       const [st, ...rest] = splitBar(rv[0]);
-      const em = st.match(/^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*(.*)$/u);
-      if (em) { ctx.stamp.emoji = em[1]; if (em[2]) ctx.stamp.text = esc(em[2].replace(/^도장\s*[:：]?\s*/, '')); }
-      else if (st) ctx.stamp.text = esc(st.replace(/^도장\s*[:：]?\s*/, ''));
+      const EMO = /\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*/u;
+      const em = st.match(EMO);
+      if (em) ctx.stamp.emoji = em[0];
+      const word = st.replace(EMO, '').replace(/^\s*도장\s*/, '').replace(/[()（）\[\]:：]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (word) ctx.stamp.text = esc(word);
       rv[0] = rest.join(' | ');
     }
     ctx.review = rv.filter(x => x.trim()).map(fmt).join('<br>');
@@ -317,8 +319,27 @@ const Journal = (() => {
     return { html, body, warn: d.warn, ctx };
   }
 
-  return { parse, build, renderTpl, parseTpl, convert };
+  /* ---------- 6. 작업대·보관함에서 쓰기 (서랍의 📓 관찰일지 글) ---------- */
+  // 마지막으로 일지 페이지에서 읽은 틀 → 없으면 builtin-journals.js 의 복사본
+  function currentTpl() {
+    const list = store.json('journal.tpls', []);
+    const want = store.get('journal.tpl', '');
+    const t = list.find(x => x.file === want) || list[0] || (window.BUILTIN_JOURNALS || [])[0];
+    return t ? parseTpl(t.file, t.html) : null;
+  }
+  // 칸 채우기 양식으로 쓴 글이면 틀로 바꿔서 { body, css, html, stats }, 아니면 null (옛날 HTML 일지 등)
+  function renderForItem(text) {
+    const d = parse(text);
+    if (Object.keys(d.sec).length < 2) return null;
+    const tpl = currentTpl();
+    if (!tpl) return null;
+    const r = convert(text, tpl);
+    return { body: r.body, css: tpl.css, html: r.html, stats: { images: 0, status: 0 } };
+  }
+
+  return { parse, build, renderTpl, parseTpl, convert, currentTpl, renderForItem };
 })();
+window.Journal = Journal;   // 작업대·보관함(converter.js)에서 찾을 수 있게
 
 
 /* =========================================================
@@ -395,7 +416,55 @@ const Journal = (() => {
   $('jnClear').addEventListener('click', async () => { if (!(await ask('입력한 글을 비울까요?', '비우기'))) return; $('jnIn').value = ''; run(); });
   $('jnOocCopy').addEventListener('click', async () => toast(await copyText($('jnOoc').value) ? '📋 OOC 복사했어요 ♡' : '복사 실패…'));
 
+  /* 🗄 서랍에 담기 · 💾 보관함에 저장 */
+  const storyDate = () => { const r = Journal.parse($('jnIn').value); const di = r.meta.date && r.meta.date.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return di ? `${di[1]}.${di[2].padStart(2, '0')}.${di[3].padStart(2, '0')}` : ''; };
+  const catSel = $('jnCat');
+  function renderCats() {
+    if (typeof Meta === 'undefined') return;
+    const want = store.get('journal.cat', '') || Meta.defaultCat();
+    catSel.innerHTML = Meta.cats().map(c => `<option value="${c.id}">${c.id === Meta.defaultCat() ? '★ ' : ''}${esc(c.name)}</option>`).join('');
+    catSel.value = Meta.cats().some(c => c.id === want) ? want : Meta.defaultCat();
+  }
+  catSel.addEventListener('change', () => store.set('journal.cat', catSel.value));
+  const titleNow = () => ($('jnTitle').value.trim() || '관찰일지' + (storyDate() ? ' ' + storyDate() : ''));
+  $('jnIn').addEventListener('input', () => { $('jnTitle').placeholder = '관찰일지' + (storyDate() ? ' ' + storyDate() : ''); });
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  let savedId = null, savedText = null;   // 같은 글을 두 번 저장하면 덮어쓰기
+  $('jnDrawer').addEventListener('click', () => {
+    const text = $('jnIn').value.trim();
+    if (!text) return toast('먼저 일지를 붙여넣어 주세요');
+    const items = store.json('wb.drawer', []);
+    if (items.some(x => x.type === 'journal' && x.text.trim() === text)) return Modal.alert('이미 서랍에 있는 일지예요');
+    const base = titleNow();
+    const same = items.filter(x => x.type === 'journal' && x.cat === catSel.value && (x.base || '').trim() === base);
+    items.push({ id: newId(), base, no: same.length ? Math.max(...same.map(x => x.no || 1)) + 1 : 1, text, type: 'journal', cat: catSel.value,
+      request: '', storyDate: storyDate(), done: false, bookmark: null, vaultAt: 0, addedAt: Date.now() });
+    store.setJson('wb.drawer', items);
+    toast('🗄 작업대 서랍(📓 관찰일지)에 담았어요!');
+  });
+  $('jnVault').addEventListener('click', async () => {
+    const text = $('jnIn').value.trim();
+    if (!text) return toast('먼저 일지를 붙여넣어 주세요');
+    if (!Vault.configured()) {
+      if (await Modal.open({ html: '깃허브 보관함이 아직 연결되지 않았어요.<br>보관함 페이지에서 연결할까요?', buttons: [{ label: '그만', value: false, cls: 'white' }, { label: '연결하러 가기', value: true, cls: 'pink', primary: true }] })) location.href = 'vault.html';
+      return;
+    }
+    const btn = $('jnVault'); btn.disabled = true; btn.textContent = '⏳ 저장 중…';
+    try {
+      if (savedText !== text) savedId = null;
+      const id = savedId || newId();
+      await Vault.savePost({ id, title: titleNow(), cat: catSel.value, type: 'journal', text, request: '', storyDate: storyDate(),
+        savedAt: Date.now(), stats: { status: 0, images: 0, chars: text.length } });
+      savedId = id; savedText = text;
+      toast('💾 보관함에 저장했어요! (🗂 보관함 → 📓 관찰일지)');
+    } catch (e) { Modal.alert('⚠️ 저장 못 했어요<br><small>' + esc(e.message) + '</small>'); }
+    btn.disabled = false; btn.textContent = '💾 보관함에 저장';
+  });
+  renderCats();
+  window.addEventListener('meta-changed', renderCats);
+
   $('jnIn').value = store.get('journal.input', '');
+  $('jnTitle').placeholder = '관찰일지' + (storyDate() ? ' ' + storyDate() : '');
   $('jnOoc').value = JOURNAL_OOC;
   loadTpls(false);
 })();
