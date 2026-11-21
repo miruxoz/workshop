@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 관찰일지</title>
+  <link rel="stylesheet" href="css/site.css">
+  <style>
+    .jn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+    @media (max-width: 760px) { .jn-grid { grid-template-columns: 1fr; } }
+    .jn-warn { font-size: 11px; line-height: 1.7; color: #b5547c; background: #fff4f8; border: 1px dashed #f0b8cd; padding: 6px 8px; }
+    .jn-frame { width: 100%; height: 400px; border: 1px solid var(--line); background: #fff; display: block; }
+    .jn-help { font-size: 11px; line-height: 1.7; color: #666; }
+    .jn-help code { background: var(--blue-pale); padding: 0 4px; border-radius: 3px; }
+    .jn-opt { display: flex; align-items: center; gap: 4px; font-size: 11px; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>📔 관찰일지 ♪ AI가 칸만 채우면 틀에 쏙 넣어줘요</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="journal.html" class="on">♡ 일지 ♡</a>
+    <a href="vault.html">🗂 보관함</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+    <a href="fonts.html">🔤 폰트</a>
+    <a href="lab.html">🎨 실험실</a>
+    <a href="links.html">🔗 링크</a>
+  </nav>
+
+  <main class="main">
+    <div class="jn-grid">
+      <!-- 왼쪽: 입력 -->
+      <section class="win">
+        <div class="win-t pink"><span>✏️ AI가 쓴 일지 붙여넣기</span><span class="row" style="gap:3px"><button class="btn mini white" id="jnSample">예시 넣기</button><button class="btn mini white" id="jnClear">비우기</button></span></div>
+        <div class="win-b">
+          <div class="row">
+            <select class="tx sel" id="jnTpl" style="flex:1"></select>
+            <button class="btn white" id="jnReload" style="flex:none;min-width:0" title="journals 폴더 다시 읽기">🔄</button>
+          </div>
+          <textarea class="tx big" id="jnIn" placeholder="AI 답변(코드블록 안 글)을 그대로 붙여넣으세요&#10;&#10;날짜: 2014.09.28&#10;[프로필]&#10;칭호: …&#10;[스테이터스]&#10;HP: 65 | 코멘트&#10;…"></textarea>
+          <div class="jn-warn" id="jnWarn" hidden></div>
+          <div class="jn-help">
+            · <code>[칸 이름]</code> 아래에 <code>항목: 내용</code> · 여러 개는 <code>|</code> 로 나눠요<br>
+            · 관찰 기록은 <code># 제목 | 시간</code> 줄 아래가 본문 · <code>==형광펜==</code> <code>~~취소선~~</code><br>
+            · 없는 칸은 통째로 빠지고, 기록·표 줄 수는 몇 개든 괜찮아요
+          </div>
+        </div>
+      </section>
+
+      <!-- 오른쪽: 미리보기 -->
+      <section class="win">
+        <div class="win-t"><span>👀 미리보기</span></div>
+        <div class="win-b" style="padding:6px">
+          <iframe class="jn-frame" id="jnFrame" sandbox="allow-same-origin" title="미리보기"></iframe>
+        </div>
+      </section>
+    </div>
+
+    <!-- 결과 -->
+    <section class="win">
+      <div class="win-t pink"><span>📋 완성 HTML</span><label class="jn-opt"><input type="checkbox" id="jnCss" checked> 꾸밈(CSS) 같이 붙이기</label></div>
+      <div class="win-b">
+        <textarea class="tx code" id="jnOut" rows="6" readonly placeholder="여기에 완성 HTML이 나와요"></textarea>
+        <button class="btn pink big" id="jnCopy">📋 완성 HTML 복사</button>
+        <div class="jn-help">한 글에 일지를 여러 개 넣을 때는 두 번째부터 「꾸밈 같이 붙이기」를 끄면 글이 가벼워져요</div>
+      </div>
+    </section>
+
+    <!-- OOC -->
+    <section class="win">
+      <div class="win-t"><span>💌 AI에게 보낼 OOC</span><button class="btn mini white" id="jnOocCopy">📋 복사</button></div>
+      <div class="win-b">
+        <textarea class="tx code" id="jnOoc" rows="8" readonly></textarea>
+        <div class="jn-help">이 OOC로 받은 답을 위에 붙여넣으면 돼요 · OOC 내용은 <code>data/journal-ooc.js</code> 에서 고쳐요</div>
+      </div>
+    </section>
+  </main>
+  <footer class="foot">붙여넣은 일지는 이 브라우저 안에만 잠깐 저장돼요 ♡</footer>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/repo.js"></script>
+<script src="data/journal-ooc.js"></script>
+<script src="js/journal.js"></script>
+</body>
+</html>
