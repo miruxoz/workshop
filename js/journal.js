@@ -17,7 +17,8 @@ const Journal = (() => {
     '선택지': 'choice', '접근작전': 'choice', '選択肢': 'choice',
     '주변반응': 'around', '周りの反応': 'around',
     '어록': 'quote', '오늘의어록': 'quote',
-    '세이어사전': 'dict', '사전': 'dict', '번역': 'dict',
+    '세이어사전': 'dict', '사전': 'dict', '번역': 'dict', '세이번역기': 'dict', '번역기': 'dict',
+    '세이프로필': 'profile', '오늘의접근작전': 'choice', '선수단적응체크': 'around',
     '이상증세': 'karte', '관찰자이상증세': 'karte', '진단서': 'karte',
     '다음관찰계획': 'plan', '다음계획': 'plan',
     '총평': 'review', '한줄총평': 'review',
@@ -26,10 +27,10 @@ const Journal = (() => {
   // 진단서 체크 칸: 이름 · 보기 (AI가 보기 중 하나만 쓰면 그걸 ☑)
   const KARTE_ROWS = [
     { keys: ['증상'], label: '症状 증상', opts: ['경상', '그럭저럭 중상', '꽤 위험함'] },
-    { keys: ['수술'], label: '手術 수술', opts: ['있음', '없음'] },
+    { keys: ['수술', '수술필요'], label: '手術 수술', opts: ['있음', '없음'] },
     { keys: ['검사', '검사결과'], label: '検査 결과', opts: ['멀쩡함', '나아질지도?', '불치병', '이미 늦음'] },
   ];
-  const KARTE_LINES = { '병명': '病名', '심박수': '心拍数', '진단': '診断' };
+  const KARTE_LINES = { '병명': '病名', '심박수': '心拍数', '심박수상태': '心拍数', '상태': '心拍数', '진단': '診断', '진단결과': '診断' };
 
   const WIKI_TOC = {
     found: '新発見',
@@ -47,6 +48,19 @@ const Journal = (() => {
     .replace(/~~(.+?)~~/g, '<del>$1</del>');
   const norm = s => String(s).replace(/[\s\d.·・()（）]/g, '');
   const splitBar = s => String(s).split(/\s*[|｜]\s*/).map(x => x.trim()).filter(Boolean);
+  // 쉼표·| 로 나누기 (괄호 안 쉼표는 그대로)
+  const splitList = s => {
+    const out = []; let buf = '', depth = 0;
+    for (const ch of String(s)) {
+      if ('([（「『'.includes(ch)) depth++;
+      if (')]）」』'.includes(ch)) depth = Math.max(0, depth - 1);
+      if (!depth && /[,，、|｜]/.test(ch)) { out.push(buf); buf = ''; continue; }
+      buf += ch;
+    }
+    out.push(buf);
+    return out.map(x => x.trim()).filter(Boolean);
+  };
+  const unq = s => String(s || '').trim().replace(/^[「『"]\s*|\s*[」』"]$/g, '');
   const kv = line => {
     const m = line.match(/^([^:：]{1,20})[:：]\s*(.*)$/);
     return m ? [m[1].trim(), m[2].trim()] : [null, line.trim()];
@@ -69,7 +83,8 @@ const Journal = (() => {
         continue;
       }
       const [k, v] = kv(line);
-      if (k && ['날짜', '일자', 'date'].includes(norm(k))) { d.meta.date = v; continue; }
+      if (k && ['날짜', '일자', '관찰일자', 'date'].includes(norm(k))) { d.meta.date = v; continue; }
+      if (!cur && (k && norm(k) === '관찰자' || /^\s*(세이\s*)?관찰\s*일지\s*$/.test(line))) continue;   // 제목·관찰자 줄은 틀에 이미 있어요
       if (k && ['번호', '일지번호', 'no'].includes(norm(k).toLowerCase())) { d.meta.no = v; continue; }
       if (!cur) { if (line.trim()) d.warn.push(`칸 밖의 줄: ${line.trim().slice(0, 30)}…`); continue; }
       d.sec[cur].push(line);
@@ -101,17 +116,21 @@ const Journal = (() => {
     const dp = (tplData.defaults && tplData.defaults.p) || {};
     const p = { name: esc(dp.name || ''), kana: esc(dp.kana || ''), title: esc(dp.title || ''), guard: esc(dp.guard || ''), contact: esc(dp.contact || ''),
       skill: [], weak: [], like: [], dislike: [], say: '' };
-    const list = (arr, v) => splitBar(v).forEach(x => arr.push({ text: fmt(x) }));
+    const list = (arr, v) => splitList(v).forEach(x => arr.push({ text: fmt(x) }));
     for (const l of lines('profile')) {
       const [k, v] = kv(l); const key = norm(k || '');
-      if (key === '이름') { const [a, b] = splitBar(v); p.name = fmt(a); if (b) p.kana = fmt(b); }
-      else if (['칭호', '별명', '称号'].includes(key)) p.title = fmt(v);
-      else if (['보호자', '관찰자'].includes(key)) { const [a, b] = splitBar(v); p.guard = fmt(a); p.contact = b ? fmt(b) : ''; }
+      if (key === '이름') {
+        const [a, b] = splitBar(v);
+        p.name = fmt(String(a || '').replace(/\s*[(（][^)）]*[)）]\s*$/, ''));   // "히비 세이 (日日 清)" → 히비 세이
+        if (b) p.kana = fmt(b);
+      }
+      else if (['칭호', '별명', '称号'].includes(key)) { const [a, b] = splitBar(v); p.title = fmt(a); if (b) p.say = fmt(b); }
+      else if (['보호자'].includes(key)) { const [a, b] = splitBar(v); p.guard = fmt(a); p.contact = b ? fmt(b) : ''; }
       else if (['특기', '스킬'].includes(key)) list(p.skill, v);
       else if (['약점'].includes(key)) list(p.weak, v);
       else if (['좋아', '좋아하는것', '좋아함', 'like'].includes(key.toLowerCase())) list(p.like, v);
       else if (['싫어', '싫어하는것', '싫어함', 'dislike'].includes(key.toLowerCase())) list(p.dislike, v);
-      else if (['한마디', '쿄헤이', '코멘트'].includes(key)) p.say = fmt(v);
+      else if (['한마디', '쿄헤이', '코멘트', '속마음'].includes(key)) p.say = fmt(v);
       else d.warn.push(`프로필: 모르는 줄 "${l.trim().slice(0, 20)}"`);
     }
     p.skill.forEach((x, i) => x.num = NUMS[i] || `${i + 1}.`);
@@ -132,7 +151,8 @@ const Journal = (() => {
     /* 오늘의 세이 */
     ctx.today = lines('today').map((l, i) => {
       const [k, v] = kv(l);
-      return Object.assign({}, pick('today', i), { label: fmt(k || ''), text: fmt(v) });
+      const SHORT = { '자주한표정': '표정', '오늘의냄새': '향기', '냄새': '향기' };
+      return Object.assign({}, pick('today', i), { label: fmt(SHORT[norm(k || '')] || k || ''), text: fmt(v) });
     });
 
     /* 밀착 관찰 기록 (# 제목 | 시간 → 아래 줄들이 본문) */
@@ -153,7 +173,11 @@ const Journal = (() => {
     if (nm > 10) d.warn.push('관찰 기록은 10장까지만 넘겨져요');
 
     /* 공략 wiki */
-    const pairs = k => lines(k).map(l => { const [a, b] = kv(l); return { k: fmt(a || ''), v: fmt(b) }; });
+    const pairs = k => lines(k).map(l => {
+      const t = l.replace(/^\s*NEW!?\s*/i, '');
+      if (/[|｜]/.test(t)) { const [a, ...b] = splitBar(t); return { k: fmt(a), v: fmt(b.join(' | ')) }; }
+      const [a, b] = kv(t); return { k: fmt(a || ''), v: fmt(b) };
+    });
     const EVAL = [
       { re: /[◎○⭕]|대성공|성공/, cls: 'o', mark: '◎', word: '대성공' },
       { re: /[△▲]|미묘/, cls: 'm', mark: '△', word: '미묘' },
@@ -162,7 +186,10 @@ const Journal = (() => {
     const wiki = {
       found: pairs('found'),
       choice: lines('choice').map(l => {
-        const [act, res, ev] = splitBar(l);
+        let act, res, ev;
+        const m = l.match(/^\s*([◎○⭕△▲×✕xX❌])\s*(.+?)\s*(?:→|->|⇒)\s*(.+)$/);
+        if (m) [ev, act, res] = [m[1], m[2], m[3]];
+        else [act, res, ev] = splitBar(l);
         const e = EVAL.find(x => x.re.test(ev || '')) || { cls: 'm', mark: esc(ev || '?'), word: '' };
         return { act: fmt(act), res: fmt(res || ''), cls: e.cls, mark: e.mark, word: e.word };
       }),
@@ -180,18 +207,22 @@ const Journal = (() => {
 
     /* 어록 (말: 대사 | 시간 · 답장: 쿄헤이 속마음) */
     const quote = { say: [], reply: '' };
+    const replies = [];
     for (const l of lines('quote')) {
       const [k, v] = kv(l); const key = norm(k || '');
-      if (['답장', '쿄헤이', '입력', '속마음'].includes(key)) { quote.reply = fmt(v); continue; }
-      const [t, time] = splitBar(k && ['말', '세이', '대사', '어록'].includes(key) ? v : l);
-      quote.say.push({ text: fmt(t), time: fmt(time || '') });
+      if (/^\s*[「『]/.test(l)) { const [t, time] = splitBar(l); quote.say.push({ text: fmt(unq(t)), time: fmt(time || '') }); continue; }
+      if (k && ['답장', '쿄헤이', '입력', '속마음', '감상'].includes(key)) { replies.push(fmt(v)); continue; }
+      if (k && ['말', '세이', '대사', '어록'].includes(key)) { const [t, time] = splitBar(v); quote.say.push({ text: fmt(unq(t)), time: fmt(time || '') }); continue; }
+      replies.push(fmt(l));   // 「」 없는 줄 = 쿄헤이 감상
     }
+    quote.reply = replies.join('<br>');
     ctx.quote = quote;
 
     /* 세이어 사전 (단어: 뜻) */
     ctx.dict = lines('dict').map(l => {
-      const [k, v] = kv(l);
-      return { word: fmt(String(k || '').replace(/^[「『"]|[」』"]$/g, '')), mean: fmt(v) };
+      const m = l.match(/^\s*(.+?)\s*(?:→|->|⇒)\s*(.+)$/);
+      const [k, v] = m ? [m[1], m[2]] : kv(l);
+      return { word: fmt(unq(k)), mean: fmt(v) };
     });
 
     /* 진단서 */
@@ -201,7 +232,7 @@ const Journal = (() => {
       const row = KARTE_ROWS.find(r => r.keys.includes(key));
       if (row) {
         let opts;
-        if (/[|｜]/.test(v)) opts = splitBar(v).map(x => { const on = /^\[.*\]$/.test(x); return { text: fmt(x.replace(/^\[|\]$/g, '')), on }; });
+        if (/[|｜]/.test(v) || /\[.+\]/.test(v)) opts = splitBar(v).map(x => { const on = /^\[.*\]$/.test(x); return { text: fmt(x.replace(/^\[|\]$/g, '')), on }; });
         else {
           opts = row.opts.map(o => ({ text: esc(o), on: norm(o) === norm(v) }));
           if (!opts.some(o => o.on) && v) opts.push({ text: fmt(v), on: true });
@@ -214,7 +245,17 @@ const Journal = (() => {
 
     /* 엽서 */
     ctx.plan = lines('plan').map(fmt).join('<br>');
-    ctx.review = lines('review').map(fmt).join('<br>');
+    // 총평: "🌸 참 잘했어요 | 한 줄 총평" → 도장 이모지·문구 + 총평
+    ctx.stamp = { emoji: '💮', text: '참 잘했어요' };
+    const rv = lines('review');
+    if (rv.length && /[|｜]/.test(rv[0])) {
+      const [st, ...rest] = splitBar(rv[0]);
+      const em = st.match(/^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*(.*)$/u);
+      if (em) { ctx.stamp.emoji = em[1]; if (em[2]) ctx.stamp.text = esc(em[2].replace(/^도장\s*[:：]?\s*/, '')); }
+      else if (st) ctx.stamp.text = esc(st.replace(/^도장\s*[:：]?\s*/, ''));
+      rv[0] = rest.join(' | ');
+    }
+    ctx.review = rv.filter(x => x.trim()).map(fmt).join('<br>');
 
     const pHas = !!(lines('profile').length);
     ctx.has = {
