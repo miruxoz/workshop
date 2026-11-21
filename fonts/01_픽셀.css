@@ -157,3 +157,15 @@
     src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/EmojiFont.woff') format('woff');
     font-display: swap;
 }
+
+/* ---------------------------------------------------------
+   Melonano (ruccho · pixeltype) · SIL OFL 1.1
+   라이선스 전문: fonts/Melonano-OFL.txt · 글자 모양은 안 바꾸고 woff로 형식만 바꿈
+   --------------------------------------------------------- */
+
+/* 픽셀 | 일·영 | メロナノ 멜로나노 · 12px 배수 · 일본어(한자 4874자) · 한글 없음 → 한글 폰트를 뒤에 같이 적기 · OFL */
+@font-face {
+    font-family: 'Melonano';
+    src: url('https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/Melonano.woff') format('woff');
+    font-display: swap;
+}
