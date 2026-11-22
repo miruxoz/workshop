@@ -459,6 +459,6 @@ a[href="#soon"]{opacity:.85}
 
 /* ===== 로고 이미지 ===== */
 .logo{text-decoration:none;top:18px}
-.logo img{display:block;width:min(460px,52vw);height:auto}
+.logo img{display:block;width:min(100px,52vw);height:auto}
 .logo span{margin-top:4px;margin-left:10px}
 @media(max-width:780px){.logo img{width:78vw}}
