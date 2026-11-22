@@ -432,13 +432,49 @@ body[contenteditable]{outline:none}`;
       const d = doc(); if (!d) return;
       let where = $('insWhere').value, base = sel;
       if (!base || base === d.body) { base = d.body; if (where === 'beforebegin') where = 'afterbegin'; if (where === 'afterend') where = 'beforeend'; }
-      const tpl = d.createElement('template'); tpl.innerHTML = code;
+      // 이미지 주소만 붙여 넣으면 <img> 로
+      const html = /^https?:\/\/\S+$/i.test(code) && !/[<>"]/.test(code) ? `<img src="${code}" alt="">` : code;
+      if (where === 'sticker') return sticker(html, base);
+      const tpl = d.createElement('template'); tpl.innerHTML = html;
       const nodes = [...tpl.content.childNodes];
       const first = nodes.find(n => n.nodeType === 1 && n.tagName !== 'STYLE') || nodes.find(n => n.nodeType === 1);
       const frag = tpl.content;
       ({ beforeend: () => base.append(frag), afterbegin: () => base.prepend(frag), beforebegin: () => base.before(frag), afterend: () => base.after(frag) })[where]();
       link(nodes.filter(n => n.nodeType === 1 || n.textContent.trim()));
       commit(); fitFrame(); if (first) select(first); toast('➕ 넣었어요 · 코드를 고치면 바로 바뀌어요');
+    }
+    // 🌟 스티커로 넣기: 고른 상자 위에 둥실 띄워서, 끌어서 아무 데나
+    function sticker(html, base) {
+      const d = doc(), w = frame.contentWindow;
+      const par = /^(IMG|INPUT|BR|HR|TEXTAREA|SELECT|IFRAME|VIDEO|svg)$/i.test(base.tagName) ? base.parentElement || d.body : base;
+      const tpl = d.createElement('template'); tpl.innerHTML = html;
+      const els = [...tpl.content.children].filter(n => n.tagName !== 'STYLE'), styles = [...tpl.content.children].filter(n => n.tagName === 'STYLE');
+      if (!els.length) { toast('스티커로 넣을 요소가 없어요'); return; }
+      let st = els[0];
+      if (els.length > 1) { st = d.createElement('div'); els.forEach(n => st.append(n)); }
+      if (w.getComputedStyle(par).position === 'static') par.style.setProperty('position', 'relative');
+      styles.forEach(n => par.append(n));
+      st.style.setProperty('position', 'absolute'); st.style.setProperty('margin', '0'); st.style.setProperty('z-index', '50');
+      par.append(st);
+      // 지금 보이는 화면 가운데쯤 (고른 상자 안으로)
+      const fr = frame.getBoundingClientRect(), pr = par.getBoundingClientRect();
+      const vx1 = Math.max(0, -fr.left), vx2 = Math.min(w.innerWidth, innerWidth - fr.left), vy1 = Math.max(0, -fr.top), vy2 = Math.min(w.innerHeight, innerHeight - fr.top);
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+      const place = () => {
+        const sw = st.offsetWidth || 40, sh = st.offsetHeight || 40;
+        const cx = clamp((vx1 + vx2) / 2, pr.left + sw / 2, Math.max(pr.left + sw / 2, pr.right - sw / 2)) - pr.left - par.clientLeft - sw / 2;
+        const cy = clamp((vy1 + vy2) / 2, pr.top + sh / 2, Math.max(pr.top + sh / 2, pr.bottom - sh / 2)) - pr.top - par.clientTop - sh / 2;
+        st.style.setProperty('left', (par.clientWidth ? (cx / par.clientWidth * 100).toFixed(2) : 0) + '%');
+        st.style.setProperty('top', Math.round(cy) + 'px');
+      };
+      // 너무 큰 그림은 스티커 크기로 (그 뒤엔 📦 상자 탭 너비로 조절)
+      const fit = () => { if (st.tagName === 'IMG' && !st.style.width && st.naturalWidth > 200) st.style.setProperty('width', '120px'); };
+      fit(); place();
+      if (st.tagName === 'IMG') st.addEventListener('load', fit, { once: true });
+      st.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', () => { place(); commitSoon(); }, { once: true }); });
+      if (st.tagName === 'IMG' && !st.complete) st.addEventListener('load', () => { place(); commitSoon(); }, { once: true });
+      link([]);
+      commit(); fitFrame(); select(st); toast('🌟 스티커로 붙였어요 · 👆상자 모드에서 끌어서 옮겨요');
     }
     // 🔗 넣은 요소 ↔ 코드 칸 연결: 코드를 고치면 미리보기도 바로 바뀌어요
     let linked = [];
