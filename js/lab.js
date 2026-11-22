@@ -50,6 +50,8 @@ body[contenteditable]{outline:none}`;
     } else {
       src = `<!DOCTYPE html><html><head><meta charset="utf-8">${head}</head><body>${html}</body></html>`;
     }
+    // 🔗 주소 모드: css·js 를 매번 새로 읽게 (예전 파일 기억 방지)
+    if (ui.base && isDoc) { const t = Date.now(); src = src.replace(/(<(?:link|script)\b[^>]*?\b(?:href|src)=["'])([^"'?#]+\.(?:css|js))(["'])/gi, `$1$2?lab=${t}$3`); }
     sel = null; lastRange = null;
     frame.srcdoc = src;
     if (typeof Pos !== 'undefined' && Pos.unlink) Pos.unlink();
@@ -70,6 +72,7 @@ body[contenteditable]{outline:none}`;
       root.querySelectorAll('#famSel option:not(:first-child)').forEach(n => n.remove());
       root.querySelectorAll('[class=""]').forEach(n => n.removeAttribute('class'));
     }
+    root.querySelectorAll('link[href*="?lab="], script[src*="?lab="]').forEach(n => { const a = n.hasAttribute('href') ? 'href' : 'src'; n.setAttribute(a, n.getAttribute(a).replace(/\?lab=\d+$/, '')); });
     root.querySelectorAll('[style=""]').forEach(n => n.removeAttribute('style'));
     if (isDoc) return '<!DOCTYPE html>\n' + root.outerHTML;
     return root.innerHTML.replace(/^\s+|\s+$/g, '');
