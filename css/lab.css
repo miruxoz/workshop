@@ -397,3 +397,70 @@
 .lab-cur-sw.qk-pick { overflow: hidden; }
 #qkWhere { flex-wrap: wrap; }
 #qkWhere button { white-space: nowrap; padding-left: 7px; padding-right: 7px; }
+
+
+/* ================= 🎀 전체화면 + 리모컨 ================= */
+.lab-tabs .fs-only { display: none; }
+.lab-fs, .lab-fs body { overflow: hidden; }
+.lab-fs .fs-btn { display: none; }
+.lab-fs .lab-stage { position: fixed; inset: 0; z-index: 1000; gap: 0; background: #fff; }
+.lab-fs .lab-scroll { flex: 1; min-height: 0; border: 0; }
+.lab-fs .lab-frame-wrap { height: 100%; }
+.lab-fs #frame { height: 100% !important; }
+.rc-drag #frame, .rc-drag .lab-scroll { pointer-events: none; }
+.rc-drag, .rc-drag * { cursor: grabbing !important; user-select: none; }
+
+.rc { position: fixed; z-index: 1100; width: 420px; max-width: calc(100vw - 16px); background: #fff; border: 3px double var(--line);
+  box-shadow: 4px 4px 0 var(--blue-bg), 0 6px 18px rgba(0,0,0,.14); display: flex; flex-direction: column; max-height: calc(100vh - 16px); }
+.rc[hidden] { display: none; }
+.rc-t { flex: none; display: flex; align-items: center; gap: 5px; padding: 7px 8px 7px 12px; cursor: grab; user-select: none; touch-action: none;
+  font-family: var(--title-font); font-size: 13px; letter-spacing: .1em; text-shadow: var(--outline);
+  background: repeating-linear-gradient(90deg, var(--pink-bg) 0 6px, #fff 6px 12px); }
+.rc-t span { flex: 1; }
+.rc-t button { font-family: var(--title-font); font-size: 11px; height: 24px; min-width: 24px; padding: 0 6px; cursor: pointer; background: #fff;
+  border: 1px solid var(--line); box-shadow: inset -2px -2px 0 #ccc, inset 2px 2px 0 #fff; }
+.rc-t button:active { box-shadow: inset 2px 2px 0 #ccc; }
+.rc-b { flex: 1; min-height: 0; overflow: auto; border-top: 3px double var(--line); }
+.rc.folded .rc-b { display: none; }
+.rc-dot { position: fixed; right: 24px; bottom: 24px; z-index: 1100; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 22px;
+  background: repeating-linear-gradient(90deg, var(--pink-bg) 0 6px, #fff 6px 12px); border: 3px double var(--line); box-shadow: 3px 3px 0 var(--blue-bg); }
+.rc-dot[hidden] { display: none; }
+.rc-dot:hover { transform: scale(1.08); }
+
+/* 리모컨 안: 넉넉하게 */
+.rc .lab-bar { position: static; gap: 8px; padding: 12px 12px 14px; border: 0; border-bottom: 1px dotted var(--line); background: var(--blue-pale); }
+.rc .lab-bar .btn.mini { padding: 4px 10px; font-size: 12px; }
+.rc .seg button { padding: 4px 10px; font-size: 12px; }
+.rc .lab-sync { margin-left: auto; }
+.rc .lab-code { padding: 12px; border-bottom: 1px dotted var(--line); background: var(--pink-pale); }
+.rc .lab-target { margin: 12px 12px 0; padding: 6px 10px; background: var(--blue-pale); border: 1px dotted var(--line); white-space: normal; }
+.rc .lab-tools { border: 0; }
+.rc .lab-tabs { gap: 6px; padding: 12px; border-bottom: 1px dotted var(--line); }
+.rc .lab-tabs button { padding: 8px 4px; font-size: 12px; border: 1px solid var(--line); box-shadow: inset -2px -2px 0 rgba(0,0,0,.1), inset 2px 2px 0 #fff; }
+.rc .lab-tabs button.on { background: var(--pink-bg); box-shadow: inset 2px 2px 0 rgba(0,0,0,.12); }
+.rc .lab-tabs .fs-only { display: block; grid-column: 1 / -1; }
+.rc .lab-pane { padding: 16px 16px 20px; gap: 12px; }
+.rc .lab-row { gap: 8px; }
+.rc .lab-pane .btn.mini { padding: 4px 10px; font-size: 12px; }
+.rc .lab-props { gap: 10px 14px; }
+.rc .lab-props label { gap: 4px; font-size: 11px; }
+.rc .lab-props .tx { padding: 6px 8px; font-size: 12px; }
+.rc .lab-sub { margin-top: 10px; padding-bottom: 3px; }
+.rc .lab-help { font-size: 11.5px; line-height: 1.7; }
+.rc .lab-crumb button, .rc .lab-kids button { font-size: 11px; padding: 2px 6px; }
+.rc .lab-crumb, .rc .lab-kids { gap: 4px; }
+.rc .lab-gal { gap: 8px; }
+.rc .lab-sw-list { gap: 6px; }
+
+/* ✏️ 글자 도구: 화면 위쪽 가운데에 따로 */
+.lab-fs #tbar { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1120; margin: 0; width: max-content; max-width: calc(100vw - 24px);
+  border: 3px double var(--line); box-shadow: 3px 3px 0 var(--pink-bg); }
+.lab-fs .lab-float { z-index: 1150; }
+.lab-fs .tb-pop { z-index: 1160; }
+.lab-fs #toast { z-index: 1200; }
+
+@media (max-width: 860px) {
+  .rc { width: calc(100vw - 16px); }
+}
+/* 전체화면일 땐 げんじょう 위젯 숨기기 (리모컨을 가려서) */
+.lab-fs .wg, .lab-fs .wg-icon { display: none !important; }

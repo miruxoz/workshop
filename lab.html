@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>♡ ろぐ こうぼう ♡ 꾸미기 실험실</title>
   <link rel="stylesheet" href="css/site.css?v=1121c">
-  <link rel="stylesheet" href="css/lab.css?v=1121b">
+  <link rel="stylesheet" href="css/lab.css?v=1123b">
 </head>
 <body>
 
@@ -32,6 +32,7 @@
       <div class="lab-grp">
         <button class="btn mini pink" id="bCode">🧾 코드</button>
         <button class="btn mini" id="bCopy">📋 코드 복사</button>
+        <button class="btn mini white" id="bUrl" title="파일 주소로 열기 · css·js·그림이 제대로 붙어요">🔗 주소</button>
       </div>
       <div class="lab-grp">
         <button class="btn mini white" id="bUndo" title="되돌리기 (Ctrl+Z)">↶</button>
@@ -51,6 +52,7 @@
         <button data-w="pc" class="on">🖥 PC</button>
         <button data-w="phone">📱 폰</button>
       </div>
+      <button class="btn mini white fs-btn" id="bFs" title="미리보기를 화면 가득 · 도구는 리모컨으로">⛶ 전체화면</button>
       <!-- ✏️ 글자 도구 (글자 모드일 때만) -->
       <div class="lab-tbar" id="tbar" hidden>
         <select class="tx sel tb-font" id="tbFont" title="폰트"></select>
@@ -93,6 +95,7 @@
           <button data-tab="img">🖼 이미지</button>
           <button data-tab="border">✨ 꾸미기</button>
           <button data-tab="color">🎨 색</button>
+          <button data-tab="ins" class="fs-only">➕ 넣기·위치</button>
         </div>
 
         <!-- 📦 상자 -->
@@ -325,7 +328,7 @@
       <!-- ➕ 요소 넣기 · 위치 -->
       <section class="lab-ins">
         <div class="lab-ins-t">➕ 요소 넣기 · 위치 잡기</div>
-        <div class="lab-pane">
+        <div class="lab-pane" data-pane="ins">
           <textarea class="tx mono" id="insCode" rows="4" spellcheck="false" placeholder="버튼·이미지·글상자 같은 코드를 붙여 넣으세요&#10;예) <button class=&quot;my-btn&quot;>♡ 눌러줘</button>"></textarea>
           <div class="lab-row wrap">
             <select class="tx sel" id="insWhere">
@@ -388,6 +391,15 @@
 
 <div class="tb-pop" id="tbPop" hidden></div>
 
+<!-- 🎀 전체화면 리모컨 -->
+<div class="rc" id="rc" hidden>
+  <div class="rc-t" id="rcT"><span>🎀 실험실 리모컨</span>
+    <button id="rcFold" title="접기 (제목줄만)">_</button><button id="rcMini" title="동그라미로 쪼그라들기">◐</button><button id="rcExit" title="전체화면 끄기 (원래 실험실로)">⤢</button>
+  </div>
+  <div class="rc-b" id="rcB"></div>
+</div>
+<button class="rc-dot" id="rcDot" title="리모컨 펼치기" hidden>🎀</button>
+
 <!-- 비교 화면 -->
 <div class="lab-cmp" id="cmp" hidden>
   <div class="lab-cmp-bar"><span id="cmpTitle"></span><button class="btn mini white" id="cmpClose">✕ 닫기</button></div>
@@ -403,7 +415,7 @@
 <script src="js/meta.js"></script>
 <script src="js/fonts.js"></script>
 <script src="js/labsync.js"></script>
-<script src="js/lab.js?v=1121b"></script>
+<script src="js/lab.js?v=1123b"></script>
 <script src="js/widget.js"></script>
 </body>
 </html>

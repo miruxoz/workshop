@@ -51,7 +51,7 @@
   on('findId','click',function(){
     pop('아이디/PW 찾기','🔍','<div style="text-align:left">쿄냐통신 회원 목록입니다.<ul class="ids">'+
       Object.keys(USERS).map(function(k){return '<li data-id="'+k+'"><b>'+k+'</b><span>'+USERS[k].hint+'</span></li>'}).join('')+
-      '</ul>비밀번호는 아무거나 입력하세요!<span class="warn">※ 진짜 비밀번호는 절대 쓰지 마세요</span></div>',true,'d14 st');
+      '</ul>비밀번호는 아무거나 입력하세요!<span class="warn">※ 진짜 비밀번호는 절대 쓰지 마세요</span></div>',true,'d14 stripe');
     document.querySelectorAll('.ids li').forEach(function(li){ li.onclick=function(){ $('lgId').value=li.dataset.id; close(); $('lgPw').focus(); }; });
   });
   function setUser(id){
@@ -76,7 +76,7 @@
     if(!pw){ pop('로그인','🙀','비밀번호를 입력해 주세요!'); return; }
     $('lgPw').value='';   // 비번은 바로 지움 — 어디에도 저장·전송 안 함
     pop('로그인','⏳','<span class="dots">로그인 중</span>',false);
-    setTimeout(function(){ var msg=setUser(id); store.set('ky_login',id); pop('로그인 성공','🎉',msg); },1200);
+    setTimeout(function(){ var msg=setUser(id); store.set('ky_login',id); if(typeof drawOnline==='function') drawOnline(); pop('로그인 성공','🎉',msg); },1200);
   });
   on('lgPw','keydown',function(e){ if(e.key==='Enter') $('lgBtn').click(); });
   on('lgOut','click',function(e){ e.preventDefault(); me=null; store.set('ky_login','');
@@ -84,7 +84,7 @@
     var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.firstElementChild.textContent='🔒 회원 전용'; }
     document.querySelectorAll('#wMail,#wChat').forEach(function(w){w.classList.remove('show')});
     var gn=$('gbName'); if(gn) gn.value=''; if(KY.MICRO_SET) KY.MICRO_SET('all'); resetOmk();
-    pop('로그아웃','👋','또 놀러 오세요!'); });
+    if(typeof drawOnline==='function') drawOnline(); pop('로그아웃','👋','또 놀러 오세요!'); });
   on('secretMenu','click',function(e){ if(!this.classList.contains('open')){ e.preventDefault(); pop('회원 전용','🔒','로그인한 회원만 볼 수 있어요!'); } });
   // 다른 페이지로 가도 로그인 유지
   var saved=store.get('ky_login'); if(saved && $('lgCard')) setUser(saved);
@@ -121,6 +121,29 @@
   on('chatIn','keydown',function(e){ if(e.key==='Enter' && !e.isComposing) send(); });
   on('myBlog','click',function(e){ if(this.getAttribute('href')==='#soon') return; });
 
+
+  /* =========================== 헤더: 메뉴 · 시계 · D+ · 접속 중 =========================== */
+  document.querySelectorAll('.m2 [data-dd]').forEach(function(mi){
+    mi.firstElementChild.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation();
+      var o=mi.classList.contains('open');
+      document.querySelectorAll('.m2 .open').forEach(function(x){x.classList.remove('open')});
+      if(!o) mi.classList.add('open'); });
+  });
+  document.addEventListener('click',function(){
+    document.querySelectorAll('.m2 .open').forEach(function(x){x.classList.remove('open')});
+    var ol=$('onList'); if(ol) ol.classList.remove('show'); });
+  function clk(){ var c=$('clock'); if(!c) return; var d=new Date();
+    c.innerHTML=('0'+d.getHours()).slice(-2)+'<i>:</i>'+('0'+d.getMinutes()).slice(-2); }
+  clk(); setInterval(clk,10000);
+  if($('dday') && KY.DDAY_START){ var p=KY.DDAY_START.split('-'), st0=new Date(+p[0],+p[1]-1,+p[2]), t0=new Date(); t0.setHours(0,0,0,0);
+    $('dday').textContent='D+'+(Math.round((t0-st0)/864e5)+1); }
+  function drawOnline(){ var L=(KY.ONLINE||[]).slice(), me2=store.get('ky_login');
+    if(me2){ var u=USERS[me2.toLowerCase()]; L.unshift([u?u.av:'🐣',esc(me2),'나']); } else L.push(['👀','손님','나']);
+    var seen={}; L=L.filter(function(x){ var k=String(x[1]).toLowerCase(); if(seen[k]) return false; seen[k]=1; return true; });
+    if($('onN')) $('onN').textContent=L.length;
+    if($('onList')) $('onList').innerHTML=L.map(function(x){return '<div>'+x[0]+' '+x[1]+' <em>'+x[2]+'</em></div>'}).join(''); }
+  drawOnline();
+  on('onBtn','click',function(e){ e.stopPropagation(); $('onList').classList.toggle('show'); });
   /* =========================== 흐르는 띠·인기 검색어·패밀리 =========================== */
   if($('tickTx') && KY.TICKER) $('tickTx').textContent=KY.TICKER;
   if($('hotList') && KY.HOT) $('hotList').innerHTML=KY.HOT.map(function(h,i){

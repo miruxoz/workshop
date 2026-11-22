@@ -42,7 +42,8 @@ body[contenteditable]{outline:none}`;
   function render(html) {
     isDoc = /<html[\s>]/i.test(html);
     const fontCss = FontLib.cached().map(f => f.css).join('\n');
-    const head = `<style data-lab>${LAB_CSS}</style><style data-lab>${fontCss}</style>`;
+    const base = ui.base && isDoc ? `<base data-lab href="${ui.base.replace(/"/g, '%22')}">` : '';
+    const head = `${base}<style data-lab>${LAB_CSS}</style><style data-lab>${fontCss}</style>`;
     let src;
     if (isDoc) {
       src = /<head[^>]*>/i.test(html) ? html.replace(/<head([^>]*)>/i, `<head$1>${head}`) : html.replace(/<html([^>]*)>/i, `<html$1><head>${head}</head>`);
@@ -62,6 +63,13 @@ body[contenteditable]{outline:none}`;
       n.removeAttribute?.('data-lab-sel'); n.removeAttribute?.('data-lab-hov');
       if (n.tagName === 'BODY') { n.removeAttribute('contenteditable'); n.removeAttribute('spellcheck'); }
     });
+    if (ui.base) {   // 🔗 주소로 연 페이지: 스크립트가 잠깐 띄운 것들은 코드에 안 남기기
+      root.querySelectorAll('.spk, .hrt').forEach(n => n.remove());
+      root.querySelectorAll('.win.show, .pop-bg.show, .onlist.show').forEach(n => n.classList.remove('show'));
+      root.querySelectorAll('.mi.open').forEach(n => n.classList.remove('open'));
+      root.querySelectorAll('#famSel option:not(:first-child)').forEach(n => n.remove());
+      root.querySelectorAll('[class=""]').forEach(n => n.removeAttribute('class'));
+    }
     root.querySelectorAll('[style=""]').forEach(n => n.removeAttribute('style'));
     if (isDoc) return '<!DOCTYPE html>\n' + root.outerHTML;
     return root.innerHTML.replace(/^\s+|\s+$/g, '');
@@ -151,6 +159,25 @@ body[contenteditable]{outline:none}`;
   $('bCode').onclick = () => { const box = $('codeBox'); box.hidden = !box.hidden; if (!box.hidden) { $('codeTa').value = cur; $('codeTa').focus(); } };
   $('codeClose').onclick = () => { $('codeBox').hidden = true; };
   $('codeApply').onclick = () => { const v = $('codeTa').value.trim(); if (!v) { toast('코드가 비어 있어요'); return; } setHtml(v); toast('✔ 미리보기에 넣었어요'); };
+  // 🔗 주소로 열기: 파일을 그 자리에서 연 것처럼 (css·js·그림 경로가 맞게)
+  const urlLabel = () => { $('bUrl').textContent = ui.base ? '🔗 ' + decodeURIComponent(ui.base.split('/').pop() || ui.base) : '🔗 주소'; };
+  $('bUrl').onclick = async () => {
+    const now = ui.base ? ui.base.replace(location.href.replace(/[^/]*$/, ''), '') : 'kyonya/preview.html';
+    const r = await Modal.prompt('🔗 주소로 열기', [{ name: 'url', label: '열 파일 주소 (작업대 폴더 기준 · 비우면 주소 모드 끄기)', value: now, placeholder: 'kyonya/preview.html' }], { ok: '열기 ♡' });
+    if (!r) return;
+    const v = (r.url || '').trim();
+    if (!v) { ui.base = ''; saveUi(); urlLabel(); render(cur); toast('주소 모드를 껐어요'); return; }
+    let url;
+    try { url = new URL(v, location.href); } catch (e) { toast('⚠️ 주소가 이상해요'); return; }
+    try {
+      const res = await fetch(url.href, { cache: 'no-store' }); if (!res.ok) throw new Error(res.status);
+      let html = await res.text();
+      html = html.replace(/<!-- Code injected by live-server -->\s*<script[\s\S]*?<\/script>/i, '');   // Live Server 가 끼워 넣는 것 빼기
+      ui.base = url.href; saveUi(); urlLabel();
+      setHtml(html); toast('🔗 열었어요 · ' + v);
+    } catch (e) { toast('⚠️ 못 열었어요 · 주소를 확인해 주세요'); }
+  };
+  urlLabel();
   $('bCopy').onclick = async () => { clearTimeout(ct); commit(); toast(await copyText(withFontFaces(cur)) ? '📋 코드를 복사했어요!' : '⚠️ 복사 실패'); };
 
   // 폰트 라이브러리 폰트를 썼으면 @font-face 를 같이 붙여요
@@ -1408,7 +1435,61 @@ body[contenteditable]{outline:none}`;
   }
   $('cmpClose').onclick = () => { $('cmp').hidden = true; };
 
+  /* ---------------- 🎀 전체화면 + 리모컨 ---------------- */
+  const FS = (() => {
+    const rc = $('rc'), rcB = $('rcB'), dot = $('rcDot'), tools = document.querySelector('.lab-tools');
+    const insPane = document.querySelector('.lab-ins [data-pane="ins"]');
+    const homes = new Map();
+    const park = el => { const m = document.createComment('fs'); el.before(m); homes.set(el, m); };
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    function place() {
+      const p = ui.rcPos;
+      if (!p) { rc.style.left = 'auto'; rc.style.right = '24px'; rc.style.top = '24px'; return; }
+      rc.style.right = 'auto';
+      rc.style.left = clamp(p.x, 0, innerWidth - 120) + 'px';
+      rc.style.top = clamp(p.y, 0, innerHeight - 40) + 'px';
+    }
+    function state() {
+      rc.classList.toggle('folded', !!ui.rcFold);
+      rc.hidden = !!ui.rcMini; dot.hidden = !ui.rcMini;
+    }
+    function on() {
+      if (homes.size) return;
+      document.documentElement.classList.add('lab-fs');
+      [document.querySelector('.lab-bar'), $('codeBox'), $('target'), tools].forEach(el => { park(el); rcB.append(el); });
+      park(insPane); tools.append(insPane);
+      park($('tbar')); document.body.append($('tbar'));
+      place(); state(); showTab(ui.tab);
+    }
+    function off() {
+      homes.forEach((m, el) => m.replaceWith(el)); homes.clear();
+      document.documentElement.classList.remove('lab-fs');
+      rc.hidden = true; dot.hidden = true; insPane.hidden = false;
+      if (ui.tab === 'ins') showTab('box');
+      setTimeout(fitFrame, 50);
+    }
+    function set(v) { ui.fs = v; saveUi(); v ? on() : off(); }
+    $('bFs').onclick = () => set(true);
+    $('rcExit').onclick = () => set(false);
+    $('rcFold').onclick = () => { ui.rcFold = !ui.rcFold; saveUi(); state(); };
+    $('rcMini').onclick = () => { ui.rcMini = true; saveUi(); state(); };
+    dot.onclick = () => { ui.rcMini = false; saveUi(); state(); place(); };
+    // 제목줄 잡고 끌기 (미리보기 위를 지나가도 안 끊기게)
+    $('rcT').addEventListener('pointerdown', e => {
+      if (e.target.closest('button') || e.button !== 0) return;
+      const r = rc.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+      document.documentElement.classList.add('rc-drag');
+      const mv = ev => { ui.rcPos = { x: ev.clientX - dx, y: ev.clientY - dy }; place(); };
+      const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); document.documentElement.classList.remove('rc-drag'); saveUi(); };
+      addEventListener('pointermove', mv); addEventListener('pointerup', up); e.preventDefault();
+    });
+    $('rcT').addEventListener('dblclick', e => { if (!e.target.closest('button')) $('rcFold').click(); });
+    addEventListener('resize', () => { if (ui.fs) place(); });
+    return { init() { if (ui.tab === 'ins' && !ui.fs) ui.tab = 'box'; if (ui.fs) on(); } };
+  })();
+
   /* ---------------- 시작 ---------------- */
+  FS.init();
   showTab(ui.tab); showQk(ui.qk); showDeco(ui.dt || 'border'); ST.draw(); drawQkWhere(); applyW();
   // ☁️ 보관함과 맞춘 뒤, 처음 한 번 기본 테두리·스티커 넣기
   const LS = LabSync.create('lab.json', ['lab.imgs', 'lab.imgTags', 'lab.borders', 'lab.stickers', 'lab.stTags', 'lab.colorHist', 'lab.palettes', 'lab.workPal', 'lab.snips', 'lab.snaps'],
