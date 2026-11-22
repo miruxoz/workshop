@@ -456,3 +456,9 @@ body.in-frame .cmt>.in{border:0;padding:6px}
 a[href="#soon"]{opacity:.85}
 .hot li a{text-decoration:none;flex:1}
 .hot li a:hover{color:var(--hot)}
+
+/* ===== 로고 이미지 ===== */
+.logo{text-decoration:none;top:18px}
+.logo img{display:block;width:min(460px,52vw);height:auto}
+.logo span{margin-top:4px;margin-left:10px}
+@media(max-width:780px){.logo img{width:78vw}}
