@@ -235,22 +235,38 @@
 
 <!-- ===== 떠 있는 것들 ===== -->
 <button class="totop" id="toTop" title="맨 위로"><span class="bw">🎀</span><span class="rb">TOP</span></button>
-<div class="pop-bg" id="popBg"><div class="pop"><h3><span id="popT">알림</span><span>✕</span></h3>
-  <div class="pb"><div class="pi" id="popI">🐾</div><div id="popM" style="margin:6px 0 10px"></div><button class="btn" id="popOk">확인</button></div></div></div>
-<div class="win" id="wMail" style="left:30%;top:120px"><h3><span>📧 쿄냐메일 · 받은편지함</span><span class="x">✕</span></h3><div class="wb">
-  <ul class="ml" id="mList"></ul><div class="mread" id="mRead">편지를 눌러서 읽어 보세요 ✉</div></div></div>
-<div class="win sky" id="wChat" style="left:45%;top:160px"><h3><span id="chatT">💬 쿄냐톡</span><span class="x">✕</span></h3><div class="wb">
-  <div class="chat" id="chatLog"></div><div class="typing" id="typing"></div>
-  <div class="cin"><input class="f" id="chatIn" placeholder="메시지 입력…"><button class="btn" id="chatSend">전송</button></div></div></div>
-<div class="win" id="wBgm"><h3><span>♪ 쿄냐통신 BGM</span><span class="x">✕</span></h3>
-  <div class="pb"><div style="font-size:34px">🎧</div>쿄냐통신에 오신 걸 환영해요!<br>BGM을 틀까요?<br><small style="color:#888">(소리가 나요)</small>
-  <div class="yn"><button class="btn yes" id="bgmYes">네 ♪</button><button class="btn" id="bgmNo">아니오</button></div></div></div>
-<div class="win ad-pop" id="wAd1" data-key="ad1" style="left:calc(max(25%,260px) + 30px);top:90px"><h3><span>📢 광고</span><span class="x">✕</span></h3><div class="wb">
-  <div class="adc y"><span class="blink">★ 축하합니다 ★</span><div class="big">당신은 오늘의<br>1,000,000번째<br>쿄냐 방문자!</div>지금 바로 경품을 받으세요<br><span class="cta" data-prize>🎁 경품 받기</span></div>
-  <div class="adfoot"><label><input type="checkbox">오늘 하루 보지 않기</label><a class="close">닫기 ✕</a></div></div></div>
-<div class="win ad-pop sky" id="wAd2" data-key="ad2" style="right:4%;top:150px"><h3><span>📸 신제품 출시</span><span class="x">✕</span></h3><div class="wb">
-  <div class="adc b">쿄헤이 전용 카메라<div class="big">「세이캠」</div>셔터 누를 때마다<br>"귀여워" 음성 지원 💕<br><small>지금 구매 시 메모리카드 증정<br>(세이 사진 3만 장 들어 있음)</small><br><span class="cta" data-buy>지금 구매</span></div>
-  <div class="adfoot"><label><input type="checkbox">오늘 하루 보지 않기</label><a class="close">닫기 ✕</a></div></div></div>
+<!-- ▼ 창 모음 (디자인: dA 회색 땡땡이 / d14 st 초코+초콜릿바+줄무늬 / d2 하늘 초코칩) -->
+<!-- 알림 팝업 (아이디 찾기도 이 창을 써요: 그때만 초코 디자인으로 바뀜) -->
+<div class="pop-bg" id="popBg"><div class="kw dA pop" id="popW">
+  <div class="tt"><span id="popT">알림</span><button class="x" id="popX">✕</button></div><div class="scal"></div>
+  <div class="sunk bd"><div class="big" id="popI">🐾</div><div id="popM"></div></div>
+  <div class="ft"><button class="btn main" id="popOk">확인</button></div><div class="choc"></div></div></div>
+<!-- 메일 (A) -->
+<div class="win kw dA mail" id="wMail" style="left:30%;top:120px">
+  <div class="tt"><span>📧 쿄냐메일 · 받은편지함</span><button class="x">✕</button></div>
+  <ul class="kml sunk" id="mList"></ul><div class="kmr sunk" id="mRead">편지를 눌러서 읽어 보세요 ✉</div></div>
+<!-- 채팅 (초코 + 초콜릿 바 + 줄무늬) -->
+<div class="win kw d14 st chat" id="wChat" style="left:45%;top:160px">
+  <div class="tt"><span id="chatT">💬 쿄냐톡</span><button class="x">✕</button></div><div class="scal"></div>
+  <div class="kchat sunk" id="chatLog"></div><div class="ktyping" id="typing"></div>
+  <div class="kin"><input class="sunk" id="chatIn" placeholder="메시지 입력…"><button class="btn" id="chatSend">전송</button></div><div class="choc"></div></div>
+<!-- BGM 묻기 (A) -->
+<div class="win kw dA" id="wBgm">
+  <div class="tt"><span>🎧 쿄냐통신 BGM</span><button class="x">✕</button></div>
+  <div class="sunk bd"><div class="big">🎧</div>쿄냐통신에 오신 걸 환영해요!<br>BGM을 틀까요?<br><small style="color:#999">(소리가 나요)</small></div>
+  <div class="ft"><button class="btn main" id="bgmYes">네 ♪</button><button class="btn" id="bgmNo">아니오</button></div></div>
+<!-- 광고 1 (초코 + 초콜릿 바 + 줄무늬) -->
+<div class="win kw d14 st ad ad-pop" id="wAd1" data-key="ad1" style="left:calc(max(20%,260px) + 30px);top:90px">
+  <div class="tt"><span>📢 광고</span><button class="x">✕</button></div><div class="scal"></div>
+  <div class="sunk bd"><span class="blink">★ 축하합니다 ★</span><div class="hl">당신은 오늘의<br>1,000,000번째<br>쿄냐 방문자!</div>지금 바로 경품을 받으세요
+    <div class="ft"><button class="btn main" data-prize>🎁 경품 받기</button></div></div>
+  <div class="ks"><label><input type="checkbox">오늘 하루 보지 않기</label><a class="close">닫기</a></div><div class="choc"></div></div>
+<!-- 광고 2 (하늘 초코칩) -->
+<div class="win kw d2 ad ad-pop" id="wAd2" data-key="ad2" style="right:4%;top:150px">
+  <div class="tt"><span>📸 신제품 출시</span><button class="x">✕</button></div>
+  <div class="sunk bd">쿄헤이 전용 카메라<div class="hl">「세이캠」</div>셔터 누를 때마다<br>"귀여워" 음성 지원 💕<br><span style="font-size:10px;color:#999">지금 구매 시 메모리카드 증정<br>(세이 사진 3만 장 들어 있음)</span>
+    <div class="ft"><button class="btn main" data-buy>지금 구매</button></div></div>
+  <div class="ks"><label><input type="checkbox">오늘 하루 보지 않기</label><a class="close">닫기</a></div></div>
 
 <style>
 .pvbar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:200;background:#fff;border:1px solid #3a2f33;box-shadow:3px 3px 0 #ffb3cc;padding:4px 6px;font:11px Mona12;display:flex;gap:4px;align-items:center}
@@ -259,9 +275,13 @@
 .pvbar button.on{background:#ffb3cc}
 body:not(#tt-body-category) .pv-list,body:not(#tt-body-page) .pv-post,body:not(#tt-body-guestbook) .pv-guest{display:none}
 </style>
-<div class="pvbar"><b>미리보기 ▸</b><button class="on" data-id="tt-body-index">홈</button><button data-id="tt-body-category">카테고리 목록</button><button data-id="tt-body-page">글 보기</button><button data-id="tt-body-guestbook">방명록</button></div>
-<script>document.querySelectorAll('.pvbar button').forEach(function(b){b.onclick=function(){document.body.id=b.dataset.id;
-document.querySelectorAll('.pvbar button').forEach(function(x){x.classList.toggle('on',x===b)});scrollTo(0,0);};});</script>
+<div class="pvbar"><b>미리보기 ▸</b><button class="on" data-id="tt-body-index">홈</button><button data-id="tt-body-category">카테고리 목록</button><button data-id="tt-body-page">글 보기</button><button data-id="tt-body-guestbook">방명록</button>
+<label style="display:flex;align-items:center;gap:3px;margin-left:6px;cursor:pointer"><input type="checkbox" id="pvQuiet">팝업 끄기</label></div>
+<script>(function(){var g=function(k){try{return localStorage.getItem(k)}catch(e){}},st=function(k,v){try{localStorage.setItem(k,v)}catch(e){}};
+function go(id){document.body.id=id;document.querySelectorAll('.pvbar button').forEach(function(x){x.classList.toggle('on',x.dataset.id===id)});st('ky_pv_view',id);}
+document.querySelectorAll('.pvbar button').forEach(function(b){b.onclick=function(){go(b.dataset.id);scrollTo(0,0);};});
+var v=g('ky_pv_view');if(v)go(v);   /* 새로고침해도 보던 화면 그대로 */
+var q=document.getElementById('pvQuiet');q.checked=g('ky_pv_quiet')==='1';q.onchange=function(){st('ky_pv_quiet',q.checked?'1':'0');};})();</script>
 <script>window.KY_PREVIEW=true</script>
 <script src="./kyonya-data.js"></script>
 <script src="./kyonya.js"></script>

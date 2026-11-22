@@ -3,6 +3,7 @@
    티스토리 스킨과 preview.html이 같이 불러 쓰는 디자인 파일
    ========================================================= */
 @font-face{font-family:Mona12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2) format("woff2")}
+@font-face{font-family:Umdot12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2) format("woff2")}
 @font-face{font-family:ThinMulmaru;src:url(https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2) format("woff2")}
 .text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:middle;margin:0 2px}
 
@@ -22,7 +23,7 @@ body{margin:0;color:#111;font:13px/1.65 ThinMulmaru,Mona12,sans-serif;
 a{color:#111}
 .wrap{padding:0}
 /* 오른쪽 3/4 영역 */
-.page{margin-left:max(25%,260px);padding:0 16px 30px}
+.page{margin-left:max(20%,260px);padding:0 16px 30px}
 .pix{font-family:Mona12}
 
 /* ===== 상자 공통 ===== */
@@ -38,15 +39,12 @@ input.f{width:100%;font:12px ThinMulmaru;border:1px solid var(--line);padding:2p
 
 /* ===== ① 헤더 ===== */
 .hd{position:relative;border:1px solid var(--line);border-top:0;height:150px;margin:0 -16px;border-right:0;overflow:hidden;
-  background:
-    linear-gradient(90deg,rgba(255,255,255,.45) 50%,transparent 0) 0 0/20px 20px,
-    linear-gradient(rgba(255,255,255,.45) 50%,transparent 0) 0 0/20px 20px,var(--pink)}
+  background: #fff;}
 .hd:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:12px;
   background:radial-gradient(circle at 8px 12px,#fff 7px,transparent 7.5px) 0 0/16px 12px}
 .logo{position:absolute;left:3%;top:28px}
 .logo b{display:block;font:50px/1 Mona12;color:#fff;letter-spacing:3px;
   text-shadow:2px 0 var(--hot),-2px 0 var(--hot),0 2px var(--hot),0 -2px var(--hot),2px 2px var(--hot),-2px -2px var(--hot),2px -2px var(--hot),-2px 2px var(--hot),4px 4px 0 #fff}
-.logo span{display:inline-block;margin-top:10px;font:11px Mona12;background:#fff;border:1px solid var(--line);padding:0 8px}
 .hd-ad{position:absolute;right:3%;top:30px;width:234px;height:60px;border:1px solid var(--line);
   background:repeating-linear-gradient(45deg,var(--cream) 0 6px,#fff 6px 12px);text-align:center;font:11px/1.4 Mona12;padding-top:10px}
 .hd-ad em{font-style:normal;color:var(--hot);font-size:15px}
@@ -84,7 +82,7 @@ input.f{width:100%;font:12px ThinMulmaru;border:1px solid var(--line);padding:2p
 /* ===== 3단 ===== */
 .cols{display:grid;grid-template-columns:1fr minmax(230px,30%);gap:16px;align-items:start}
 /* 1단: 화면 1/4, 스크롤해도 고정 */
-.left{position:fixed;left:0;top:0;width:25%;min-width:260px;height:100vh;overflow-y:auto;padding:14px 16px;z-index:20;
+.left{position:fixed;left:0;top:0;width:20%;min-width:260px;height:100vh;overflow-y:auto;padding:14px 16px;z-index:20;
   border-right:1px solid var(--line);
   background:
     linear-gradient(90deg,rgba(255,255,255,.55) 50%,transparent 0) 0 0/18px 18px,
@@ -188,18 +186,6 @@ main,.cols>aside:last-child{padding-top:2px}
 .smenu a:hover{background:var(--sky2)}
 .smenu .lock a{color:#aaa;cursor:not-allowed}
 .smenu .lock.open a{color:#111;cursor:pointer;background:var(--cream)}
-/* 사이트 안 팝업 */
-.pop-bg{position:fixed;inset:0;background:none;pointer-events:none;display:none;align-items:center;justify-content:center;z-index:100}
-.pop-bg.show{display:flex}
-.pop{width:280px;background:#fff;border:1px solid var(--line);padding:3px;animation:pp .25s;pointer-events:auto;box-shadow:4px 4px 0 var(--pink)}
-@keyframes pp{from{transform:scale(.8);opacity:0}}
-.pop h3 span:last-child,.win h3 .x{cursor:pointer}
-.pop h3{margin:0;padding:2px 8px;font:12px Mona12;color:#fff;display:flex;justify-content:space-between;
-  background:radial-gradient(circle,#fff 1.2px,transparent 1.6px) 0 0/7px 7px,var(--pink);
-  text-shadow:1px 0 var(--hot),-1px 0 var(--hot),0 1px var(--hot),0 -1px var(--hot)}
-.pop .pb{border:1px dashed var(--pink);margin-top:3px;padding:16px 12px;text-align:center}
-.pop .pi{font-size:36px;line-height:1.3}
-.pop p{margin:6px 0 10px}
 .dots:after{content:"";animation:dt 1s steps(4) infinite}
 @keyframes dt{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
 
@@ -227,38 +213,6 @@ main,.cols>aside:last-child{padding-top:2px}
 .nlist a:hover{text-decoration:underline}
 .nlist span{flex:none;font:10px Mona12;color:#888}
 .nlist span:before{content:"· ";color:#ccc}
-/* 창 (메일·채팅) — 뒤에 화면 안 깔고 떠 있기만, 제목줄 잡고 끌기 */
-.win{position:fixed;z-index:90;width:320px;background:#fff;border:1px solid var(--line);padding:3px;box-shadow:4px 4px 0 var(--pink);display:none;animation:pp .2s}
-.win.show{display:block}
-.win h3{margin:0;padding:2px 8px;font:12px Mona12;color:#fff;display:flex;justify-content:space-between;cursor:move;user-select:none;
-  background:radial-gradient(circle,#fff 1.2px,transparent 1.6px) 0 0/7px 7px,var(--pink);
-  text-shadow:1px 0 var(--hot),-1px 0 var(--hot),0 1px var(--hot),0 -1px var(--hot)}
-.win.sky h3{background:radial-gradient(circle,#fff 1.2px,transparent 1.6px) 0 0/7px 7px,#8cc4f5;text-shadow:1px 0 #3d86c9,-1px 0 #3d86c9,0 1px #3d86c9,0 -1px #3d86c9}
-.win .wb{border:1px dashed var(--pink);margin-top:3px}
-/* 메일 */
-.ml{margin:0;padding:0;list-style:none;max-height:150px;overflow-y:auto}
-.ml li{display:flex;gap:6px;padding:4px 8px;border-bottom:1px dotted #ddd;cursor:pointer;font-size:12px}
-.ml li:hover{background:var(--pink2)}
-.ml li.unread b{color:var(--hot)}
-.ml li b{flex:none;font:11px Mona12;width:62px}
-.ml li span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.ml li time{flex:none;font:10px Mona12;color:#888}
-.mread{border-top:1px solid var(--line);padding:8px 10px;font-size:12px;min-height:90px;background:var(--cream);
-  text-align:justify;word-break:break-word;overflow-wrap:anywhere}
-.mread h4{margin:0 0 4px;font:12px Mona12}
-/* 채팅 */
-.chat{height:220px;overflow-y:auto;padding:8px;background:
-  linear-gradient(90deg,rgba(255,255,255,.6) 50%,transparent 0) 0 0/14px 14px,linear-gradient(rgba(255,255,255,.6) 50%,transparent 0) 0 0/14px 14px,var(--sky2)}
-.cm{display:flex;gap:5px;margin-bottom:7px;align-items:flex-end}
-.cm .ca{flex:none;width:24px;height:24px;border:1px solid var(--line);background:#fff;text-align:center;line-height:22px;font-size:14px}
-.cm p{margin:0;max-width:72%;background:#fff;border:1px solid var(--line);padding:3px 8px;font-size:12px;border-radius:8px 8px 8px 0}
-.cm.me{flex-direction:row-reverse}
-.cm.me p{background:var(--pink2);border-radius:8px 8px 0 8px}
-.cm small{font:9px Mona12;color:#888}
-.cin{display:flex;gap:3px;padding:4px;border-top:1px solid var(--line)}
-.cin input{flex:1}
-.typing{font:10px Mona12;color:#888;padding:0 8px 3px;height:14px}
-
 /* ===== 폰 ===== */
 @media(max-width:780px){
   .cols{grid-template-columns:1fr}.page{margin-left:0;padding:0 10px 30px}.hd,.tick,.ft{margin:0 -10px}
@@ -278,10 +232,6 @@ main,.cols>aside:last-child{padding-top:2px}
 .lg .go:hover{background:#ffd0e2}
 .find{display:block;text-align:right;font:10px Mona12;margin-top:5px;color:#666;cursor:pointer}
 .find:hover{color:var(--hot)}
-.idlist{list-style:none;margin:4px 0 8px;padding:0;text-align:left}
-.idlist li{border:1px solid var(--line);margin-bottom:3px;padding:2px 6px;cursor:pointer;font-size:12px;background:#fff}
-.idlist li:hover{background:var(--pink2)}
-.idlist b{font:12px Mona12;color:var(--hot);margin-right:4px}
 .warn{font:10px Mona12;color:#e5484d;display:block}
 .login .row2{display:flex;gap:4px;margin-top:4px}.login .row2 a{flex:1;text-align:center;text-decoration:none}
 /* 카운터 한 줄 */
@@ -339,27 +289,6 @@ main,.cols>aside:last-child{padding-top:2px}
 /* BGM 막대 */
 .bgm .bar{background:#fff}.bgm .bar i{display:block;height:100%;width:0;background:var(--hot);transition:width .3s linear}
 .bgm .scr.off{color:#999}
-/* 팝업 광고 */
-.win.ad-pop{width:250px}
-.win.ad-pop .wb{padding:0;border:0}
-.adc{padding:14px 10px;text-align:center;font-size:12px;border:1px dashed var(--pink);margin-top:3px}
-.adc .big{font:18px/1.3 Mona12;color:var(--hot);margin:4px 0}
-.adc .blink{animation:bl .6s steps(1) infinite}
-@keyframes bl{50%{opacity:0}}
-.adc .cta{display:inline-block;margin-top:8px;font:12px Mona12;background:#ffe14d;border:1px solid var(--line);padding:2px 12px;cursor:pointer}
-.adc .cta:hover{background:#fff3a0}
-.adc.y{background:repeating-linear-gradient(45deg,var(--cream) 0 8px,#fff 8px 16px)}
-.adc.b{background:radial-gradient(circle,#fff 2px,transparent 2.5px) 0 0/14px 14px,var(--sky2)}
-.adfoot{display:flex;justify-content:space-between;align-items:center;font:10px Mona12;background:#3a2f33;color:#fff;padding:2px 6px;margin-top:3px}
-.adfoot label{display:flex;align-items:center;gap:3px;cursor:pointer}
-.adfoot a{color:#fff;cursor:pointer}
-/* BGM 묻기 창 */
-#wBgm{width:260px}
-#wBgm .pb{border:1px dashed var(--pink);margin-top:3px;padding:14px 12px;text-align:center}
-#wBgm .yn{display:flex;gap:6px;justify-content:center;margin-top:10px}
-#wBgm .yn .btn{padding:2px 16px}
-#wBgm .yn .yes{background:var(--pink)}
-
 /* 커서 반짝이 + 클릭 하트 */
 .spk{position:fixed;pointer-events:none;z-index:999;font-size:11px;color:var(--hot);animation:spk .8s forwards;transform:translate(-50%,-50%)}
 .spk.s{color:#8cc4f5}.spk.y{color:#ffc93c}
@@ -459,6 +388,120 @@ a[href="#soon"]{opacity:.85}
 
 /* ===== 로고 이미지 ===== */
 .logo{text-decoration:none;top:18px}
-.logo img{display:block;width:min(100px,52vw);height:auto}
+.logo img{display:block;width:min(300px,52vw);height:auto}
 .logo span{margin-top:4px;margin-left:10px}
 @media(max-width:780px){.logo img{width:78vw}}
+
+/* =========================================================
+   🪟 창 디자인 (알림·BGM·메일 = dA / 아이디·채팅·광고 = d14 st / 광고2 = d2)
+   ========================================================= */
+:root{
+  --w-ink:#2b2220; --w-choco:#7d5d4f; --w-cocoa:#a98c7e; --w-milk:#f8e6ee; --w-pink:#fbeff4; --w-mdot:#dcc9cd;
+  --w-sky:#dceaf7; --w-accent:#e07fa3;
+  --w-hi:#fff; --w-lo:#b4b4b4;
+}
+/* 떠 있는 위치 */
+.pop-bg{position:fixed;inset:0;background:none;pointer-events:none;display:none;align-items:center;justify-content:center;z-index:100}
+.pop-bg.show{display:flex}
+.pop-bg .kw{pointer-events:auto}
+.win{position:fixed;z-index:90;display:none}
+.win.show{display:block}
+.kw{animation:kpop .2s ease-out}
+@keyframes kpop{from{transform:scale(.85);opacity:0}}
+
+/* --- 창 공통 --- */
+.kw{width:260px;font:11px Umdot12,Mona12,sans-serif;color:var(--w-ink);padding:5px;
+  box-shadow:inset 2px 2px 0 var(--w-hi),inset -2px -2px 0 var(--w-lo)}            /* 바깥: 볼록 */
+.kw .tt{display:flex;justify-content:space-between;align-items:center;font-weight:bold;padding:2px 3px 5px 4px;cursor:move;user-select:none}
+.kw .x{width:16px;height:16px;padding:0;font:10px/12px Mona12;text-align:center;cursor:pointer;
+  box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 var(--w-lo)}
+.kw .x:active{box-shadow:inset 1px 1px 0 var(--w-lo),inset -1px -1px 0 #fff}
+.kw .sunk,.kw.sunk{background:#fff;border:2px solid;border-color:var(--w-lo) #fff #fff var(--w-lo)}   /* 안쪽: 파인 흰 칸 */
+.kw .bd{padding:12px 10px;line-height:1.65;text-align:center;word-break:keep-all}
+.kw .bd .big{font-size:30px;line-height:1.2;margin-bottom:2px}
+.kw .ft{display:flex;justify-content:center;gap:6px;padding:7px 0 2px;border:0;margin:0;background:none;font:inherit;text-align:center}  /* 푸터 .ft 스타일 안 묻게 */
+.kw .ft{align-items:center}
+.kw .btn{line-height:1.4}
+.kw .btn{font:11px Umdot12,Mona12,sans-serif;color:var(--w-ink);cursor:pointer;border-radius:4px;padding:4px 14px;
+  box-shadow:inset -3px -3px 0 rgba(184,184,184,.35),inset 3px 3px 0 #fff}
+.kw .btn:active{box-shadow:inset 3px 3px 0 rgba(184,184,184,.35),inset -3px -3px 0 #fff;transform:translateY(1px)}
+.kw .btn.main{font-weight:bold}
+.kw .scal,.kw .choc{display:none}
+/* 오늘 하루 보지 않기 줄 */
+.kw .ks{display:flex;justify-content:space-between;align-items:center;margin-top:5px;padding:2px 5px;font-size:10px;
+  border:1px solid;border-color:var(--w-lo) #fff #fff var(--w-lo);background:rgba(255,255,255,.8)}
+.kw .ks label{display:flex;align-items:center;gap:4px;cursor:pointer}
+.kw .ks a{cursor:pointer;text-decoration:underline}
+.kw input[type=checkbox]{appearance:none;-webkit-appearance:none;margin:0;width:12px;height:12px;cursor:pointer;position:relative;
+  background:#fff;border:1px solid #8f8f8f;box-shadow:inset 1px 1px 0 var(--w-lo)}
+.kw input[type=checkbox]:checked:after{content:"✓";position:absolute;left:1px;top:-3px;font:bold 11px/1 sans-serif;color:var(--w-accent)}
+/* 아이디 찾기: 줄 쳐진 목록 */
+.kw .ids{list-style:none;margin:6px 0 8px;padding:0;border-top:1px solid #d9d9d9;text-align:left}
+.kw .ids li{display:flex;gap:6px;padding:3px 4px;border-bottom:1px solid #d9d9d9;cursor:pointer}
+.kw .ids li:hover{background:var(--w-pink)}
+.kw .ids li b{flex:none;width:44px;color:var(--w-accent)}
+.kw .ids li span{color:#555}
+.warn{font-size:10px;color:#e5484d;display:block}
+/* 메일 */
+.kw.mail{width:320px}
+.kml{list-style:none;margin:0;padding:0;max-height:110px;overflow-y:auto}
+.kml li{display:flex;gap:6px;padding:3px 6px;border-bottom:1px dotted #d6d6d6;cursor:pointer}
+.kml li:hover{background:var(--w-pink)}
+.kml li b{flex:none;width:58px;font-weight:normal}
+.kml li.unread b{color:var(--w-accent);font-weight:bold}
+.kml li span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.kml li time{flex:none;color:#999;font-size:10px}
+.kmr{margin-top:5px;padding:8px 10px;min-height:86px;font:12px ThinMulmaru,sans-serif;color:#222;text-align:justify;word-break:break-word;overflow-wrap:anywhere}
+.kmr h4{margin:0 0 2px;font:11px Umdot12,Mona12}
+.kmr small{font:10px Umdot12,Mona12;color:#999}
+/* 채팅 */
+.kw.chat{width:300px}
+.kchat{height:190px;overflow-y:auto;padding:8px}
+.kcm{display:flex;gap:5px;align-items:flex-end;margin-bottom:7px}
+.kcm .ca{flex:none;width:24px;height:24px;line-height:22px;text-align:center;font-size:14px;background:#fff;border:1px solid #bdbdbd;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 var(--w-lo)}
+.kcm p{margin:0;max-width:74%;padding:3px 8px;font:12px/1.55 ThinMulmaru,sans-serif;color:#222;background:#f5f5f5;border:1px solid #cfcfcf;border-radius:8px 8px 8px 0}
+.kcm.me{flex-direction:row-reverse}
+.kcm.me p{border-radius:8px 8px 0 8px;background:var(--w-pink);border-color:#e7c3d1}
+.kcm small{font-size:9px;color:#aaa}
+.ktyping{height:16px;font-size:10px;color:#999;padding:3px 2px 0}
+.kin{display:flex;gap:4px;margin-top:2px}
+.kin input{flex:1;min-width:0;font:12px ThinMulmaru,sans-serif;padding:3px 6px;outline:0}
+/* 광고 */
+.kw.ad{margin:0;text-align:left}
+.kw.ad .hl{font:18px/1.35 Mona12;color:var(--w-accent);margin:4px 0}
+.kw.ad .blink{animation:bl .6s steps(1) infinite;color:var(--w-accent)}
+@keyframes bl{50%{opacity:0}}
+.dots:after{content:"";animation:dt 1s steps(4) infinite}
+
+/* --- dA. 회색 땡땡이 --- */
+.dA{border:1px solid #8f8f8f;
+  background:radial-gradient(circle,#fff 3.2px,transparent 3.8px) 0 0/24px 24px,radial-gradient(circle,#fff 3.2px,transparent 3.8px) 12px 12px/24px 24px,#e6e6e6}
+.dA .tt{text-shadow:-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff,1px 1px 0 #fff}
+.dA .x{background:#fdf7fa;border:1px solid #8f8f8f;color:#4a4a4a}
+.dA .btn{background:#fdf7fa;border:1px solid #bebebe}
+
+/* --- d14. 초코 제목줄 + 초콜릿 바 (st = 줄무늬 바탕) --- */
+.d14{border:1px solid var(--w-choco);
+  background:radial-gradient(circle,var(--w-mdot) 3px,transparent 3.6px) 0 0/22px 22px,radial-gradient(circle,var(--w-mdot) 3px,transparent 3.6px) 11px 11px/22px 22px,var(--w-milk)}
+.d14.st{background:repeating-linear-gradient(90deg,#f6d9e5 0 12px,#fff 12px 24px)}
+.d14 .tt{background:var(--w-choco);color:#fff;padding:3px 4px 3px 8px;margin:-2px -2px 0}
+.d14 .scal{display:block;height:8px;margin:0 -2px 5px;background:radial-gradient(circle at 6px 0,var(--w-choco) 6px,transparent 6.5px) 0 0/12px 8px}
+.d14 .choc{display:block;height:22px;margin:6px -2px -2px;border-top:1px solid var(--w-choco);
+  background:linear-gradient(#ffffff22,#00000010),repeating-linear-gradient(90deg,#6b4c3f 0 2px,#8a6a5b 2px 3px,#9b7a6a 3px 18px,#7d5d4f 18px 20px);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.15)}
+.d14 .x{background:var(--w-pink);border:1px solid #5e4339;color:var(--w-choco)}
+.d14 .btn{background:var(--w-pink);border:1px solid var(--w-cocoa)}
+
+/* --- d2. 하늘 초코칩 --- */
+.d2{border:1px solid var(--w-cocoa);padding:6px;
+  background:radial-gradient(circle,#bfa69a 3.5px,transparent 4px) 0 0/26px 26px,radial-gradient(circle,#bfa69a 3.5px,transparent 4px) 13px 13px/26px 26px,var(--w-sky)}
+.d2 .tt{color:var(--w-choco);padding:0 1px 6px 1px}
+.d2 .tt span{background:#fff;border:1px solid var(--w-cocoa);border-radius:10px;padding:0 10px}
+.d2 .x{background:#fff;border:1px solid var(--w-cocoa);color:var(--w-choco)}
+.d2 .btn{background:#fff;border:1px solid var(--w-cocoa)}
+.d2 .kcm.me p{background:#eaf3fc;border-color:#bcd5ec}
+
+/* 폰 */
+@media(max-width:780px){.win.kw{width:92vw!important;left:4vw!important;right:auto!important}}
+/* 방명록 작은 창 안에서는 창들 숨김 */
+body.in-frame .win,body.in-frame .pop-bg{display:none!important}

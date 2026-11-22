@@ -8,7 +8,7 @@
   var esc=function(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
   var store={ get:function(k){try{return localStorage.getItem(k)}catch(e){return null}}, set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
   var sess ={ get:function(k){try{return sessionStorage.getItem(k)}catch(e){return null}}, set:function(k,v){try{sessionStorage.setItem(k,v)}catch(e){}} };
-  var isHome=document.body.id==='tt-body-index';
+  var isHome=document.body.id==='tt-body-index' || PREVIEW;   // 미리보기는 화면 전환이 있어서 홈 칸을 항상 채워 둠
   var today=new Date();
   function on(id,ev,fn){ var e=$(id); if(e) e.addEventListener(ev,fn); }
 
@@ -21,10 +21,12 @@
 
   /* ---------- 팝업 (뒤 화면 안 덮음) ---------- */
   var bg=$('popBg'), ok=$('popOk');
-  function pop(t,i,m,btn){ $('popT').textContent=t; $('popI').textContent=i; $('popM').innerHTML=m;
-    ok.style.display=btn===false?'none':''; bg.classList.add('show'); }
+  // design: 'dA'(기본·회색 땡땡이) / 'd14 st'(초코+초콜릿바+줄무늬) / 'd2'(하늘 초코칩)
+  function pop(t,i,m,btn,design){ $('popT').textContent=t; $('popI').textContent=i; $('popM').innerHTML=m;
+    $('popW').className='kw pop '+(design||'dA');
+    ok.parentNode.style.display=btn===false?'none':''; bg.classList.add('show'); }
   function close(){ bg.classList.remove('show'); }
-  ok.onclick=close; bg.querySelector('h3 span:last-child').onclick=close;
+  ok.onclick=close; $('popX').onclick=close;
   window.kyPop=pop;
 
   /* 준비 중 링크 */
@@ -36,7 +38,7 @@
   function openWin(w){ w.classList.add('show'); w.style.zIndex=++zTop; }
   document.querySelectorAll('.win').forEach(function(w){
     w.addEventListener('mousedown',function(){ w.style.zIndex=++zTop; });
-    w.querySelector('h3').addEventListener('mousedown',function(e){ if(e.target.classList.contains('x')) return;
+    w.querySelector('.tt').addEventListener('mousedown',function(e){ if(e.target.classList.contains('x')) return;
       var r=w.getBoundingClientRect(), dx=e.clientX-r.left, dy=e.clientY-r.top;
       function mv(ev){ w.style.right='auto'; w.style.left=(ev.clientX-dx)+'px'; w.style.top=Math.max(0,ev.clientY-dy)+'px'; }
       function up(){ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); }
@@ -47,10 +49,10 @@
   /* =========================== 로그인 =========================== */
   var USERS=KY.USERS||{}, CHAT=KY.CHAT||{}, me=null, mails=[], chatOpened=false;
   on('findId','click',function(){
-    pop('아이디/PW 찾기','🔍','쿄냐통신 회원 목록입니다.<ul class="idlist">'+
-      Object.keys(USERS).map(function(k){return '<li data-id="'+k+'"><b>'+k+'</b>'+USERS[k].hint+'</li>'}).join('')+
-      '</ul>비밀번호는 아무거나 입력하세요!<span class="warn">※ 진짜 비밀번호는 절대 쓰지 마세요</span>');
-    document.querySelectorAll('.idlist li').forEach(function(li){ li.onclick=function(){ $('lgId').value=li.dataset.id; close(); $('lgPw').focus(); }; });
+    pop('아이디/PW 찾기','🔍','<div style="text-align:left">쿄냐통신 회원 목록입니다.<ul class="ids">'+
+      Object.keys(USERS).map(function(k){return '<li data-id="'+k+'"><b>'+k+'</b><span>'+USERS[k].hint+'</span></li>'}).join('')+
+      '</ul>비밀번호는 아무거나 입력하세요!<span class="warn">※ 진짜 비밀번호는 절대 쓰지 마세요</span></div>',true,'d14 st');
+    document.querySelectorAll('.ids li').forEach(function(li){ li.onclick=function(){ $('lgId').value=li.dataset.id; close(); $('lgPw').focus(); }; });
   });
   function setUser(id){
     var u=USERS[id.toLowerCase()];
@@ -103,7 +105,7 @@
 
   /* 채팅 */
   function who(){ return CHAT[me.chatWith]||CHAT.kyohei; }
-  function say(mine,t){ var d=document.createElement('div'); d.className='cm'+(mine?' me':'');
+  function say(mine,t){ var d=document.createElement('div'); d.className='kcm'+(mine?' me':'');
     var n=new Date(), tm=n.getHours()+':'+('0'+n.getMinutes()).slice(-2);
     d.innerHTML=(mine?'':'<div class="ca">'+who().av+'</div>')+'<p>'+t+'</p><small>'+tm+'</small>';
     $('chatLog').appendChild(d); $('chatLog').scrollTop=1e5; }
@@ -275,7 +277,7 @@
     [['wAd1',0],['wAd2',700]].forEach(function(a){ var w=$(a[0]); if(!w || store.get('hide_'+w.dataset.key)===todayKey) return;
       setTimeout(function(){ openWin(w); },a[1]); }); }
   document.querySelectorAll('.ad-pop').forEach(function(w){
-    var shut=function(){ if(w.querySelector('.adfoot input').checked) store.set('hide_'+w.dataset.key,todayKey); w.classList.remove('show'); };
+    var shut=function(){ if(w.querySelector('.ks input').checked) store.set('hide_'+w.dataset.key,todayKey); w.classList.remove('show'); };
     w.querySelector('.close').onclick=shut; w.querySelector('.x').onclick=shut; });
   var pz=document.querySelector('[data-prize]'); if(pz) pz.onclick=function(){ pop('경품 당첨','🎁','<b>쿄헤이의 세이 자랑 3시간 청취권</b>이<br>지급되었습니다!<br><small>(환불 불가)</small>'); };
   var by=document.querySelector('[data-buy]'); if(by) by.onclick=function(){ pop('세이캠','📸','품절되었습니다.<br><small>(구매자: 사쿠라바 쿄헤이 외 0명)</small>'); };
@@ -286,7 +288,8 @@
   if(wb){
     $('bgmYes').onclick=function(){answer(true)}; $('bgmNo').onclick=function(){answer(false)};
     wb.querySelector('.x').onclick=function(){answer(false)};
-    if(!sess.get('ky_asked')){ openWin(wb); center(wb); }
+    if(PREVIEW && store.get('ky_pv_quiet')==='1'){ /* 미리보기: 팝업 조용히 */ }
+    else if(!sess.get('ky_asked')){ openWin(wb); center(wb); }
     else { showAds();
       // 이미 「네」를 골랐으면: 다른 페이지에서는 처음 누를 때 이어서 재생
       if(store.get('ky_bgm')==='on'){ setTitle('♪ 아무 데나 누르면 이어서 재생돼요',true);
