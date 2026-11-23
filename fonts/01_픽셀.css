@@ -177,3 +177,60 @@
     font-weight: normal;
     font-display: swap;
 }
+
+@font-face {
+    font-family: 'kimjeoung';
+    src: url('./김어진정자10.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'soyagod';
+    src: url('./소야곧은10.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'soyanon';
+    src: url('./소야논8.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'soyaba';
+    src: url('./소야바른9.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'entersol';
+    src: url('./엔터_솔잎9.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'entergal';
+    src: url('./엔터갈잎.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'enterpul';
+    src: url('./엔터풀잎.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
+
+
+@font-face {
+    font-family: 'whiteday';
+    src: url('./화이트데이체.ttf') format('ttf');
+    font-weight: normal;
+    font-display: swap;
+}
