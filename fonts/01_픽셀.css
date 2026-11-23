@@ -180,7 +180,7 @@
 
 @font-face {
     font-family: 'enterful';
-    src: url('./enterful.ttf') format('ttf');
+    src: url('./workshop/fonts/enterful.ttf') format('ttf');
     font-weight: normal;
     font-display: swap;
 }
