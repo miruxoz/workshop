@@ -161,7 +161,7 @@ body[contenteditable]{outline:none}`;
   /* ---------------- 코드 칸 ---------------- */
   $('bCode').onclick = () => { const box = $('codeBox'); box.hidden = !box.hidden; if (!box.hidden) { $('codeTa').value = cur; $('codeTa').focus(); } };
   $('codeClose').onclick = () => { $('codeBox').hidden = true; };
-  $('codeApply').onclick = () => { const v = $('codeTa').value.trim(); if (!v) { toast('코드가 비어 있어요'); return; } setHtml(v); toast('✔ 미리보기에 넣었어요'); };
+  $('codeApply').onclick = () => { const v = $('codeTa').value.trim(); if (!v) { toast('코드가 비어 있어요'); return; } setHtml(v); store.set('lab.orig', v); toast('✔ 미리보기에 넣었어요'); };
   // 🔗 주소로 열기: 파일을 그 자리에서 연 것처럼 (css·js·그림 경로가 맞게)
   const urlLabel = () => { $('bUrl').textContent = ui.base ? '🔗 ' + decodeURIComponent(ui.base.split('/').pop() || ui.base) : '🔗 주소'; };
   $('bUrl').onclick = async () => {
@@ -177,7 +177,7 @@ body[contenteditable]{outline:none}`;
       let html = await res.text();
       html = html.replace(/<!-- Code injected by live-server -->\s*<script[\s\S]*?<\/script>/i, '');   // Live Server 가 끼워 넣는 것 빼기
       ui.base = url.href; saveUi(); urlLabel();
-      setHtml(html); toast('🔗 열었어요 · ' + v);
+      setHtml(html); store.set('lab.orig', html); toast('🔗 열었어요 · ' + v);
     } catch (e) { toast('⚠️ 못 열었어요 · 주소를 확인해 주세요'); }
   };
   urlLabel();
@@ -1473,6 +1473,175 @@ body[contenteditable]{outline:none}`;
     $('cmp').hidden = false;
   }
   $('cmpClose').onclick = () => { $('cmp').hidden = true; };
+
+  /* ---------------- ✨ 바뀐 것만 ---------------- */
+  const Diff = (() => {
+    const INLINE = /^(B|I|U|S|STRONG|EM|SPAN|FONT|RUBY|RT|RP|BR|MARK|SMALL|BIG|SUB|SUP|STRIKE|DEL|INS|IMG|A)$/;
+    const STATE = /^(on|show|open|active|sel|selected|unread|mine)$/;
+    const ign = el => el.hasAttribute('data-lab') || /^(SCRIPT|NOSCRIPT)$/.test(el.tagName) || el.matches('.spk, .hrt');
+    const kids = el => [...el.children].filter(c => !ign(c));
+    const sig = el => el.tagName + '#' + (el.id || '') + '.' + ([...el.classList].find(c => !STATE.test(c)) || '');
+    const norm = t => (t || '').replace(/\s+/g, ' ').trim();
+    const ownText = el => norm([...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join(' '));
+    const isFloat = el => /position\s*:\s*absolute/i.test(el.getAttribute('style') || '');
+    function lcs(A, B) {
+      const n = A.length, m = B.length, T = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+      for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) T[i][j] = sig(A[i]) === sig(B[j]) ? T[i + 1][j + 1] + 1 : Math.max(T[i + 1][j], T[i][j + 1]);
+      const out = []; let i = 0, j = 0;
+      while (i < n && j < m) { if (sig(A[i]) === sig(B[j])) { out.push([A[i], B[j]]); i++; j++; } else if (T[i + 1][j] >= T[i][j + 1]) i++; else j++; }
+      return out;
+    }
+    // style="" 를 선언 단위로 (url(...;...) 안의 ; 는 그대로)
+    function decls(el) {
+      const t = el.getAttribute('style') || '', out = new Map(); let buf = '', dep = 0, q = '';
+      const push = () => { const k = buf.indexOf(':'); if (k > 0) out.set(buf.slice(0, k).trim().toLowerCase(), buf.slice(k + 1).trim()); buf = ''; };
+      for (const ch of t) {
+        if (q) { if (ch === q) q = ''; buf += ch; continue; }
+        if (ch === '"' || ch === "'") { q = ch; buf += ch; continue; }
+        if (ch === '(') dep++; if (ch === ')') dep--;
+        if (ch === ';' && dep <= 0) { push(); continue; }
+        buf += ch;
+      }
+      push(); return out;
+    }
+    let dummy = null;
+    const longhands = (p, v) => { dummy.style.cssText = ''; dummy.style.setProperty(p, v.replace(/\s*!important$/, '')); const l = [...dummy.style]; return l.length ? l : [p]; };
+    const cssOf = el => el.ownerDocument.defaultView.getComputedStyle(el);
+    function clean(el, outer) {
+      const c = el.cloneNode(true);
+      [c, ...c.querySelectorAll('*')].forEach(n => { [...n.attributes].forEach(a => { if (/^data-lab|^contenteditable$|^spellcheck$/.test(a.name)) n.removeAttribute(a.name); }); });
+      c.querySelectorAll('[data-lab], script.lab').forEach(n => n.remove());
+      return (outer ? c.outerHTML : c.innerHTML).trim();
+    }
+    // 읽기 쉬운 고유 선택자 (원본 문서 기준)
+    function selFor(el) {
+      const d = el.ownerDocument; if (el === d.body) return 'body';
+      const uniq = s => { try { const r = d.querySelectorAll(s); return r.length === 1 && r[0] === el; } catch (e) { return false; } };
+      const part = n => {
+        if (n.id) return '#' + CSS.escape(n.id);
+        const cl = [...n.classList].filter(c => !STATE.test(c) && !/^data-lab/.test(c)).map(c => '.' + CSS.escape(c)).join('');
+        return cl || n.tagName.toLowerCase();
+      };
+      const nth = n => { const par = n.parentElement; if (!par) return part(n); const same = [...par.children].filter(x => part(x) === part(n)); return same.length > 1 ? part(n) + `:nth-child(${[...par.children].indexOf(n) + 1})` : part(n); };
+      let me = part(el); if (uniq(me)) return me;
+      for (let a = el.parentElement; a && a !== d.documentElement; a = a.parentElement) { const s = part(a) + ' ' + me; if (uniq(s)) return s; }
+      me = nth(el); if (uniq(me)) return me;
+      for (let a = el.parentElement; a && a !== d.documentElement; a = a.parentElement) { const s = nth(a) + ' ' + me; if (uniq(s)) return s; }
+      const chain = []; for (let n = el; n && n !== d.body; n = n.parentElement) { chain.unshift(nth(n)); if (n.id) break; }
+      return chain.join(' > ');
+    }
+    function walk(a, b, R) {
+      // 1) 꾸밈 (style)
+      const A = decls(a), B = decls(b), list = [];
+      let lost = false;
+      A.forEach((v, p) => { if (!B.has(p)) lost = true; });
+      B.forEach((v, p) => {
+        if (A.get(p) === v) return;
+        const ca = cssOf(a), cb = cssOf(b);
+        if (longhands(p, v).some(l => ca.getPropertyValue(l) !== cb.getPropertyValue(l))) list.push([p, v.replace(/\s*!important$/, '')]);
+      });
+      if (list.length) R.css.push({ a, b, list });
+      if (lost) R.attrs.push({ a, name: 'style', before: a.getAttribute('style') || '', after: b.getAttribute('style') || '' });
+      // 2) 다른 속성 (src · href …)
+      new Set([...a.getAttributeNames(), ...b.getAttributeNames()]).forEach(n => {
+        if (/^(style|class|data-lab.*|contenteditable|spellcheck)$/.test(n)) return;
+        if (a.getAttribute(n) !== b.getAttribute(n)) R.attrs.push({ a, name: n, before: a.getAttribute(n), after: b.getAttribute(n) });
+      });
+      // 3) 안쪽
+      const KA = kids(a), KB = kids(b), pairs = lcs(KA, KB);
+      const pa = new Set(pairs.map(x => x[0])), pb = new Set(pairs.map(x => x[1]));
+      const add = KB.filter(x => !pb.has(x)), rem = KA.filter(x => !pa.has(x));
+      const ta = ownText(a), tb = ownText(b);
+      const textChanged = ta !== tb && ta.replace(/\d/g, '') !== tb.replace(/\d/g, '');
+      if (textChanged || add.some(x => INLINE.test(x.tagName) && !isFloat(x)) || rem.some(x => INLINE.test(x.tagName))) { R.text.push({ a, b }); return; }
+      add.forEach(x => { const i = KB.indexOf(x); let prev = null; for (let k = i - 1; k >= 0; k--) { const pr = pairs.find(p => p[1] === KB[k]); if (pr) { prev = pr[0]; break; } } R.added.push({ parent: a, prev, b: x }); });
+      rem.forEach(x => R.removed.push(x));
+      pairs.forEach(([x, y]) => walk(x, y, R));
+    }
+    // 원본을 숨은 칸에 그려서 (스크립트까지 돌린 뒤) 비교
+    function baseline(html) {
+      return new Promise(res => {
+        const isD = /<html[\s>]/i.test(html);
+        let src = isD ? html : `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${html}</body></html>`;
+        if (ui.base && isD) {
+          const t = Date.now(), base = `<base href="${ui.base.replace(/"/g, '%22')}">`;
+          src = /<head[^>]*>/i.test(src) ? src.replace(/<head([^>]*)>/i, `<head$1>${base}`) : src.replace(/<html([^>]*)>/i, `<html$1><head>${base}</head>`);
+          src = src.replace(/(<(?:link|script)\b[^>]*?\b(?:href|src)=["'])([^"'?#]+\.(?:css|js))(["'])/gi, `$1$2?lab=${t}$3`);
+        }
+        const f = document.createElement('iframe');
+        f.setAttribute('aria-hidden', 'true');
+        f.style.cssText = `position:fixed;left:-20000px;top:0;width:${frame.clientWidth || 1200}px;height:${(frame.contentWindow && frame.contentWindow.innerHeight) || 900}px;border:0;opacity:0;pointer-events:none`;
+        f.onload = () => setTimeout(() => res(f), 800);
+        document.body.append(f); f.srcdoc = src;
+      });
+    }
+    const hasFace = (d, fam) => { for (const sh of d.styleSheets) { let rules; try { rules = sh.cssRules; } catch (e) { continue; } for (const r of rules) if (r.type === 5 && norm(r.style.getPropertyValue('font-family')).replace(/["']/g, '') === fam) return true; } return false; };
+    const ta = (v, rows) => `<textarea class="tx chg-code" readonly rows="${rows || Math.min(12, Math.max(2, v.split('\n').length + 1))}">${esc(v)}</textarea>`;
+
+    async function run() {
+      const d = doc(); if (!d) return;
+      let src = '';
+      try {
+        if (ui.base) { const r = await fetch(ui.base, { cache: 'no-store' }); if (!r.ok) throw 0; src = (await r.text()).replace(/<!-- Code injected by live-server -->\s*<script[\s\S]*?<\/script>/i, ''); }
+        else src = store.get('lab.orig') || '';
+      } catch (e) { src = store.get('lab.orig') || ''; }
+      if (!src) { Modal.alert('비교할 원본이 없어요<br><small>🔗 주소로 열거나 🧾 코드로 넣은 뒤에 쓸 수 있어요</small>'); return; }
+      toast('✨ 원본이랑 비교하는 중…');
+      const f = await baseline(src), od = f.contentDocument;
+      dummy = od.createElement('div');
+      const R = { css: [], text: [], added: [], removed: [], attrs: [] };
+      try { walk(od.body, d.body, R); } catch (e) { console.error(e); }
+      // css 만들기 + 실제로 먹히는지 원본에 대 보고, 안 먹히면 !important
+      R.css.forEach(r => { r.sel = selFor(r.a); r.imp = r.list.map(() => false); });
+      const chk = od.createElement('style'); od.head.append(chk);
+      const hex = v => v.replace(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*1)?\)/g, (m, r, g, b) => '#' + [r, g, b].map(x => (+x).toString(16).padStart(2, '0')).join(''));
+      const write = () => R.css.map(r => `${r.sel}{${r.list.map(([p, v], i) => `${p}:${hex(v)}${r.imp[i] ? ' !important' : ''}`).join(';')}}`).join('\n');
+      for (let round = 0; round < 2; round++) {
+        chk.textContent = write();
+        R.css.forEach(r => { const ca = cssOf(r.a), cb = cssOf(r.b); r.list.forEach(([p, v], i) => { if (longhands(p, v).some(l => ca.getPropertyValue(l) !== cb.getPropertyValue(l))) r.imp[i] = true; }); });
+      }
+      // 폰트: kyonya.css 에 @font-face 가 없으면 같이
+      const fams = new Set();
+      const grab = t => (t.match(/font-family\s*:\s*([^;"}]+)/gi) || []).forEach(m => { const fam = norm(m.split(':')[1].split(',')[0]).replace(/&quot;|["']/g, ''); if (fam) fams.add(fam); });
+      R.css.forEach(r => r.list.forEach(([p, v]) => { if (p === 'font-family') grab('font-family:' + v); }));
+      R.text.forEach(x => grab(x.b.innerHTML)); R.added.forEach(x => grab(x.b.outerHTML));
+      const faces = [...fams].map(fm => FontLib.get(fm)).filter(fo => fo && !hasFace(od, fo.family)).map(fo => fo.css);
+      const css = (faces.length ? '/* 새로 쓴 폰트 */\n' + faces.join('\n') + '\n' : '') + (R.css.length ? write() : '');
+      const srcHas = t => { const k = norm(t).replace(/\s/g, '').slice(0, 14); return !k || src.replace(/\s/g, '').includes(k) || src.replace(/\s/g, '').includes(esc(k)); };
+      // 화면
+      const sec = [];
+      if (css) sec.push(`<div class="chg-sec"><div class="chg-h">🎨 꾸밈 <small>→ kyonya.css 맨 아래에 붙이기</small><button class="btn mini pink" data-cp="0">📋 복사</button></div>${ta(css)}</div>`);
+      const blocks = [css];
+      if (R.text.length) sec.push(`<div class="chg-sec"><div class="chg-h">✏️ 바뀐 글자 <small>→ preview.html 에서 찾아 바꾸기</small></div>` + R.text.map(x => {
+        const before = norm(x.a.textContent).slice(0, 80), after = clean(x.b), i = blocks.push(after) - 1;
+        const js = !srcHas(x.a.textContent);
+        return `<div class="chg-it"><div class="chg-w">📍 ${esc(selFor(x.a))}${js ? ' <em>⚠ js가 채우는 글자 · kyonya-data.js 에서 고쳐요</em>' : ''}</div><div class="chg-b">전: ${esc(before) || '(비어 있음)'}</div><div class="chg-a">후 <button class="btn mini white" data-cp="${i}">📋</button></div>${ta(after)}</div>`;
+      }).join('') + '</div>');
+      if (R.added.length) sec.push(`<div class="chg-sec"><div class="chg-h">➕ 새로 넣은 것 <small>→ preview.html 그 자리에 붙이기</small></div>` + R.added.map(x => {
+        const code = clean(x.b, true), i = blocks.push(code) - 1;
+        const last = !x.b.nextElementSibling || ![...x.b.parentElement.children].slice([...x.b.parentElement.children].indexOf(x.b) + 1).some(n => !ign(n) && !R.added.some(y => y.b === n));
+        const ps = x.prev && selFor(x.prev), pt = x.prev && norm(x.prev.textContent).slice(0, 16);
+        const where = `<b>${esc(selFor(x.parent))}</b> 안 · ` + (last ? '맨 뒤' : !x.prev ? '맨 앞' : ps.length <= 40 ? `<b>${esc(ps)}</b> 바로 뒤` : pt ? `「${esc(pt)}…」 바로 뒤` : `<b>${esc(ps)}</b> 바로 뒤`);
+        return `<div class="chg-it"><div class="chg-w">📍 ${where} <button class="btn mini white" data-cp="${i}">📋</button></div>${ta(code)}</div>`;
+      }).join('') + '</div>');
+      if (R.attrs.length) sec.push(`<div class="chg-sec"><div class="chg-h">🔧 바뀐 속성 <small>(그림 주소 · 링크 등)</small></div>` + R.attrs.map(x => `<div class="chg-it"><div class="chg-w">📍 ${esc(selFor(x.a))} · <b>${esc(x.name)}</b></div><div class="chg-b">전: ${esc(x.before ?? '(없음)')}</div><div class="chg-b">후: ${esc(x.after ?? '(지움)')}</div></div>`).join('') + '</div>');
+      if (R.removed.length) sec.push(`<div class="chg-sec"><div class="chg-h">🗑 지운 것 <small>→ preview.html 에서 지우기</small></div>` + R.removed.map(x => `<div class="chg-it"><div class="chg-w">📍 ${esc(selFor(x))}</div><div class="chg-b">${esc(norm(x.textContent).slice(0, 60)) || esc('<' + x.tagName.toLowerCase() + '>')}</div></div>`).join('') + '</div>');
+      f.remove();
+      const html = sec.length ? `<p class="md-msg chg-top">원본 <b>${esc(ui.base ? decodeURIComponent(ui.base.split('/').pop()) : '처음 넣은 코드')}</b> 와 비교했어요 · 이미 파일에 옮긴 건 빼고 보여 줘요</p>` + sec.join('')
+        : '<p class="md-msg">바뀐 게 없어요 ✨<br><small>이미 파일에 옮긴 것도 여기선 빠져요</small></p>';
+      Modal.open({ title: '✨ 바뀐 것만', html, buttons: [{ label: '닫기 ♡', value: true, cls: 'pink', primary: true }] });
+      const ov = [...document.querySelectorAll('.md-overlay')].pop(), box = ov.querySelector('.md-box');
+      box.classList.add('wide', 'chg-box');
+      box.querySelectorAll('[data-cp]').forEach(btn => btn.onclick = async () => {
+        const v = blocks[+btn.dataset.cp];
+        try { await navigator.clipboard.writeText(v); } catch (e) { const t = document.createElement('textarea'); t.value = v; document.body.append(t); t.select(); document.execCommand('copy'); t.remove(); }
+        toast('📋 복사했어요');
+      });
+      box.querySelectorAll('.chg-code').forEach(t => t.onfocus = () => t.select());
+    }
+    $('bDiff').onclick = run;
+    return { run };
+  })();
 
   /* ---------------- 🎀 전체화면 + 리모컨 ---------------- */
   const FS = (() => {
