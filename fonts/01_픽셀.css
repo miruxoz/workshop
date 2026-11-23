@@ -180,14 +180,14 @@
 
 @font-face {
     font-family: 'enterful';
-    src: url('./workshop/fonts/enterful.ttf') format('ttf');
+    src: url("enterful.ttf") format('truetype');
     font-weight: normal;
     font-display: swap;
 }
 
 @font-face {
     font-family: 'entergal';
-    src: url('./entergal.ttf') format('ttf');
+    src: url("entergal.ttf") format('truetype');
     font-weight: normal;
     font-display: swap;
 }
