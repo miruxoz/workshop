@@ -207,19 +207,18 @@ input.f:focus{border-color:var(--hot)}
 /* =========================================================
    8. 2단 위젯
    ========================================================= */
-/* 메인 소개 + 갱신내역 */
-.main{margin-bottom:14px;padding:5px;border:1px solid var(--choco);box-shadow:inset 2px 2px 0 var(--hi),inset -2px -2px 0 var(--lo);
-  background:radial-gradient(circle,var(--mdot) 3px,transparent 3.6px) 0 0/22px 22px,radial-gradient(circle,var(--mdot) 3px,transparent 3.6px) 11px 11px/22px 22px,var(--milk)}
-.main .in{border:2px solid;border-color:var(--lo) #fff #fff var(--lo);padding:14px 16px;
-  background:radial-gradient(circle,#f6d6e2 1.4px,transparent 1.9px) 0 0/10px 10px,#fff}
-.main h2{margin:0 0 6px;font:18px Mona12;color:var(--hot);text-shadow:1px 1px 0 #fbe3ec}
-.main .intro{text-align:justify;word-break:break-word;overflow-wrap:anywhere;background:#fff;border:1px dotted #efc2d3;padding:8px 10px}
-.main h4{margin:12px 0 4px;font:12px Mona12;display:flex;align-items:center;gap:6px}
-.main h4:after{content:"";flex:1;border-top:1px dashed #efc2d3}
-.upd{height:110px;overflow-y:auto;background:#fff;border:1px solid var(--cocoa);padding:4px 8px;font-size:12px}
-.upd div{border-bottom:1px dotted #ddd;padding:1px 0}
+/* 메인 소개 + 갱신내역 (나란히) */
+.main{margin-bottom:14px}
+.main h2{margin:0 0 8px;font:18px Mona12;color:var(--hot)}
+.main-2{display:grid;grid-template-columns:1.45fr 1fr;gap:16px;align-items:start}
+.main .intro{text-align:justify;word-break:break-word;overflow-wrap:anywhere}
+.upd{height:120px;overflow-y:auto;font-size:12px}
+.upd::-webkit-scrollbar{width:6px}.upd::-webkit-scrollbar-thumb{background:var(--cocoa)}
+.upd div{padding:1px 0}
 .upd time{font:10px Mona12;color:#888;margin-right:6px}
-.upd .n{font:10px Mona12;color:#fff;background:var(--hot);padding:0 3px;margin-right:4px}
+.upd .n{font:10px Mona12;color:#fff;background:#f3b9d8;padding:0 3px;margin-right:4px;animation:newbl 1.2s steps(1) infinite}
+@keyframes newbl{50%{opacity:0}}
+@media(max-width:780px){.main-2{grid-template-columns:1fr}}
 
 /* 한마디 + 알림 나란히 */
 .duo{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px}
@@ -574,7 +573,6 @@ body{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/ma
 .left{background-image:url("https://i.postimg.cc/7LzcNPgF/205ef5190c8d09f59f2a72c3c98d7bec.jpg");background-repeat:repeat;background-size:200px;background-position:0px 0px;background-color:#fffce0}
 .box.sky.smenu{font-family:entergal}
 .box.sky.hot{font-family:entergal}
-.page{background-image:url("https://i.postimg.cc/L5q5297N/stripe_and_lace_background_by_forkdotjpg_dg45xat_pre.jpg");background-size:200px;background-position:0px 0px}
 .hd{background-image:url("https://i.pinimg.com/736x/18/59/10/185910553644f1785972c67000a65f62.jpg");background-repeat:repeat;background-size:170px;background-position:0px 0px}
 .stbar{background-color:#ffebf3}
 .tick{position:relative}
@@ -586,3 +584,14 @@ body{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/ma
 textarea{font:12px entergal !important}
 .box.sky.poll{font-family:entergal;border-width:9px;border-color:transparent;border-image:url("https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe") 20 / 9px / 0px round}
 .adbn.sq{border-width:20px;border-color:transparent;border-image:url("https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe") 28 fill / 20px / 0px round}
+.page{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/4.jpg")}
+.page{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/4.jpg")}
+.main .in{font-family:entergal}
+h2{font-family:entergal !important}
+.box.sky.mb{font-family:entergal}
+.box.ntc .in{font-family:entergal}
+.box.npv .in{font-family:entergal}
+.box.gb h3{font-family:entergal}
+.box.sky.cal h3{font-family:entergal}
+.box.ft2 h3{font-family:entergal}
+.box.sky.poll h3{font-family:entergal}
