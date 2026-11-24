@@ -562,3 +562,27 @@ body.in-frame .cmt>.in{border:0;padding:6px}
 /* 🖱 커서 */
 html,body{cursor:url(https://i.postimg.cc/x8gxmMbd/tumblr-6e67c289a6a7b63ad74011405789fd02-d1a3d086-75.webp) 0 0,auto}
 a,button,label,select,.btn,.mi>a,.choc-dd a,.kw .x,.find,.stbar .on,[onclick]{cursor:url(https://i.postimg.cc/x8gxmMbd/tumblr-6e67c289a6a7b63ad74011405789fd02-d1a3d086-75.webp) 0 0,pointer}
+
+/* 새로 쓴 폰트 */
+@font-face {
+    font-family: 'entergal';
+    src: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf") format('truetype');
+    font-weight: normal;
+    font-display: swap;
+}
+body{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/pinkcheck.png");background-size:44px;background-position:0px 0px;background-color:#8f6f5f}
+.left{background-image:url("https://i.postimg.cc/7LzcNPgF/205ef5190c8d09f59f2a72c3c98d7bec.jpg");background-repeat:repeat;background-size:200px;background-position:0px 0px;background-color:#fffce0}
+.box.sky.smenu{font-family:entergal}
+.box.sky.hot{font-family:entergal}
+.page{background-image:url("https://i.postimg.cc/L5q5297N/stripe_and_lace_background_by_forkdotjpg_dg45xat_pre.jpg");background-size:200px;background-position:0px 0px}
+.hd{background-image:url("https://i.pinimg.com/736x/18/59/10/185910553644f1785972c67000a65f62.jpg");background-repeat:repeat;background-size:170px;background-position:0px 0px}
+.stbar{background-color:#ffebf3}
+.tick{position:relative}
+.tick b{background-color:#8f6e5f}
+#tickTx{font-family:entergal}
+.box.sky.news .in{font-family:entergal}
+.box.gb{font-family:entergal}
+#gbName{font-family:entergal}
+textarea{font:12px entergal !important}
+.box.sky.poll{font-family:entergal;border-width:9px;border-color:transparent;border-image:url("https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe") 20 / 9px / 0px round}
+.adbn.sq{border-width:20px;border-color:transparent;border-image:url("https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe") 28 fill / 20px / 0px round}
