@@ -207,18 +207,20 @@ input.f:focus{border-color:var(--hot)}
 /* =========================================================
    8. 2단 위젯
    ========================================================= */
-/* 메인 소개 + 갱신내역 (나란히) */
-.main{margin-bottom:14px}
+/* 메인 소개 | 업데이트 로그 (나란히) */
+.main{margin-bottom:14px;padding:12px 14px;border:1px solid var(--choco)}
+.main>.in,.main-2{display:grid;grid-template-columns:1.45fr 1fr;gap:0 16px;align-items:start}
+.main>.in>h2{grid-column:1/-1}
+.main h4{display:none}
 .main h2{margin:0 0 8px;font:18px Mona12;color:var(--hot)}
-.main-2{display:grid;grid-template-columns:1.45fr 1fr;gap:16px;align-items:start}
 .main .intro{text-align:justify;word-break:break-word;overflow-wrap:anywhere}
-.upd{height:120px;overflow-y:auto;font-size:12px}
+.upd{height:120px;overflow-y:auto;font-size:12px;padding-left:14px;border-left:1px solid var(--choco)}
 .upd::-webkit-scrollbar{width:6px}.upd::-webkit-scrollbar-thumb{background:var(--cocoa)}
 .upd div{padding:1px 0}
 .upd time{font:10px Mona12;color:#888;margin-right:6px}
 .upd .n{font:10px Mona12;color:#fff;background:#f3b9d8;padding:0 3px;margin-right:4px;animation:newbl 1.2s steps(1) infinite}
 @keyframes newbl{50%{opacity:0}}
-@media(max-width:780px){.main-2{grid-template-columns:1fr}}
+@media(max-width:780px){.main>.in,.main-2{grid-template-columns:1fr}.upd{border-left:0;padding-left:0;margin-top:10px}}
 
 /* 한마디 + 알림 나란히 */
 .duo{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px}
