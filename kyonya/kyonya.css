@@ -577,3 +577,8 @@ h2{font-family:entergal!important}
 textarea{font:12px entergal!important}
 #tickTx,#gbName,#updList,
 .smenu,.hot,.news .in,.mb,.ntc .in,.npv .in,.gb,.gb h3,.cal h3,.ft2 h3,.poll,.poll h3{font-family:entergal}
+
+.m-hi{position:relative}
+.intro{line-height:1.6}
+.m-log{position:relative;padding-left:0px;display:flex;align-items:center;justify-content:center;background-image:url("https://64.media.tumblr.com/68448ecfe187918a3cd0a715bed79096/tumblr_inline_n27381gG7a1svwp6w.png");background-size:34px;background-position:0px 0px;height:220px;border-style:solid;border-width:7px;border-color:transparent;border-image:url("https://raw.githubusercontent.com/okayletsgo555/img/main/%EA%B7%B8%EB%A0%88%EC%9D%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png") 8 / 7px / 0px round;width:240px;translate:10px}
+#updList{border-style:solid;border-width:18px;border-color:transparent;border-image:url("https://i.ibb.co/B2V1n8Nh/tumblr-4b6c9c0de67b030673c1e73b3bb9355b-d5e71ae6-1280-3.png") 30 fill / 18px / 0px round;position:relative;height:200px;width:220px;padding-left:6px;padding-top:15px;background-size:34px;background-position:0px 0px}
