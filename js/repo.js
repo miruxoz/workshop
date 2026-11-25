@@ -118,3 +118,59 @@ const Emoji = (() => {
   const tag = url => `<img class="text-emoji" src="${url}" />`;
   return { refresh, cached, parse, tag };
 })();
+
+/* =========================================================
+   ➕ GIF 이모지를 저장소 emoji/ 폴더에 바로 추가
+   · 토큰은 보관함 연결 때 넣은 것(localStorage 'vault.cfg')을 같이 써요
+     → 그 토큰에 작업대 저장소 Contents 읽기·쓰기 권한이 있어야 해요
+   · 토큰은 이 브라우저에만 있고, 파일·코드에는 절대 안 들어가요
+   ========================================================= */
+const EmojiAdd = (() => {
+  const vcfg = () => store.json('vault.cfg', null) || {};
+  const target = () => Repo.info() || (vcfg().owner ? { owner: vcfg().owner, repo: 'workshop' } : null);
+  const display = f => f.replace(/\.(txt|md)$/i, '').replace(/^\d+[_\-. ]+/, '');
+  const enc = str => { const b = new TextEncoder().encode(str); let s = ''; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); };
+  const dec = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), c => c.charCodeAt(0)));
+  async function api(path, opts = {}) {
+    const t = target(), tok = vcfg().token;
+    if (!tok) throw new Error('토큰이 없어요 · 보관함 연결을 먼저 해 주세요');
+    if (!t) throw new Error('작업대 저장소를 못 찾았어요');
+    const res = await fetch(`https://api.github.com/repos/${t.owner}/${t.repo}/contents/${path.split('/').map(encodeURIComponent).join('/')}`, {
+      ...opts, headers: { Authorization: `Bearer ${tok}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) } });
+    if (res.status === 401) throw new Error('토큰이 맞지 않거나 만료됐어요');
+    if (res.status === 403) throw new Error('권한이 없어요 · 토큰에 작업대 저장소(Contents 읽기·쓰기)를 추가했는지 확인해 주세요');
+    return res;
+  }
+  // emoji 폴더 파일 목록 → [{ file, name }]
+  async function files() {
+    const res = await api('emoji');
+    if (res.status === 404) return [];
+    if (!res.ok) throw new Error(`emoji 폴더를 못 읽었어요 (${res.status})`);
+    return (await res.json()).filter(f => f.type === 'file' && /\.(txt|md)$/i.test(f.name)).map(f => ({ file: f.name, name: display(f.name) }));
+  }
+  // 새 분류 파일 이름: 다음 번호_이름.txt
+  function newFile(list, name) {
+    const n = Math.max(0, ...list.map(f => +(f.file.match(/^(\d+)/) || [0, 0])[1])) + 1;
+    return `${String(n).padStart(2, '0')}_${name.replace(/[\\/:*?"<>|]/g, '').trim()}.txt`;
+  }
+  async function add({ url, file, name }) {
+    url = (url || '').trim();
+    if (!/^https?:\/\/\S+$/.test(url)) throw new Error('이미지 주소가 아니에요');
+    const path = 'emoji/' + file;
+    const got = await api(path);
+    let text = '', sha;
+    if (got.ok) { const j = await got.json(); sha = j.sha; text = dec(j.content || ''); }
+    else if (got.status !== 404) throw new Error(`파일을 못 읽었어요 (${got.status})`);
+    if (text.includes(url)) throw new Error('이미 그 분류에 있어요');
+    const line = name ? `${name.trim()} | ${url}` : url;
+    const next = (text.replace(/\s+$/, '') ? text.replace(/\s+$/, '') + '\n' : '') + line + '\n';
+    const put = await api(path, { method: 'PUT', body: JSON.stringify({ message: `🖼 emoji: ${display(file)} 에 추가`, content: enc(next), ...(sha ? { sha } : {}) }) });
+    if (!put.ok) throw new Error(`저장 실패 (${put.status})`);
+    // 이 브라우저 목록에도 바로 추가 (깃허브 페이지 반영은 1분쯤 걸려요)
+    const subs = text.split(/\r?\n/).filter(l => l.trim() && !/https?:\/\//.test(l));
+    const all = Emoji.cached(); all.push({ group: display(file), sub: subs.length ? subs[subs.length - 1].replace(/^#+\s*/, '').trim() : '', name: (name || '').trim(), url });
+    store.setJson('emoji.list', all);
+    return true;
+  }
+  return { target, files, add, newFile, display };
+})();

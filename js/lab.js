@@ -487,6 +487,11 @@ body[contenteditable]{outline:none}`;
       let pinned = false;
       for (let n = par; n && n !== d.documentElement; n = n.parentElement) { const p = w.getComputedStyle(n).position; if (p === 'fixed' || p === 'sticky') { pinned = true; break; } }
       if (pinned) par = d.body;
+      // 페이지에 붙일 땐: 가운데 정렬된 큰 틀(예: .wrap)이 있으면 거기에 → 창 크기가 바뀌어도 자리가 안 어긋나요
+      if (par === d.body) {
+        const box = [...d.body.children].find(n => !n.hasAttribute('data-lab') && /^(relative|absolute)$/.test(w.getComputedStyle(n).position) && n.offsetWidth > 300 && n.offsetHeight > 300);
+        if (box) par = box;
+      }
       const tpl = d.createElement('template'); tpl.innerHTML = html;
       const els = [...tpl.content.children].filter(n => n.tagName !== 'STYLE'), styles = [...tpl.content.children].filter(n => n.tagName === 'STYLE');
       if (!els.length) { toast('스티커로 넣을 요소가 없어요'); return; }
@@ -505,7 +510,7 @@ body[contenteditable]{outline:none}`;
         const sw = st.offsetWidth || 40, sh = st.offsetHeight || 40;
         const cx = clamp((vx1 + vx2) / 2, pr.left + sw / 2, Math.max(pr.left + sw / 2, pr.right - sw / 2)) - pr.left - cbEl.clientLeft - sw / 2;
         const cy = clamp((vy1 + vy2) / 2, pr.top + sh / 2, Math.max(pr.top + sh / 2, pr.bottom - sh / 2)) - pr.top - cbEl.clientTop - sh / 2;
-        st.style.setProperty('left', (cbEl.clientWidth ? (cx / cbEl.clientWidth * 100).toFixed(2) : 0) + '%');
+        st.style.setProperty('left', Math.round(cx) + 'px');
         st.style.setProperty('top', Math.round(cy) + 'px');
       };
       // 너무 큰 그림은 스티커 크기로 (그 뒤엔 📦 상자 탭 너비로 조절)
@@ -515,8 +520,33 @@ body[contenteditable]{outline:none}`;
       st.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', () => { place(); commitSoon(); }, { once: true }); });
       if (st.tagName === 'IMG' && !st.complete) st.addEventListener('load', () => { place(); commitSoon(); }, { once: true });
       link([]);
-      commit(); fitFrame(); select(st); toast(pinned ? '🌟 고정된 칸 대신 페이지에 붙였어요 · 스크롤하면 같이 움직여요' : '🌟 스티커로 붙였어요 · 👆상자 모드에서 끌어서 옮겨요');
+      commit(); fitFrame(); select(st); $('insPinRow').classList.add('on'); toast(pinned ? '🌟 고정된 칸 대신 페이지에 붙였어요 · 스크롤하면 같이 움직여요' : '🌟 스티커로 붙였어요 · 👆상자 모드에서 끌어서 옮겨요');
     }
+    // 📌 스티커 위치 확정: 지금 자리를 px 로 박아서 코드로 꺼내 주기
+    async function pin() {
+      const d = doc(), w = frame.contentWindow, el = sel;
+      if (!el || w.getComputedStyle(el).position !== 'absolute') { toast('🌟 스티커(둥실 띄운 것)를 먼저 골라 주세요'); return; }
+      const par = el.offsetParent || d.body;
+      ['right', 'bottom', 'transform'].forEach(k => el.style.removeProperty(k));
+      el.style.setProperty('left', Math.round(el.offsetLeft) + 'px'); el.style.setProperty('top', Math.round(el.offsetTop) + 'px');
+      commit();
+      const c = el.cloneNode(true);
+      [c, ...c.querySelectorAll('*')].forEach(n => [...n.attributes].forEach(a => { if (/^data-lab|^contenteditable$|^spellcheck$/.test(a.name)) n.removeAttribute(a.name); }));
+      const code = c.outerHTML;
+      const ps = par === d.body ? 'body' : Diff.selFor(par);
+      const needRel = par !== d.body && par.style.position === 'relative';
+      const css = needRel ? `${ps}{position:relative}` : '';
+      const blocks = [code, css];
+      const html = `<p class="md-msg">📍 <b>${esc(ps)}</b> 안 · <b>맨 뒤</b>에 붙여 넣으세요 (preview.html)</p>
+        <div class="chg-sec"><div class="chg-h">🌟 스티커 코드 <small>위치값 포함</small><button class="btn mini pink" data-pc="0">📋 복사</button></div><textarea class="tx chg-code" readonly rows="4">${esc(code)}</textarea></div>
+        ${css ? `<div class="chg-sec"><div class="chg-h">🎨 이것도 <small>→ kyonya.css 맨 아래 (스티커 자리의 기준이 돼요)</small><button class="btn mini white" data-pc="1">📋 복사</button></div><textarea class="tx chg-code" readonly rows="2">${esc(css)}</textarea></div>` : ''}
+        <p class="lab-help">옮긴 뒤 🧹 초기화(✨ 바뀐 것만 창)를 누르면 실험실도 파일이랑 똑같아져요</p>`;
+      Modal.open({ title: '📌 스티커 위치 확정', html, buttons: [{ label: '닫기 ♡', value: true, cls: 'pink', primary: true }] });
+      const box = [...document.querySelectorAll('.md-overlay')].pop().querySelector('.md-box'); box.classList.add('wide', 'chg-box');
+      box.querySelectorAll('[data-pc]').forEach(b => b.onclick = async () => { toast(await copyText(blocks[+b.dataset.pc]) ? '📋 복사했어요' : '⚠️ 복사 실패'); });
+      box.querySelectorAll('.chg-code').forEach(t => t.onfocus = () => t.select());
+    }
+    $('insPin').onclick = pin;
     // 🔗 넣은 요소 ↔ 코드 칸 연결: 코드를 고치면 미리보기도 바로 바뀌어요
     let linked = [];
     function link(nodes) {
@@ -1198,19 +1228,46 @@ body[contenteditable]{outline:none}`;
     async function emojiPop(btn) {
       let list = Emoji.cached();
       if (!list.length && typeof Repo !== 'undefined' && Repo.info()) { try { list = await Emoji.refresh(); } catch (e) {} }
-      if (!list.length) { toast('등록된 GIF 이모지가 없어요 (🖼 이모지 페이지 참고)'); return; }
       const groups = [...new Set(list.map(x => x.group))];
       let g = store.get('lab.tbEmoG', groups[0]); if (!groups.includes(g)) g = groups[0];
       const recent = store.json('lab.tbEmoRecent', []) || [];
       const grid = gg => list.filter(x => x.group === gg).map(x => `<button class="tp-emo" data-u="${esc(x.url)}" title="${esc(x.name || '')}"><img src="${esc(x.url)}" loading="lazy" alt=""></button>`).join('');
       openPop(btn, `<div class="tp-t">🖼 텍스트 이모지 <small>누르면 커서 자리에 쏙</small></div>
+        <div class="tp-add"><input class="tx" id="tpEmoUrl" placeholder="🔗 새 GIF 주소 → 저장소에 추가 + 바로 넣기">
+          <div class="tp-row"><select class="tx sel" id="tpEmoF"><option value="">분류 불러오는 중…</option></select><input class="tx" id="tpEmoN" placeholder="이름 (안 써도 돼요)"><button class="btn mini pink" id="tpEmoAdd">➕</button></div></div>
         ${recent.length ? `<div class="tp-s">🕘 최근</div><div class="tp-emos">${recent.map(u => `<button class="tp-emo" data-u="${esc(u)}"><img src="${esc(u)}" alt=""></button>`).join('')}</div>` : ''}
-        <select class="tx sel" id="tpEmoG">${groups.map(x => `<option ${x === g ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
-        <div class="tp-emos big" id="tpEmoGrid">${grid(g)}</div>`, e => {
+        ${groups.length ? `<select class="tx sel" id="tpEmoG">${groups.map(x => `<option ${x === g ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
+        <div class="tp-emos big" id="tpEmoGrid">${grid(g)}</div>` : '<p class="lab-help">아직 이모지가 없어요 · 위에 주소를 넣어 보세요</p>'}`, e => {
         const b = e.target.closest('[data-u]'); if (!b) return; insertEmoji(b.dataset.u);
         store.setJson('lab.tbEmoRecent', [b.dataset.u, ...recent.filter(u => u !== b.dataset.u)].slice(0, 16));
       });
-      $('tpEmoG').onchange = () => { store.set('lab.tbEmoG', $('tpEmoG').value); $('tpEmoGrid').innerHTML = grid($('tpEmoG').value); };
+      if ($('tpEmoG')) $('tpEmoG').onchange = () => { store.set('lab.tbEmoG', $('tpEmoG').value); $('tpEmoGrid').innerHTML = grid($('tpEmoG').value); };
+      // ➕ 새 이모지: 저장소 emoji/ 폴더에 추가하고 바로 넣기
+      let files = [];
+      EmojiAdd.files().then(fs => {
+        files = fs; const last = store.get('lab.tbEmoF', '');
+        if (!$('tpEmoF')) return;
+        $('tpEmoF').innerHTML = fs.map(f => `<option value="${esc(f.file)}" ${f.file === last ? 'selected' : ''}>📁 ${esc(f.name)}</option>`).join('') + '<option value="+">＋ 새 분류…</option>';
+      }).catch(er => { if ($('tpEmoF')) $('tpEmoF').innerHTML = `<option value="">⚠️ ${esc(er.message)}</option>`; });
+      $('tpEmoUrl').onkeydown = ev => { if (ev.key === 'Enter') $('tpEmoAdd').click(); };
+      $('tpEmoAdd').onclick = async () => {
+        const url = $('tpEmoUrl').value.trim(); let file = $('tpEmoF').value;
+        if (!/^https?:\/\/\S+$/.test(url)) { toast('GIF 주소를 넣어 주세요'); return; }
+        if (!file) { toast('분류를 골라 주세요'); return; }
+        const ok = await new Promise(res => { const im = new Image(); im.onload = () => res(true); im.onerror = () => res(false); im.src = url; setTimeout(() => res(false), 8000); });
+        if (!ok) { toast('⚠️ 그림을 못 불러왔어요 (주소 확인!)'); return; }
+        if (file === '+') {
+          const r = await Modal.prompt('📁 새 분류', [{ name: 'n', label: '분류 이름', placeholder: '예: 하트 / 리본 / 동물' }], { ok: '만들기 ♡' });
+          const n = r && r.n.trim(); if (!n) return; file = EmojiAdd.newFile(files, n);
+        }
+        $('tpEmoAdd').disabled = true;
+        try {
+          await EmojiAdd.add({ url, file, name: $('tpEmoN').value });
+          store.set('lab.tbEmoF', file); insertEmoji(url);
+          store.setJson('lab.tbEmoRecent', [url, ...recent.filter(u => u !== url)].slice(0, 16));
+          toast(`➕ 📁 ${EmojiAdd.display(file)} 에 저장하고 넣었어요`); pop.hidden = true;
+        } catch (er) { toast('⚠️ ' + er.message); $('tpEmoAdd').disabled = false; }
+      };
     }
     function insertEmoji(url) {
       const d = doc(); const r = (lastRange && !lastRange.collapsed ? lastRange : caret);
@@ -1786,7 +1843,7 @@ body[contenteditable]{outline:none}`;
       store.set('lab.orig', src); setHtml(src); toast('🧹 새로 시작! 이제 바꾸는 것부터 ✨ 에 떠요');
     }
     $('bDiff').onclick = run;
-    return { run };
+    return { run, selFor };
   })();
 
   /* ---------------- 🎀 전체화면 + 리모컨 ---------------- */

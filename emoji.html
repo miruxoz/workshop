@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>♡ ろぐ こうぼう ♡ GIF 이모지</title>
   <link rel="stylesheet" href="css/site.css?v=1121c">
+  <style>
+    .ea-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .ea-row #eaUrl { flex: 1; min-width: 200px; }
+    .ea-row #eaName { flex: 1; min-width: 120px; }
+    .ea-prev img { height: 28px; vertical-align: middle; }
+    .ea-note { font-size: 11.5px; color: #888; margin: 4px 0 0; }
+  </style>
   <style>@font-face { font-family: 'EmojiFont'; src: url('fonts/EmojiFont.woff') format('woff'); font-display: block; }</style>
 </head>
 <body>
@@ -61,6 +68,22 @@
     </section>
 
     <section class="win">
+      <div class="win-t"><span>➕ 새 이모지 추가</span></div>
+      <div class="win-b">
+        <div class="ea-row">
+          <input class="tx" id="eaUrl" placeholder="🔗 GIF 주소" autocomplete="off">
+          <span class="ea-prev" id="eaPrev"></span>
+        </div>
+        <div class="ea-row">
+          <select class="tx" id="eaFile"><option value="">분류 불러오는 중…</option></select>
+          <input class="tx" id="eaName" placeholder="이름 (안 써도 돼요)" autocomplete="off">
+          <button class="btn" id="eaGo">➕ 저장소에 추가</button>
+        </div>
+        <p class="ea-note" id="eaNote">저장소 <b>emoji/</b> 폴더의 txt 파일에 한 줄 추가돼요 · 보관함 연결 때 넣은 토큰을 같이 써요</p>
+      </div>
+    </section>
+
+    <section class="win">
       <div class="win-t"><span>📁 이모지 추가 · 저장소 설정</span><button class="btn mini white" id="setToggle">펼치기</button></div>
       <div class="win-b" id="setBody" hidden>
         <ol class="set-help">
@@ -82,7 +105,7 @@
 </div>
 
 <script src="js/common.js?v=1121c"></script>
-<script src="js/repo.js"></script>
+<script src="js/repo.js?v=1125c"></script>
 <script src="js/vault.js"></script>
 <script src="js/meta.js"></script>
 <script>
@@ -149,6 +172,37 @@
       toast('저장했어요'); reload(false);
     };
     render(); reload(false);
+
+    // ➕ 새 이모지 → 저장소 emoji/ 폴더에 추가
+    let files = [];
+    const fillFiles = () => EmojiAdd.files().then(fs => {
+      files = fs; const last = store.get('emo.addFile', '');
+      $('eaFile').innerHTML = fs.map(f => `<option value="${esc(f.file)}" ${f.file === last ? 'selected' : ''}>📁 ${esc(f.name)}</option>`).join('') + '<option value="+">＋ 새 분류…</option>';
+      const t = EmojiAdd.target(); $('eaNote').innerHTML = `📁 <b>${esc(t.owner)}/${esc(t.repo)}</b> / emoji 폴더의 txt 파일에 한 줄 추가돼요 · 깃허브 페이지 반영은 1분쯤 걸려요`;
+    }).catch(er => { $('eaFile').innerHTML = '<option value="">—</option>'; $('eaNote').innerHTML = '⚠️ ' + esc(er.message); });
+    fillFiles();
+    $('eaUrl').oninput = () => { const u = $('eaUrl').value.trim(); $('eaPrev').innerHTML = /^https?:\/\//.test(u) ? `<img src="${esc(u)}" alt="">` : ''; };
+    $('eaUrl').onkeydown = e => { if (e.key === 'Enter') $('eaGo').click(); };
+    $('eaGo').onclick = async () => {
+      const url = $('eaUrl').value.trim(); let file = $('eaFile').value;
+      if (!/^https?:\/\/\S+$/.test(url)) { toast('GIF 주소를 넣어 주세요'); return; }
+      if (!file) { toast('분류를 골라 주세요'); return; }
+      const ok = await new Promise(res => { const im = new Image(); im.onload = () => res(true); im.onerror = () => res(false); im.src = url; setTimeout(() => res(false), 8000); });
+      if (!ok) { toast('⚠️ 그림을 못 불러왔어요 (주소 확인!)'); return; }
+      if (file === '+') {
+        const r = await Modal.prompt('📁 새 분류', [{ name: 'n', label: '분류 이름', placeholder: '예: 하트 / 리본 / 동물' }], { ok: '만들기 ♡' });
+        const n = r && r.n.trim(); if (!n) return; file = EmojiAdd.newFile(files, n);
+      }
+      $('eaGo').disabled = true;
+      try {
+        await EmojiAdd.add({ url, file, name: $('eaName').value });
+        store.set('emo.addFile', file); toast(`➕ 📁 ${EmojiAdd.display(file)} 에 추가했어요`);
+        $('eaUrl').value = ''; $('eaName').value = ''; $('eaPrev').innerHTML = '';
+        if (!files.some(f => f.file === file)) fillFiles();
+        render();
+      } catch (er) { toast('⚠️ ' + er.message); }
+      $('eaGo').disabled = false;
+    };
   })();
 
   // ===== 이모지 폰트 (EmojiFont) =====
