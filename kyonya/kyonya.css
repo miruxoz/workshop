@@ -6,6 +6,7 @@
 @font-face{font-family:Mona12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2) format("woff2")}
 @font-face{font-family:Umdot12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2) format("woff2")}
 @font-face{font-family:ThinMulmaru;src:url(https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2) format("woff2")}
+@font-face{font-family:entergal;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf) format("truetype");font-display:swap}
 .text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:-0.2em;margin:0 2px}
 
 /* =========================================================
@@ -41,7 +42,7 @@
    ========================================================= */
 *{box-sizing:border-box}
 body{margin:0;color:var(--ink);font:13px/1.65 ThinMulmaru,Mona12,sans-serif;
-  background:repeating-linear-gradient(90deg,#e6f3fd 0 34px,#f6fbff 34px 68px)}
+  background:url(https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/pinkcheck.png) 0 0/44px #8f6f5f}
 a{color:var(--ink)}
 a:hover{color:var(--hot)}
 ::selection{background:#fbdfee;color:var(--ink)}
@@ -56,9 +57,9 @@ a:hover{color:var(--hot)}
 .wrap{max-width:var(--site-w);margin:0 auto;position:relative;min-height:100vh;display:flex;align-items:flex-start}
 .left{position:sticky;top:0;height:100vh;flex:none;width:var(--left-w);
   overflow-y:auto;padding:14px 14px;z-index:20;border-left:1px solid var(--choco);border-right:1px solid var(--choco);
-  background:radial-gradient(circle,var(--mdot) 3px,transparent 3.6px) 0 0/22px 22px,radial-gradient(circle,var(--mdot) 3px,transparent 3.6px) 11px 11px/22px 22px,var(--milk)}
+  background:url(https://i.postimg.cc/7LzcNPgF/205ef5190c8d09f59f2a72c3c98d7bec.jpg) 0 0/200px #fffce0}
 .left::-webkit-scrollbar{width:6px}.left::-webkit-scrollbar-thumb{background:var(--cocoa)}
-.page{flex:1;min-width:0;padding:0 16px 30px;min-height:100vh;background:rgba(255,255,255,.55);border-right:1px solid var(--choco)}
+.page{flex:1;min-width:0;padding:0 16px 30px;min-height:100vh;background:url(https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/4.jpg) rgba(255,255,255,.55);border-right:1px solid var(--choco)}
 .cols{display:grid;grid-template-columns:1fr minmax(230px,30%);gap:16px;align-items:start;margin-top:16px}
 
 /* =========================================================
@@ -66,7 +67,7 @@ a:hover{color:var(--hot)}
    ========================================================= */
 .topbar{position:sticky;top:0;z-index:30;margin:0 -16px}
 .hd{position:relative;height:78px;display:flex;align-items:center;gap:16px;padding:0 16px;
-  background:radial-gradient(circle,#fdeef4 3px,transparent 3.6px) 0 0/22px 22px,radial-gradient(circle,#fdeef4 3px,transparent 3.6px) 11px 11px/22px 22px,#fff}
+  background:url(https://i.pinimg.com/736x/18/59/10/185910553644f1785972c67000a65f62.jpg) 0 0/170px #fff}
 .logo{flex:none;display:block;text-decoration:none}
 .logo img{display:block;width:300px;height:auto}
 
@@ -99,7 +100,7 @@ a:hover{color:var(--hot)}
 
 /* 상태 줄 */
 .stbar{display:flex;align-items:center;height:22px;padding:0 12px;font:11px Mona12;color:var(--choco);
-  background:var(--pink2);border-top:1px solid var(--choco);border-bottom:1px dashed var(--cocoa)}
+  background:#ffebf3;border-top:1px solid var(--choco);border-bottom:1px dashed var(--cocoa)}
 .stbar>span{padding:0 9px;border-left:1px dotted var(--cocoa);white-space:nowrap}.stbar>span:first-child{border:0;padding-left:0}
 .stbar .ver{color:#b48ba0}
 .stbar b{color:var(--hot);font-weight:normal}
@@ -112,8 +113,8 @@ a:hover{color:var(--hot)}
 .onlist em{font-style:normal;color:#999;font-size:10px;margin-left:4px}
 
 /* 흐르는 띠 */
-.tick{display:flex;border-bottom:1px solid var(--choco);background:var(--cream);height:22px;font:11px/21px Mona12;overflow:hidden}
-.tick b{flex:none;background:var(--choco);color:#fff;padding:0 8px;font-weight:normal}
+.tick{position:relative;display:flex;border-bottom:1px solid var(--choco);background:var(--cream);height:22px;font:11px/21px Mona12;overflow:hidden}
+.tick b{flex:none;background:#8f6e5f;color:#fff;padding:0 8px;font-weight:normal}
 .tick div{flex:1;overflow:hidden;white-space:nowrap}
 .tick span{display:inline-block;padding-left:100%;animation:mv 26s linear infinite}
 @keyframes mv{to{transform:translateX(-100%)}}
@@ -207,20 +208,21 @@ input.f:focus{border-color:var(--hot)}
 /* =========================================================
    8. 2단 위젯
    ========================================================= */
-/* 메인 소개 | 업데이트 로그 (나란히) */
-.main{margin-bottom:14px;padding:12px 14px;border:1px solid var(--choco)}
-.main>.in,.main-2{display:grid;grid-template-columns:1.45fr 1fr;gap:0 16px;align-items:start}
-.main>.in>h2{grid-column:1/-1}
-.main h4{display:none}
+/* 메인: 왼쪽 칸(.m-hi = 말풍선·Welcome.txt·인사말) | 오른쪽 칸(.upd = 갱신내역) */
+.main{position:relative;margin-bottom:14px;padding:12px 14px;border:1px solid var(--choco);font-family:entergal;
+  background:url(https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/heart-tile%403x.png) 0 0/34px}
+.main-2{display:grid;grid-template-columns:1.45fr 1fr;gap:0 16px;align-items:start}
 .main h2{margin:0 0 8px;font:18px Mona12;color:var(--hot)}
-.main .intro{text-align:justify;word-break:break-word;overflow-wrap:anywhere}
-.upd{height:120px;overflow-y:auto;font-size:12px;padding-left:14px;}
+.m-wel{margin:2px 0 6px}
+.main .intro{position:relative;text-align:justify;word-break:break-word;overflow-wrap:anywhere}
+.m-log{padding-left:14px}
+.upd{height:120px;overflow-y:auto;font-size:12px}
 .upd::-webkit-scrollbar{width:6px}.upd::-webkit-scrollbar-thumb{background:var(--cocoa)}
 .upd div{padding:1px 0}
 .upd time{font:10px Mona12;color:#888;margin-right:6px}
 .upd .n{font:10px Mona12;color:#fff;background:#f3b9d8;padding:0 3px;margin-right:4px;animation:newbl 1.2s steps(1) infinite}
 @keyframes newbl{50%{opacity:0}}
-@media(max-width:780px){.main>.in,.main-2{grid-template-columns:1fr}.upd{border-left:0;padding-left:0;margin-top:10px}}
+@media(max-width:780px){.main-2{grid-template-columns:1fr}.upd{border-left:0;padding-left:0;margin-top:10px}}
 
 /* 한마디 + 알림 나란히 */
 .duo{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px}
@@ -297,6 +299,8 @@ input.f:focus{border-color:var(--hot)}
 
 /* 운세 */
 .ft2 .res{display:none;text-align:center}
+#omk{display:none}          /* 뽑기 버튼 숨기고 */
+#omkRes{display:block}      /* 결과를 바로 보여 주기 */
 .ft2 .big{font:24px Mona12;color:var(--hot);margin:2px 0}
 .ft2 dl{display:grid;grid-template-columns:auto 1fr;gap:1px 6px;margin:6px 0 0;font-size:12px;text-align:left}
 .ft2 dt{font:11px Mona12;color:#888}.ft2 dd{margin:0}
@@ -305,6 +309,7 @@ input.f:focus{border-color:var(--hot)}
 .ft2 .omk:active{box-shadow:inset 3px 3px 0 rgba(184,184,184,.35),inset -3px -3px 0 #fff}
 
 /* 투표 */
+aside.right .box.poll{border:9px solid transparent;border-image:url(https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe) 20 / 9px / 0 round}
 .poll .q{margin:0 0 6px;font:13px Mona12}
 .poll label{display:flex;align-items:center;gap:6px;padding:2px 4px;cursor:pointer;font-size:12px;border-bottom:1px dotted #ddd}
 .poll label:hover{background:var(--pink2)}
@@ -322,7 +327,8 @@ input.f:focus{border-color:var(--hot)}
 /* 광고 배너 */
 .adbn{position:relative;border:1px solid var(--choco);text-align:center;font:12px/1.5 Mona12;padding:14px 6px;margin-bottom:14px;
   background:repeating-linear-gradient(90deg,var(--sky2) 0 10px,#fff 10px 20px)}
-.adbn.sq{background:repeating-linear-gradient(90deg,var(--milk) 0 10px,#fff 10px 20px)}
+.adbn.sq{background:repeating-linear-gradient(90deg,var(--milk) 0 10px,#fff 10px 20px);
+  border:20px solid transparent;border-image:url(https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe) 28 fill / 20px / 0 round}
 .adbn small{position:absolute;right:3px;top:1px;font-size:9px;color:#888}
 .adbn em{display:block;font-style:normal;font-size:16px;color:var(--hot)}
 
@@ -564,44 +570,10 @@ body.in-frame .cmt>.in{border:0;padding:6px}
 html,body{cursor:url(https://i.postimg.cc/x8gxmMbd/tumblr-6e67c289a6a7b63ad74011405789fd02-d1a3d086-75.webp) 0 0,auto}
 a,button,label,select,.btn,.mi>a,.choc-dd a,.kw .x,.find,.stbar .on,[onclick]{cursor:url(https://i.postimg.cc/x8gxmMbd/tumblr-6e67c289a6a7b63ad74011405789fd02-d1a3d086-75.webp) 0 0,pointer}
 
-/* 새로 쓴 폰트 */
-@font-face {
-    font-family: 'entergal';
-    src: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf") format('truetype');
-    font-weight: normal;
-    font-display: swap;
-}
-body{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/pinkcheck.png");background-size:44px;background-position:0px 0px;background-color:#8f6f5f}
-.left{background-image:url("https://i.postimg.cc/7LzcNPgF/205ef5190c8d09f59f2a72c3c98d7bec.jpg");background-repeat:repeat;background-size:200px;background-position:0px 0px;background-color:#fffce0}
-.box.sky.smenu{font-family:entergal}
-.box.sky.hot{font-family:entergal}
-.hd{background-image:url("https://i.pinimg.com/736x/18/59/10/185910553644f1785972c67000a65f62.jpg");background-repeat:repeat;background-size:170px;background-position:0px 0px}
-.stbar{background-color:#ffebf3}
-.tick{position:relative}
-.tick b{background-color:#8f6e5f}
-#tickTx{font-family:entergal}
-.box.sky.news .in{font-family:entergal}
-.box.gb{font-family:entergal}
-#gbName{font-family:entergal}
-textarea{font:12px entergal !important}
-.box.sky.poll{font-family:entergal;border-width:9px;border-color:transparent;border-image:url("https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe") 20 / 9px / 0px round}
-.adbn.sq{border-width:20px;border-color:transparent;border-image:url("https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe") 28 fill / 20px / 0px round}
-.page{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/4.jpg")}
-.page{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/4.jpg")}
-.main .in{font-family:entergal}
-h2{font-family:entergal !important}
-.box.sky.mb{font-family:entergal}
-.box.ntc .in{font-family:entergal}
-.box.npv .in{font-family:entergal}
-.box.gb h3{font-family:entergal}
-.box.sky.cal h3{font-family:entergal}
-.box.ft2 h3{font-family:entergal}
-.box.sky.poll h3{font-family:entergal}
-
-
-.home-only .main{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/heart-tile%403x.png");background-size:34px;background-position:0px 0px;height:auto !important;position:relative}
-.intro{font-family:entergal;position:relative}
-#updList{font-family:entergal}
-#omk{display:none}
-#omkRes{display:block}
-.m-wel{margin:2px 0 6px}
+/* =========================================================
+   🔤 entergal 폰트를 쓰는 곳 (한 곳에 모음)
+   ========================================================= */
+h2{font-family:entergal!important}
+textarea{font:12px entergal!important}
+#tickTx,#gbName,#updList,
+.smenu,.hot,.news .in,.mb,.ntc .in,.npv .in,.gb,.gb h3,.cal h3,.ft2 h3,.poll,.poll h3{font-family:entergal}
