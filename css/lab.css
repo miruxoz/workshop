@@ -480,3 +480,43 @@
 .chg-b { font-size: 11.5px; color: #777; word-break: break-all; }
 .chg-a { font-size: 11.5px; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
 .chg-code { width: 100%; font: 11.5px/1.5 Consolas, monospace; resize: vertical; margin-top: 4px; background: #fff; white-space: pre; }
+
+/* 🎨 네모 색상환 (글자 도구 팝업) */
+.tp-sq { display: flex; flex-direction: column; gap: 6px; }
+.tp-sq .sq { position: relative; height: 130px; border: 1px solid var(--line); cursor: crosshair; touch-action: none; }
+.tp-sq .sq-dot { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,.35); pointer-events: none; }
+.tp-sq .sq-h { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; margin: 0; border: 1px solid var(--line); cursor: pointer;
+  background: linear-gradient(90deg, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00); }
+.tp-sq .sq-h::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 16px; background: #fff; border: 1px solid #333; }
+.tp-sq .sq-h::-moz-range-thumb { width: 8px; height: 16px; background: #fff; border: 1px solid #333; border-radius: 0; }
+.tb-pop .sq-hex { width: 78px; font-family: monospace; font-size: 12px; }
+.tb-pop .sq-sw { width: 26px; height: 26px; flex: none; }
+.tb-pop .sq-ok { margin-left: auto; }
+/* 형광펜: 반만 / 전체 */
+.tp-mk { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.tp-mk button { padding: 8px 4px; font-size: 12px; cursor: pointer; background: #fff; border: 1px solid #ddd; }
+.tp-mk button.on { border: 2px solid var(--pink); background: var(--pink-pale); }
+.tb-pop { max-height: 70vh; }
+
+/* 🖼 갤러리 칸 크기 똑같이 */
+.lab-gal { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+.lab-gal.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.st-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.bd-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.g-it, .st-it, .bd-it { min-width: 0; }
+
+/* ☑ 여러 개 골라서 정리 */
+.bulk-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: 2px 0 6px; font-size: 11.5px; }
+.bulk-bar button { font-size: 11px; padding: 2px 8px; cursor: pointer; background: #fff; border: 1px solid var(--line); box-shadow: inset -2px -2px 0 rgba(0,0,0,.08); }
+.bulk-bar button.pink { background: var(--pink-bg); }
+.bulk-bar button.danger { color: #d33; }
+.bulk-bar.on { padding: 6px 8px; background: var(--pink-pale); border: 1px dashed var(--pink); position: sticky; top: 0; z-index: 3; }
+.bulk-bar .bk-n { margin-right: auto; }
+.bulk-bar .bk-n b { color: var(--pink); }
+.bulk .g-it, .bulk .st-it, .bulk .bd-it { cursor: pointer; position: relative; }
+.bulk .g-it *, .bulk .st-it *, .bulk .bd-it * { pointer-events: none; }
+.bulk .repo { opacity: .35; }
+.bulk .picked { outline: 3px solid var(--pink) !important; z-index: 1; }
+.bulk .picked::after { content: "✔"; position: absolute; right: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--pink); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+.bd-it { position: relative; }
+.css-file { color: #3f88c4 !important; }

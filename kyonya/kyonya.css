@@ -214,7 +214,7 @@ input.f:focus{border-color:var(--hot)}
 .main h4{display:none}
 .main h2{margin:0 0 8px;font:18px Mona12;color:var(--hot)}
 .main .intro{text-align:justify;word-break:break-word;overflow-wrap:anywhere}
-.upd{height:120px;overflow-y:auto;font-size:12px;padding-left:14px;border-left:1px solid var(--choco)}
+.upd{height:120px;overflow-y:auto;font-size:12px;padding-left:14px;}
 .upd::-webkit-scrollbar{width:6px}.upd::-webkit-scrollbar-thumb{background:var(--cocoa)}
 .upd div{padding:1px 0}
 .upd time{font:10px Mona12;color:#888;margin-right:6px}

@@ -323,6 +323,20 @@ body[contenteditable]{outline:none}`;
   $('kids').addEventListener('dragend', () => { clearDrop(); dragK = -1; });
   $('cssDet').addEventListener('toggle', () => { if ($('cssDet').open) drawRules(); });
 
+  /* ---- 📄 css 파일 규칙을 실험실에서만 덮어쓰기 (<style data-labcss>) ---- */
+  const Ovr = {
+    el(d, make) { let st = d.querySelector('style[data-labcss]'); if (!st && make) { st = d.createElement('style'); st.setAttribute('data-labcss', '[]'); (d.head || d.body).append(st); } return st; },
+    list(d) { const st = d && this.el(d); if (!st) return []; try { return JSON.parse(st.getAttribute('data-labcss') || '[]'); } catch (e) { return []; } },
+    text(L) { return L.map(x => x.media ? `@media ${x.media}{${x.sel}{${x.body}}}` : `${x.sel}{${x.body}}`).join('\n'); },
+    set(d, sel, media, body) {
+      let L = this.list(d).filter(x => !(x.sel === sel && x.media === media));
+      if (body) L.push({ sel, media, body });
+      const st = this.el(d, true);
+      if (!L.length) { st.remove(); return; }
+      st.setAttribute('data-labcss', JSON.stringify(L)); st.textContent = this.text(L);
+    }
+  };
+
   /* ---- 고른 상자에 걸린 <style> 규칙 찾기 · 고치기 ---- */
   // <style> 글자를 훑어서 { } 덩어리 위치를 찾아요 (주석·@media 안쪽까지)
   function scanBlocks(text) {
@@ -351,7 +365,7 @@ body[contenteditable]{outline:none}`;
     const d = doc(); if (!sel || !d) { $('cssRules').innerHTML = ''; return; }
     ruleList = [];
     [...d.querySelectorAll('style')].forEach(st => {
-      if (st.hasAttribute('data-lab') || st.hasAttribute('data-fontface')) return;
+      if (st.hasAttribute('data-lab') || st.hasAttribute('data-fontface') || st.hasAttribute('data-labcss')) return;
       const text = st.textContent, blocks = scanBlocks(text);
       const walk = (rules, media) => [...rules].forEach(r => {
         if (r.cssRules && r.media) { walk(r.cssRules, r.media.mediaText); return; }
@@ -362,16 +376,38 @@ body[contenteditable]{outline:none}`;
       });
       try { walk(st.sheet.cssRules, ''); } catch (e) {}
     });
+    // 📄 연결된 css 파일 (kyonya.css 등) 규칙도
+    const ovr = Ovr.list(d);
+    [...d.styleSheets].forEach(sh => {
+      const own = sh.ownerNode; if (!own || own.tagName !== 'LINK') return;
+      const file = decodeURIComponent((sh.href || '').split('?')[0].split('/').pop() || 'css');
+      const walk = (rules, media) => [...rules].forEach(r => {
+        if (r.cssRules && r.media) { walk(r.cssRules, r.media.mediaText); return; }
+        if (!r.selectorText || !ruleHits(sel, r.selectorText)) return;
+        // 모든 상자에 걸리는 공통 규칙(*, ::selection, 스크롤바…)은 빼기
+        if (splitSel(r.selectorText).every(x => /^\*$|^(html|body)$|::?(selection|-webkit-|-moz-)/.test(x.trim()))) return;
+        const o = ovr.find(x => x.sel === r.selectorText && x.media === media);
+        ruleList.push({ link: true, file, selector: r.selectorText, media, orig: r.style.cssText, body: o ? o.body : r.style.cssText, edited: !!o });
+      });
+      try { walk(sh.cssRules, ''); } catch (e) {}
+    });
     const clean = b => b.replace(/^\s*\n|\s+$/g, '').split('\n').map(l => l.replace(/^\s{2,}/, '  ')).join('\n').trim();
     $('cssRules').innerHTML = ruleList.length ? `<p class="lab-help">⚠️ 아래 CSS는 <b>같은 이름(class)을 쓰는 다른 상자도 같이</b> 바뀌어요. 이 상자만 바꾸고 싶으면 위 style 칸에 적어 주세요.</p>` + ruleList.map((r, i) => `<div class="css-blk">
-        <div class="css-h"><b>${esc(r.selector)}</b>${r.media ? `<small>@media ${esc(r.media)}</small>` : ''}</div>
+        <div class="css-h"><b>${esc(r.selector)}</b>${r.link ? `<small class="css-file">📄 ${esc(r.file)}${r.edited ? ' · ✏️ 실험실에서 고침' : ''}</small>` : ''}${r.media ? `<small>@media ${esc(r.media)}</small>` : ''}</div>
         <textarea class="tx mono" data-ri="${i}" rows="${Math.min(10, Math.max(2, clean(r.body).split(/;|\n/).filter(x => x.trim()).length + 1))}" spellcheck="false">${esc(clean(r.body).replace(/;\s*(?=\S)/g, ';\n'))}</textarea>
-        <button class="btn mini white" data-ra="${i}">적용</button></div>`).join('')
+        <button class="btn mini white" data-ra="${i}">적용</button>${r.edited ? ` <button class="btn mini white" data-rr="${i}">↺ 파일 원래대로</button>` : ''}</div>`).join('') + (ruleList.some(r => r.link) ? '<p class="lab-help">📄 파일 규칙은 실험실에서만 바뀌어요 · 파일에 옮기려면 ✨ 바뀐 것만 · 줄을 지우는 것보다 값을 바꾸는 게 확실해요</p>' : '')
       : '<p class="lab-help">이 상자에 걸린 &lt;style&gt; 규칙이 없어요</p>';
   }
   $('cssRules').addEventListener('click', e => {
+    const rr = e.target.closest('[data-rr]');
+    if (rr) { const r = ruleList[+rr.dataset.rr]; Ovr.set(doc(), r.selector, r.media, null); commit(); fitFrame(); drawRules(); toast('↺ 파일 원래대로'); return; }
     const b = e.target.closest('[data-ra]'); if (!b) return;
     const r = ruleList[+b.dataset.ra]; const val = $('cssRules').querySelector(`[data-ri="${b.dataset.ra}"]`).value;
+    if (r.link) {
+      const flat = val.split('\n').map(l => l.trim()).filter(Boolean).join(' ');
+      const same = (() => { const a = doc().createElement('i'), c = doc().createElement('i'); a.style.cssText = flat; c.style.cssText = r.orig; return a.style.cssText === c.style.cssText; })();
+      Ovr.set(doc(), r.selector, r.media, same ? null : flat); commit(); fitFrame(); drawRules(); toast(same ? '↺ 원래랑 같아요' : '✔ 실험실에서 바꿨어요 · 파일엔 ✨ 바뀐 것만으로'); return;
+    }
     if (r.open < 0) { try { r.rule.style.cssText = val; } catch (er) {} toast('⚠️ 원본 위치를 못 찾아서 미리보기만 바꿨어요'); return; }
     const text = r.st.textContent;
     r.st.textContent = text.slice(0, r.open + 1) + '\n  ' + val.trim().split('\n').map(l => l.trim()).filter(Boolean).join('\n  ') + '\n' + text.slice(r.close);
@@ -446,25 +482,30 @@ body[contenteditable]{outline:none}`;
     // 🌟 스티커로 넣기: 고른 상자 위에 둥실 띄워서, 끌어서 아무 데나
     function sticker(html, base) {
       const d = doc(), w = frame.contentWindow;
-      const par = /^(IMG|INPUT|BR|HR|TEXTAREA|SELECT|IFRAME|VIDEO|svg)$/i.test(base.tagName) ? base.parentElement || d.body : base;
+      let par = /^(IMG|INPUT|BR|HR|TEXTAREA|SELECT|IFRAME|VIDEO|svg)$/i.test(base.tagName) ? base.parentElement || d.body : base;
+      // 고른 상자가 화면에 붙박이(고정·sticky) 칸 안이면 스티커도 같이 따라다니니까 → 페이지에 붙이기
+      let pinned = false;
+      for (let n = par; n && n !== d.documentElement; n = n.parentElement) { const p = w.getComputedStyle(n).position; if (p === 'fixed' || p === 'sticky') { pinned = true; break; } }
+      if (pinned) par = d.body;
       const tpl = d.createElement('template'); tpl.innerHTML = html;
       const els = [...tpl.content.children].filter(n => n.tagName !== 'STYLE'), styles = [...tpl.content.children].filter(n => n.tagName === 'STYLE');
       if (!els.length) { toast('스티커로 넣을 요소가 없어요'); return; }
       let st = els[0];
       if (els.length > 1) { st = d.createElement('div'); els.forEach(n => st.append(n)); }
-      if (w.getComputedStyle(par).position === 'static') par.style.setProperty('position', 'relative');
+      const cbEl = par === d.body && w.getComputedStyle(par).position === 'static' ? d.documentElement : par;   // body 는 건드리지 않기
+      if (cbEl === par && w.getComputedStyle(par).position === 'static') par.style.setProperty('position', 'relative');
       styles.forEach(n => par.append(n));
       st.style.setProperty('position', 'absolute'); st.style.setProperty('margin', '0'); st.style.setProperty('z-index', '50');
       par.append(st);
       // 지금 보이는 화면 가운데쯤 (고른 상자 안으로)
-      const fr = frame.getBoundingClientRect(), pr = par.getBoundingClientRect();
+      const fr = frame.getBoundingClientRect(), pr = cbEl.getBoundingClientRect();
       const vx1 = Math.max(0, -fr.left), vx2 = Math.min(w.innerWidth, innerWidth - fr.left), vy1 = Math.max(0, -fr.top), vy2 = Math.min(w.innerHeight, innerHeight - fr.top);
       const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
       const place = () => {
         const sw = st.offsetWidth || 40, sh = st.offsetHeight || 40;
-        const cx = clamp((vx1 + vx2) / 2, pr.left + sw / 2, Math.max(pr.left + sw / 2, pr.right - sw / 2)) - pr.left - par.clientLeft - sw / 2;
-        const cy = clamp((vy1 + vy2) / 2, pr.top + sh / 2, Math.max(pr.top + sh / 2, pr.bottom - sh / 2)) - pr.top - par.clientTop - sh / 2;
-        st.style.setProperty('left', (par.clientWidth ? (cx / par.clientWidth * 100).toFixed(2) : 0) + '%');
+        const cx = clamp((vx1 + vx2) / 2, pr.left + sw / 2, Math.max(pr.left + sw / 2, pr.right - sw / 2)) - pr.left - cbEl.clientLeft - sw / 2;
+        const cy = clamp((vy1 + vy2) / 2, pr.top + sh / 2, Math.max(pr.top + sh / 2, pr.bottom - sh / 2)) - pr.top - cbEl.clientTop - sh / 2;
+        st.style.setProperty('left', (cbEl.clientWidth ? (cx / cbEl.clientWidth * 100).toFixed(2) : 0) + '%');
         st.style.setProperty('top', Math.round(cy) + 'px');
       };
       // 너무 큰 그림은 스티커 크기로 (그 뒤엔 📦 상자 탭 너비로 조절)
@@ -474,7 +515,7 @@ body[contenteditable]{outline:none}`;
       st.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', () => { place(); commitSoon(); }, { once: true }); });
       if (st.tagName === 'IMG' && !st.complete) st.addEventListener('load', () => { place(); commitSoon(); }, { once: true });
       link([]);
-      commit(); fitFrame(); select(st); toast('🌟 스티커로 붙였어요 · 👆상자 모드에서 끌어서 옮겨요');
+      commit(); fitFrame(); select(st); toast(pinned ? '🌟 고정된 칸 대신 페이지에 붙였어요 · 스크롤하면 같이 움직여요' : '🌟 스티커로 붙였어요 · 👆상자 모드에서 끌어서 옮겨요');
     }
     // 🔗 넣은 요소 ↔ 코드 칸 연결: 코드를 고치면 미리보기도 바로 바뀌어요
     let linked = [];
@@ -709,6 +750,43 @@ body[contenteditable]{outline:none}`;
   }
   $('decoTabs').onclick = e => { const b = e.target.closest('[data-dt]'); if (b) showDeco(b.dataset.dt); };
 
+  /* ---------------- ☑ 여러 개 골라서 정리 (이미지·스티커·테두리) ---------------- */
+  function Bulk({ bar, grid, item, api }) {
+    let on = false; const picked = new Set();
+    const mark = () => grid.querySelectorAll(item).forEach(el => el.classList.toggle('picked', picked.has(el.dataset.id)));
+    const drawBar = () => {
+      bar.innerHTML = on
+        ? `<span class="bk-n">✔ <b>${picked.size}</b>개 골랐어요</span><button data-bk="all">전부</button><button data-bk="move">📁 분류 옮기기</button><button data-bk="del" class="danger">🗑 지우기</button><button data-bk="done" class="pink">완료</button>`
+        : `<button data-bk="on">☑ 여러 개 골라서 정리</button>`;
+      bar.classList.toggle('on', on); grid.classList.toggle('bulk', on); mark();
+    };
+    new MutationObserver(() => { if (on) mark(); }).observe(grid, { childList: true });
+    grid.addEventListener('click', e => {
+      if (!on) return; e.stopPropagation(); e.preventDefault();
+      const it = e.target.closest(item); if (!it || it.classList.contains('repo')) return;
+      const id = it.dataset.id; picked.has(id) ? picked.delete(id) : picked.add(id); drawBar();
+    }, true);
+    grid.addEventListener('mouseover', e => { if (on) e.stopPropagation(); }, true);
+    bar.onclick = async e => {
+      const b = e.target.closest('[data-bk]'); if (!b) return; const k = b.dataset.bk;
+      if (k === 'on') { on = true; picked.clear(); }
+      else if (k === 'done') { on = false; picked.clear(); }
+      else if (k === 'all') { const ids = [...grid.querySelectorAll(item)].filter(x => !x.classList.contains('repo')).map(x => x.dataset.id); const all = ids.length && ids.every(i => picked.has(i)); ids.forEach(i => all ? picked.delete(i) : picked.add(i)); }
+      else if (!picked.size) { toast('먼저 눌러서 골라 주세요'); return; }
+      else if (k === 'move') {
+        const tags = api.tags();
+        let t = await Modal.choose(`📁 ${picked.size}개를 어느 분류로?`, [...tags.map(x => ({ value: x, label: '📁 ' + x })), { value: '\u0000', label: '(분류 없음)' }, { value: '\u0001', label: '＋ 새 분류 만들기' }], tags[0] || '\u0001', { ok: '옮기기 ♡' });
+        if (t === null) return;
+        if (t === '\u0001') { const r = await Modal.prompt('📁 새 분류', [{ name: 'tag', label: '분류 이름' }], { ok: '만들고 옮기기 ♡' }); t = r && r.tag.trim(); if (!t) return; }
+        if (t === '\u0000') t = '';
+        api.move(picked, t); toast(t ? `📁 ${t} 로 옮겼어요` : '분류를 뺐어요'); picked.clear();
+      }
+      else if (k === 'del') { if (!(await Modal.confirm(`${picked.size}개를 지울까요?`))) return; api.del(picked); picked.clear(); toast('🗑 지웠어요'); }
+      drawBar();
+    };
+    drawBar();
+  }
+
   const ST = (() => {
     let list = store.json('lab.stickers', []) || [];
     let extra = store.json('lab.stTags', []) || [];
@@ -771,6 +849,10 @@ body[contenteditable]{outline:none}`;
       if (n) save();
       draw();
     }
+    Bulk({ bar: $('stBulk'), grid: $('stGrid'), item: '.st-it', api: {
+      tags: () => [...new Set(list.map(x => x.tag).filter(Boolean).concat(extra))].sort((a, b) => a.localeCompare(b, 'ko')),
+      move: (ids, t) => { list.forEach(x => { if (ids.has(x.id)) x.tag = t; }); if (t && !extra.includes(t)) { extra.push(t); store.setJson('lab.stTags', extra); } save(); draw(); },
+      del: ids => { list = list.filter(x => !ids.has(x.id)); save(); draw(); } } });
     return { draw, seed };
   })();
 
@@ -1000,12 +1082,36 @@ body[contenteditable]{outline:none}`;
       const r = btn.getBoundingClientRect();
       pop.style.top = (r.bottom + 4) + 'px'; pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - pop.offsetWidth - 8)) + 'px';
       pop.onclick = e => onPick(e);
+      wireSq();
     }
     document.addEventListener('mousedown', e => { if (!e.target.closest('#tbPop, #tbar')) pop.hidden = true; });
     const swRow = (cols, attr = 'data-c') => cols.map(c => `<button class="sw" ${attr}="${c}" style="background:${c}" title="${c}"></button>`).join('');
-    function colorHtml(title, base) {
+    // 🎨 네모 색상환 (채도·밝기 네모 + 색상 막대)
+    const hsv2hex = (h, s, v) => { const f = n => { const k = (n + h / 60) % 6; return Math.round(255 * (v - v * s * Math.max(0, Math.min(k, 4 - k, 1)))); }; return '#' + [f(5), f(3), f(1)].map(x => x.toString(16).padStart(2, '0')).join(''); };
+    const hex2hsv = hex => { const m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return [330, .5, 1]; const n = parseInt(m[1], 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+      let h = 0; if (d) h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; return [(h * 60 + 360) % 360, mx ? d / mx : 0, mx]; };
+    const sqHtml = now => `<div class="tp-sq" data-hex="${now}"><div class="sq"><i class="sq-dot"></i></div><input type="range" class="sq-h" min="0" max="359"></div>
+      <div class="tp-row"><span class="lab-cur-sw sq-sw"></span><input class="tx sq-hex" maxlength="7" spellcheck="false"><button class="btn mini pink sq-ok" data-c="${now}">✔ 이 색</button></div>`;
+    function wireSq() {
+      const box = pop.querySelector('.tp-sq'); if (!box) return;
+      const sq = box.querySelector('.sq'), dot = box.querySelector('.sq-dot'), hue = box.querySelector('.sq-h'), hexIn = pop.querySelector('.sq-hex'), sw = pop.querySelector('.sq-sw'), ok = pop.querySelector('.sq-ok');
+      let [h, sa, v] = hex2hsv(box.dataset.hex);
+      const paint = (fromHex) => {
+        const hx = hsv2hex(h, sa, v);
+        sq.style.background = `linear-gradient(transparent, #000), linear-gradient(90deg, #fff, hsl(${h} 100% 50%))`;
+        dot.style.left = sa * 100 + '%'; dot.style.top = (1 - v) * 100 + '%'; dot.style.borderColor = v > .6 && sa < .4 ? '#333' : '#fff';
+        hue.value = Math.round(h); sw.style.background = hx; ok.dataset.c = hx; if (!fromHex) hexIn.value = hx;
+      };
+      const at = e => { const r = sq.getBoundingClientRect(); sa = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); v = 1 - Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)); paint(); };
+      sq.addEventListener('pointerdown', e => { e.preventDefault(); at(e); const mv = ev => at(ev), up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); }; addEventListener('pointermove', mv); addEventListener('pointerup', up); });
+      hue.oninput = () => { h = +hue.value; paint(); };
+      hexIn.oninput = () => { const t = hexIn.value.trim(); if (/^#?[0-9a-f]{6}$/i.test(t)) { [h, sa, v] = hex2hsv(t.startsWith('#') ? t : '#' + t); paint(true); } };
+      hexIn.onkeydown = e => { if (e.key === 'Enter') ok.click(); };
+      paint();
+    }
+    function colorHtml(title, base, now) {
       const hist = (store.json(K.hist, []) || []).slice(0, 12), pals = store.json(K.pals, []) || [];
-      return `<div class="tp-t">${title}</div><div class="lab-sw-list">${swRow(base)}</div>
+      return `<div class="tp-t">${title}</div>${sqHtml(now || CP.hex())}<div class="tp-s">🎀 기본</div><div class="lab-sw-list">${swRow(base)}</div>
         ${hist.length ? `<div class="tp-s">🕘 최근</div><div class="lab-sw-list">${swRow(hist)}</div>` : ''}
         ${pals.map(p => `<div class="tp-s">🎀 ${esc(p.name)}</div><div class="lab-sw-list">${swRow(p.colors)}</div>`).join('')}
         <div class="tp-row"><span class="lab-cur-sw" style="background:${CP.hex()}"></span><button class="btn mini white" data-c="${CP.hex()}">🎨 색 탭의 지금 색</button></div>`;
@@ -1025,11 +1131,13 @@ body[contenteditable]{outline:none}`;
         case 's': if (need()) { wrapSel({ 'text-decoration': 'line-through' }); done(); } break;
         case 'u': if (need()) { wrapSel({ 'text-decoration': 'underline', 'text-underline-offset': '2px' }); done(); } break;
         case 'color':
-          openPop(btn, colorHtml('글자색', INKS), e => { const c = e.target.closest('[data-c]'); if (!c) return; colorNow = c.dataset.c; store.set('lab.tbColor', colorNow); bars(); if (need()) { wrapSel({ color: colorNow }); CP.pushHist(colorNow); done(); } pop.hidden = true; });
+          openPop(btn, colorHtml('글자색', INKS, colorNow), e => { const c = e.target.closest('[data-c]'); if (!c) return; colorNow = c.dataset.c; store.set('lab.tbColor', colorNow); bars(); if (need()) { wrapSel({ color: colorNow }); CP.pushHist(colorNow); done(); } pop.hidden = true; });
           break;
         case 'mark':
-          openPop(btn, colorHtml('형광펜', MARKS) + `<div class="tp-row"><label class="lab-chk"><input type="checkbox" id="tpFull" ${store.get('lab.tbMarkFull') === '1' ? 'checked' : ''}> 글자 전체 칠하기 (끄면 아래 반만)</label></div>`, e => {
-            if (e.target.id === 'tpFull') { store.set('lab.tbMarkFull', e.target.checked ? '1' : '0'); return; }
+          const full = store.get('lab.tbMarkFull') === '1';
+          openPop(btn, `<div class="tp-mk"><button data-mk="0" class="${full ? '' : 'on'}"><span style="background:linear-gradient(transparent 55%, ${markNow} 55%)">아래 반만</span></button><button data-mk="1" class="${full ? 'on' : ''}"><span style="background:${markNow}">글자 전체</span></button></div>` + colorHtml('형광펜', MARKS, markNow), e => {
+            const mk = e.target.closest('[data-mk]');
+            if (mk) { store.set('lab.tbMarkFull', mk.dataset.mk); pop.querySelectorAll('[data-mk]').forEach(b => b.classList.toggle('on', b === mk)); return; }
             const c = e.target.closest('[data-c]'); if (!c) return; markNow = c.dataset.c; store.set('lab.tbMark', markNow); bars();
             if (need()) { wrapSel(store.get('lab.tbMarkFull') === '1' ? { 'background-color': markNow } : { background: `linear-gradient(transparent 55%, ${markNow} 55%)` }); done(); }
             pop.hidden = true;
@@ -1191,6 +1299,10 @@ body[contenteditable]{outline:none}`;
       x.name = r.name.trim(); x.tag = r.tag.trim(); x.mode = ['tile', 'stretch', 'cover', 'one'].includes(r.mode.trim()) ? r.mode.trim() : x.mode; save(); draw();
     }
     async function del(id) { if (!(await Modal.confirm('이 이미지를 갤러리에서 뺄까요?'))) return; list = list.filter(x => x.id !== id); save(); draw(); }
+    Bulk({ bar: $('gBulk'), grid: $('gal'), item: '.g-it', api: {
+      tags: () => [...new Set(list.map(x => x.tag).filter(Boolean).concat(extraTags))].sort((a, b) => a.localeCompare(b, 'ko')),
+      move: (ids, t) => { list.forEach(x => { if (ids.has(x.id)) x.tag = t; }); if (t && !extraTags.includes(t)) { extraTags.push(t); store.setJson('lab.imgTags', extraTags); } save(); draw(); },
+      del: ids => { list = list.filter(x => !ids.has(x.id)); save(); draw(); } } });
     return { add, draw, get, edit, del, newTag };
   })();
 
@@ -1260,8 +1372,14 @@ body[contenteditable]{outline:none}`;
     });
     const css = b => Object.entries(styles(b)).map(([k, v]) => `${k}:${v}`).join(';');
     function prev() { $('bdPrev').setAttribute('style', css(form())); }
+    let bdExtra = store.json('lab.bdTags', []) || [];
+    const bdTagList = () => [...new Set(list.map(x => x.tag).filter(Boolean).concat(bdExtra))].sort((a, b) => a.localeCompare(b, 'ko'));
     function draw() {
-      $('bdList').innerHTML = list.map(b => `<div class="bd-it"><div class="bd-th" data-use="${b.id}" style="${esc(css(b))}">${esc(b.name || '')}</div>
+      const tags = bdTagList(); if (ui.bdTag && !tags.includes(ui.bdTag)) ui.bdTag = '';
+      $('bdTags').innerHTML = [['', `전부 ${list.length}`], ...tags.map(t => [t, `📁 ${t} ${list.filter(x => x.tag === t).length}`])]
+        .map(([v, l]) => `<button class="lk-tag ${v === (ui.bdTag || '') ? 'on' : ''}" data-bt="${esc(v)}">${esc(l)}</button>`).join('') + `<button class="lk-tag add" data-bt-new>＋ 새 분류</button>`;
+      const shown = list.filter(x => !ui.bdTag || x.tag === ui.bdTag);
+      $('bdList').innerHTML = shown.map(b => `<div class="bd-it" data-id="${b.id}"><div class="bd-th" data-use="${b.id}" style="${esc(css(b))}">${esc(b.name || '')}</div>
         <div class="bd-ft"><span>${esc(b.name || '이름 없음')}</span><button data-load="${b.id}" title="위 칸으로 불러오기">✎</button><button data-copy="${b.id}" title="CSS 복사">📋</button><button data-del="${b.id}">✕</button></div></div>`).join('')
         || '<div class="lab-help" style="grid-column:1/-1">아직 없어요 · 위에서 만들고 💾 저장</div>';
       $('qkBd').innerHTML = list.map(b => `<div class="bd-it"><div class="bd-th" data-use="${b.id}" style="${esc(css(b))}">${esc(b.name || '')}</div></div>`).join('')
@@ -1277,7 +1395,7 @@ body[contenteditable]{outline:none}`;
     $('bdSave').onclick = async () => {
       const b = form(); if (!b.url) { toast('이미지 주소를 넣어 주세요'); return; }
       const r = await Modal.prompt('🧩 테두리 저장', [{ name: 'name', label: '이름', placeholder: '예: 회색 구름 프레임' }]); if (!r) return;
-      list.unshift({ id: Date.now().toString(36), name: r.name.trim(), ...b }); save(); draw(); toast('💾 저장했어요');
+      list.unshift({ id: Date.now().toString(36), name: r.name.trim(), tag: ui.bdTag || '', ...b }); save(); draw(); toast('💾 저장했어요');
     };
     $('bdFrom').onclick = () => {
       if (!sel) { toast('상자를 먼저 골라 주세요'); return; }
@@ -1308,6 +1426,17 @@ body[contenteditable]{outline:none}`;
       if (n) save();
       draw();
     }
+    $('bdTags').onclick = async e => {
+      if (e.target.closest('[data-bt-new]')) {
+        const r = await Modal.prompt('📁 새 분류', [{ name: 'tag', label: '분류 이름', placeholder: '예: 레이스 / 픽셀 / 창틀' }], { ok: '만들기 ♡' });
+        const t = r && r.tag.trim(); if (!t) return; if (!bdExtra.includes(t)) { bdExtra.push(t); store.setJson('lab.bdTags', bdExtra); } ui.bdTag = t; saveUi(); draw(); return;
+      }
+      const b = e.target.closest('[data-bt]'); if (!b) return; ui.bdTag = b.dataset.bt; saveUi(); draw();
+    };
+    Bulk({ bar: $('bdBulk'), grid: $('bdList'), item: '.bd-it', api: {
+      tags: bdTagList,
+      move: (ids, t) => { list.forEach(x => { if (ids.has(x.id)) x.tag = t; }); if (t && !bdExtra.includes(t)) { bdExtra.push(t); store.setJson('lab.bdTags', bdExtra); } save(); draw(); },
+      del: ids => { list = list.filter(x => !ids.has(x.id)); save(); draw(); } } });
     return { draw, prev, seed, use: id => apply(list.find(x => x.id === id)) };
   })();
 
@@ -1606,7 +1735,15 @@ body[contenteditable]{outline:none}`;
       R.css.forEach(r => r.list.forEach(([p, v]) => { if (p === 'font-family') grab('font-family:' + v); }));
       R.text.forEach(x => grab(x.b.innerHTML)); R.added.forEach(x => grab(x.b.outerHTML));
       const faces = [...fams].map(fm => FontLib.get(fm)).filter(fo => fo && !hasFace(od, fo.family)).map(fo => fo.css);
-      const css = (faces.length ? '/* 새로 쓴 폰트 */\n' + faces.join('\n') + '\n' : '') + (R.css.length ? write() : '');
+      // fonts/… 짧은 주소 → 원본 파일 자리에서 본 주소로 (예: kyonya/ 안이면 ../fonts/…)
+      const labDir = location.href.replace(/[?#].*$/, '').replace(/[^/]*$/, ''), baseDir = (ui.base || '').replace(/[^/]*$/, '');
+      const up = baseDir.startsWith(labDir) ? '../'.repeat(baseDir.slice(labDir.length).split('/').filter(Boolean).length) : '';
+      for (let i = 0; i < faces.length; i++) faces[i] = faces[i].replace(/url\("fonts\//g, `url("${up}fonts/`);
+      // 📄 실험실에서 고친 파일 규칙 (이미 파일에 똑같이 들어간 건 빼기)
+      const baseRule = (sel0, media) => { let hit = null; [...od.styleSheets].forEach(sh => { if (!sh.ownerNode || sh.ownerNode.tagName !== 'LINK') return; const walk = (rules, m) => { try { [...rules].forEach(r => { if (r.cssRules && r.media) walk(r.cssRules, r.media.mediaText); else if (r.selectorText === sel0 && m === media) hit = r; }); } catch (e) {} }; walk(sh.cssRules, ''); }); return hit; };
+      const ovr = Ovr.list(d).filter(x => { const br = baseRule(x.sel, x.media); if (!br) return true; dummy.style.cssText = x.body; return [...dummy.style].some(p => dummy.style.getPropertyValue(p) !== br.style.getPropertyValue(p) || dummy.style.getPropertyPriority(p) !== br.style.getPropertyPriority(p)); });
+      const ovrCss = ovr.length ? '/* 📄 실험실에서 고친 규칙 (원래 규칙은 그대로 두고 맨 아래에) */\n' + Ovr.text(ovr) + '\n' : '';
+      const css = (faces.length ? '/* 새로 쓴 폰트 */\n' + faces.join('\n') + '\n' : '') + ovrCss + (R.css.length ? write() : '');
       const srcHas = t => { const k = norm(t).replace(/\s/g, '').slice(0, 14); return !k || src.replace(/\s/g, '').includes(k) || src.replace(/\s/g, '').includes(esc(k)); };
       // 화면
       const sec = [];
@@ -1629,7 +1766,8 @@ body[contenteditable]{outline:none}`;
       f.remove();
       const html = sec.length ? `<p class="md-msg chg-top">원본 <b>${esc(ui.base ? decodeURIComponent(ui.base.split('/').pop()) : '처음 넣은 코드')}</b> 와 비교했어요 · 이미 파일에 옮긴 건 빼고 보여 줘요</p>` + sec.join('')
         : '<p class="md-msg">바뀐 게 없어요 ✨<br><small>이미 파일에 옮긴 것도 여기선 빠져요</small></p>';
-      Modal.open({ title: '✨ 바뀐 것만', html, buttons: [{ label: '닫기 ♡', value: true, cls: 'pink', primary: true }] });
+      const pr = Modal.open({ title: '✨ 바뀐 것만', html: html + '<p class="lab-help chg-reset">파일에 다 옮겼으면 <b>🧹 초기화</b> → 실험실 사본을 지금 파일 상태로 새로 시작해요 (↶ 로 되돌릴 수 있어요)</p>', buttons: [{ label: '🧹 초기화', value: 'reset', cls: 'white' }, { label: '닫기 ♡', value: true, cls: 'pink', primary: true }] });
+      pr.then(async v => { if (v === 'reset') reset(); });
       const ov = [...document.querySelectorAll('.md-overlay')].pop(), box = ov.querySelector('.md-box');
       box.classList.add('wide', 'chg-box');
       box.querySelectorAll('[data-cp]').forEach(btn => btn.onclick = async () => {
@@ -1638,6 +1776,14 @@ body[contenteditable]{outline:none}`;
         toast('📋 복사했어요');
       });
       box.querySelectorAll('.chg-code').forEach(t => t.onfocus = () => t.select());
+    }
+    async function reset() {
+      if (!(await Modal.confirm('실험실에서 고친 걸 전부 비우고<br>지금 파일 상태로 새로 시작할까요?<br><small>파일에 아직 안 옮긴 게 있으면 사라져요 · ↶ 로 되돌릴 수 있어요</small>'))) return;
+      let src = '';
+      try { if (ui.base) { const r = await fetch(ui.base, { cache: 'no-store' }); if (r.ok) src = (await r.text()).replace(/<!-- Code injected by live-server -->\s*<script[\s\S]*?<\/script>/i, ''); } } catch (e) {}
+      if (!src) src = store.get('lab.orig') || '';
+      if (!src) { toast('⚠️ 원본을 못 찾았어요'); return; }
+      store.set('lab.orig', src); setHtml(src); toast('🧹 새로 시작! 이제 바꾸는 것부터 ✨ 에 떠요');
     }
     $('bDiff').onclick = run;
     return { run };
@@ -1700,7 +1846,7 @@ body[contenteditable]{outline:none}`;
   FS.init();
   showTab(ui.tab); showQk(ui.qk); showDeco(ui.dt || 'border'); ST.draw(); drawQkWhere(); applyW();
   // ☁️ 보관함과 맞춘 뒤, 처음 한 번 기본 테두리·스티커 넣기
-  const LS = LabSync.create('lab.json', ['lab.imgs', 'lab.imgTags', 'lab.borders', 'lab.stickers', 'lab.stTags', 'lab.colorHist', 'lab.palettes', 'lab.workPal', 'lab.snips', 'lab.snaps'],
+  const LS = LabSync.create('lab.json', ['lab.imgs', 'lab.imgTags', 'lab.borders', 'lab.stickers', 'lab.stTags', 'lab.bdTags', 'lab.colorHist', 'lab.palettes', 'lab.workPal', 'lab.snips', 'lab.snaps'],
     { onPulled: () => { if (!sessionStorage.getItem('lab.pulled')) { sessionStorage.setItem('lab.pulled', '1'); location.reload(); } } });
   LS.sync($('syncSt')).finally(() => {
     if (store.get('lab.seed.v1') !== '1') { BD.seed(PRESET_BORDERS); ST.seed(PRESET_STICKERS); store.set('lab.seed.v1', '1'); }
