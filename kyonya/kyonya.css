@@ -6,7 +6,7 @@
 @font-face{font-family:Mona12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2) format("woff2")}
 @font-face{font-family:Umdot12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2) format("woff2")}
 @font-face{font-family:ThinMulmaru;src:url(https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2) format("woff2")}
-.text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:middle;margin:0 2px}
+.text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:-0.2em;margin:0 2px}
 
 /* =========================================================
    1. 색 · 크기 (여기만 바꾸면 전체가 바뀌어요)
@@ -597,3 +597,10 @@ h2{font-family:entergal !important}
 .box.sky.cal h3{font-family:entergal}
 .box.ft2 h3{font-family:entergal}
 .box.sky.poll h3{font-family:entergal}
+
+
+.home-only .main{background-image:url("https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/heart-tile%403x.png");background-size:34px;background-position:0px 0px;height:auto !important;position:relative}
+.intro{font-family:entergal;position:relative}
+#updList{font-family:entergal}
+#omk{display:none}
+#omkRes{display:block}
