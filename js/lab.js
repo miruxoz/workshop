@@ -28,6 +28,8 @@
   let isDoc = /<html[\s>]/i.test(cur);
   const undo = [], redo = [];
   let sel = null;          // 미리보기에서 고른 상자
+  const multi = new Set(); // Ctrl+클릭으로 같이 고른 상자들
+  const group = () => { const d = doc(); return [sel, ...multi].filter((n, i, a) => n && n.isConnected && n !== d?.body && a.indexOf(n) === i); };
   let lastRange = null;    // 미리보기에서 드래그한 글자 범위
   let caret = null;        // 마지막 커서 위치 (이모지 넣기용)
   let rep = null;          // 목록에서 고른 "바꿀 대상" { type: 'color'|'img'|'font', value }
@@ -37,6 +39,7 @@
   /* ---------------- 그리기 · 읽기 ---------------- */
   const LAB_CSS = `[data-lab-hov]{outline:1px dashed #5b9bd0 !important;outline-offset:2px !important}
 [data-lab-sel]{outline:2px solid #f689b6 !important;outline-offset:4px !important}
+[data-lab-multi]{outline:2px dashed #f689b6 !important;outline-offset:4px !important}
 body[contenteditable]{outline:none}`;
 
   function render(html) {
@@ -61,8 +64,8 @@ body[contenteditable]{outline:none}`;
     const d = doc(); if (!d || !d.body) return cur;
     const root = (isDoc ? d.documentElement : d.body).cloneNode(true);
     root.querySelectorAll('[data-lab]').forEach(n => n.remove());
-    [root, ...root.querySelectorAll('[data-lab-sel],[data-lab-hov],[contenteditable],[spellcheck]')].forEach(n => {
-      n.removeAttribute?.('data-lab-sel'); n.removeAttribute?.('data-lab-hov');
+    [root, ...root.querySelectorAll('[data-lab-sel],[data-lab-hov],[data-lab-multi],[contenteditable],[spellcheck]')].forEach(n => {
+      n.removeAttribute?.('data-lab-sel'); n.removeAttribute?.('data-lab-hov'); n.removeAttribute?.('data-lab-multi');
       if (n.tagName === 'BODY') { n.removeAttribute('contenteditable'); n.removeAttribute('spellcheck'); }
     });
     if (ui.base) {   // 🔗 주소로 연 페이지: 스크립트가 잠깐 띄운 것들은 코드에 안 남기기
@@ -123,6 +126,7 @@ body[contenteditable]{outline:none}`;
       if (ui.mode === 'view') return;
       if (ui.mode === 'pick') { e.preventDefault(); e.stopPropagation(); }
       const t = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+      if (ui.mode === 'pick' && (e.ctrlKey || e.metaKey)) { toggleMulti(t === d.documentElement ? d.body : t); return; }
       if (ui.mode === 'pick' || t !== d.body) select(t === d.documentElement ? d.body : t);
     }, true);
     d.addEventListener('input', commitSoon);
@@ -202,18 +206,31 @@ body[contenteditable]{outline:none}`;
     if (cls.length) s += '.' + cls.join('.');
     return s;
   };
-  function select(el) {
+  function select(el, keepMulti) {
     const d = doc(); if (!d) return;
     d.querySelectorAll('[data-lab-sel]').forEach(n => n.removeAttribute('data-lab-sel'));
+    if (!keepMulti) multi.clear();
+    d.querySelectorAll('[data-lab-multi]').forEach(n => { if (!multi.has(n)) n.removeAttribute('data-lab-multi'); });
     sel = el && el.isConnected ? el : null;
+    if (sel) { multi.delete(sel); sel.removeAttribute('data-lab-multi'); }
     if (sel && sel !== d.body) sel.setAttribute('data-lab-sel', '');
     showBox();
+  }
+  // Ctrl(⌘)+클릭: 여러 상자 같이 고르기 · 다시 Ctrl+클릭하면 빠져요
+  function toggleMulti(el) {
+    const d = doc(); if (!el || el === d.body) return;
+    if (el === sel) { const next = [...multi].pop(); if (next) { multi.delete(next); next.removeAttribute('data-lab-multi'); } select(next || null, true); return; }
+    if (multi.has(el)) { multi.delete(el); el.removeAttribute('data-lab-multi'); showBox(); return; }
+    if (sel && sel !== d.body) { multi.add(sel); sel.setAttribute('data-lab-multi', ''); }
+    select(el, true);
+    toast(`☑ ${group().length}개 같이 골랐어요 · 십자키나 끌어서 한꺼번에 옮겨요`);
   }
   function showBox() {
     const has = !!sel;
     Pos.show();
     $('boxEmpty').hidden = has; $('boxBody').hidden = !has;
-    $('target').innerHTML = has ? `👆 고른 상자: <b>${esc(label(sel))}</b>` : '👆 미리보기에서 상자를 눌러 고르세요';
+    const gn = group().length;
+    $('target').innerHTML = has ? `👆 고른 상자: <b>${esc(label(sel))}</b>${gn > 1 ? ` <span class="lab-multi-n">외 ${gn - 1}개 같이 (Ctrl+클릭으로 넣고 빼기)</span>` : ''}` : '👆 미리보기에서 상자를 눌러 고르세요 · Ctrl+클릭 = 여러 개';
     goals();
     if (ui.tab === 'font') renderFonts();
     if (!has) return;
@@ -243,30 +260,58 @@ body[contenteditable]{outline:none}`;
     $('ndNow').textContent = fl ? `🎈 띄움 · 왼쪽 ${sel.style.left || 0} · 위 ${sel.style.top || 0}`
       : (() => { const [x, y] = trXY(sel); return x || y ? `가로 ${x}px · 세로 ${y}px` : '제자리'; })();
   }
-  function nudge(dx, dy) {
-    const d = doc(); if (!sel || sel === d.body) { toast('옮길 상자를 골라 주세요'); return; }
-    const w = frame.contentWindow;
-    if (sel.style.position === 'absolute') {
-      const par = sel.parentElement || d.body;
-      const lv = sel.style.left || '0px', tv = sel.style.top || '0px';
-      if (/%$/.test(lv)) sel.style.setProperty('left', +(parseFloat(lv) + (par.clientWidth ? dx / par.clientWidth * 100 : 0)).toFixed(2) + '%');
-      else sel.style.setProperty('left', (parseFloat(lv) || 0) + dx + 'px');
-      if (/%$/.test(tv)) sel.style.setProperty('top', +(parseFloat(tv) + (par.clientHeight ? dy / par.clientHeight * 100 : 0)).toFixed(2) + '%');
-      else sel.style.setProperty('top', (parseFloat(tv) || 0) + dy + 'px');
+  function nudgeEl(el, dx, dy) {
+    const d = doc();
+    if (el.style.position === 'absolute') {
+      const par = el.parentElement || d.body;
+      const lv = el.style.left || '0px', tv = el.style.top || '0px';
+      if (/%$/.test(lv)) el.style.setProperty('left', +(parseFloat(lv) + (par.clientWidth ? dx / par.clientWidth * 100 : 0)).toFixed(2) + '%');
+      else el.style.setProperty('left', (parseFloat(lv) || 0) + dx + 'px');
+      if (/%$/.test(tv)) el.style.setProperty('top', +(parseFloat(tv) + (par.clientHeight ? dy / par.clientHeight * 100 : 0)).toFixed(2) + '%');
+      else el.style.setProperty('top', (parseFloat(tv) || 0) + dy + 'px');
     } else {
       // 원래 자리는 그대로 두고 눈에 보이는 위치만 옮겨요 (translate)
-      const [ox, oy] = trXY(sel), nx = ox + dx, ny = oy + dy;
-      if (nx || ny) sel.style.setProperty('translate', `${nx}px ${ny}px`); else sel.style.removeProperty('translate');
+      const [ox, oy] = trXY(el), nx = ox + dx, ny = oy + dy;
+      if (nx || ny) el.style.setProperty('translate', `${nx}px ${ny}px`); else el.style.removeProperty('translate');
     }
+  }
+  function nudge(dx, dy) {
+    const d = doc(); if (!sel || sel === d.body) { toast('옮길 상자를 골라 주세요'); return; }
+    group().forEach(el => nudgeEl(el, dx, dy));
     fitFrame(); commitSoon(); drawNd(); Pos.show();
     $('bxStyle').value = (sel.getAttribute('style') || '').replace(/;\s*/g, ';\n').trim();
   }
   function nudgeReset() {
     if (!sel) return;
-    if (sel.style.position === 'absolute') { toast('🎈 띄운 상자는 📐 위치에서 "띄우기"를 꺼 주세요'); return; }
-    sel.style.removeProperty('translate');
+    const G = group().filter(el => el.style.position !== 'absolute');
+    if (!G.length) { toast('🎈 띄운 상자는 📐 위치에서 "띄우기"를 꺼 주세요'); return; }
+    G.forEach(el => el.style.removeProperty('translate'));
     commit(); fitFrame(); showBox(); toast('● 제자리로');
   }
+  // ⊕ 감싸는 상자의 정중앙으로
+  function centerEl(el) {
+    const d = doc(), w = frame.contentWindow, par = el.parentElement || d.body;
+    el.style.removeProperty('translate');
+    const real = [...par.children].filter(n => !n.hasAttribute('data-lab') && !/^(STYLE|SCRIPT|BR)$/.test(n.tagName) && w.getComputedStyle(n).position !== 'absolute');
+    if (el.style.position !== 'absolute' && real.length === 1 && real[0] === el && par !== d.body) {
+      // 혼자 들어 있으면: 감싸는 상자를 가운데 정렬로 (자리 차지는 그대로)
+      par.style.setProperty('display', 'flex'); par.style.setProperty('align-items', 'center'); par.style.setProperty('justify-content', 'center');
+      ['margin-left', 'margin-right', 'margin-top', 'margin-bottom'].forEach(p => el.style.removeProperty(p));
+      return 'flex';
+    }
+    // 다른 것과 같이 있으면: 띄워서 정중앙에
+    if (w.getComputedStyle(par).position === 'static') par.style.setProperty('position', 'relative');
+    el.style.setProperty('position', 'absolute'); el.style.setProperty('margin', '0');
+    el.style.setProperty('left', '50%'); el.style.setProperty('top', '50%'); el.style.setProperty('transform', 'translate(-50%, -50%)');
+    if (!el.style.zIndex) el.style.setProperty('z-index', '5');
+    return 'float';
+  }
+  $('ndCenter').onclick = () => {
+    if (!sel || sel === doc().body) { toast('가운데로 보낼 상자를 골라 주세요'); return; }
+    const kinds = group().map(centerEl);
+    commit(); fitFrame(); showBox();
+    toast(kinds.includes('float') ? '⊕ 정중앙으로 · 띄워서 맞췄어요 (마음에 안 들면 ↶)' : '⊕ 정중앙으로 · 감싸는 상자를 가운데 정렬했어요');
+  };
   // 누르고 있으면 계속 움직여요
   let ndTimer = null;
   const ndStop = () => { clearTimeout(ndTimer); clearInterval(ndTimer); ndTimer = null; };
@@ -676,6 +721,7 @@ body[contenteditable]{outline:none}`;
     // 끌어서 옮기기
     let drag = null, dragged = false;
     function down(e) {
+      if (ui.mode === 'pick' && e.button === 0 && !e.ctrlKey && !e.metaKey && group().length > 1 && group().some(n => n.contains(e.target))) return downGroup(e);
       if (ui.mode !== 'pick' || !isFloat(sel) || !sel.contains(e.target) || e.button !== 0) return;
       e.preventDefault();
       const cs = frame.contentWindow.getComputedStyle(sel), par = parentOf(sel);
@@ -690,6 +736,31 @@ body[contenteditable]{outline:none}`;
         show();
       };
       const up = () => { d.removeEventListener('pointermove', move); d.removeEventListener('pointerup', up); if (drag.moved) { dragged = true; commit(); fitFrame(); } drag = null; };
+      d.addEventListener('pointermove', move); d.addEventListener('pointerup', up);
+    }
+    // 여러 개 같이 끌기 (띄운 건 left/top, 아닌 건 translate)
+    function downGroup(e) {
+      e.preventDefault();
+      const d = doc(), w = frame.contentWindow, x0 = e.clientX, y0 = e.clientY;
+      const items = group().map(el => el.style.position === 'absolute'
+        ? { el, f: true, l: parseFloat(w.getComputedStyle(el).left) || 0, t: parseFloat(w.getComputedStyle(el).top) || 0, pct: /%$/.test(el.style.left || ''), pctT: /%$/.test(el.style.top || ''), W: parentOf(el).clientWidth, H: parentOf(el).clientHeight }
+        : { el, f: false, xy: trXY(el) });
+      let moved = false;
+      const move = ev => {
+        const dx = ev.clientX - x0, dy = ev.clientY - y0;
+        if (!moved && Math.hypot(dx, dy) < 3) return; moved = true;
+        items.forEach(it => {
+          if (it.f) {
+            const L = it.l + dx, T = it.t + dy;
+            it.el.style.setProperty('left', it.pct && it.W ? (L / it.W * 100).toFixed(2) + '%' : Math.round(L) + 'px');
+            it.el.style.setProperty('top', it.pctT && it.H ? (T / it.H * 100).toFixed(2) + '%' : Math.round(T) + 'px');
+          } else {
+            const nx = Math.round(it.xy[0] + dx), ny = Math.round(it.xy[1] + dy);
+            if (nx || ny) it.el.style.setProperty('translate', `${nx}px ${ny}px`); else it.el.style.removeProperty('translate');
+          }
+        });
+      };
+      const up = () => { d.removeEventListener('pointermove', move); d.removeEventListener('pointerup', up); if (moved) { dragged = true; commit(); fitFrame(); showBox(); } };
       d.addEventListener('pointermove', move); d.addEventListener('pointerup', up);
     }
     const wasDrag = () => { const v = dragged; dragged = false; return v; };

@@ -528,3 +528,4 @@
 .tp-add .tx { font-size: 12px; }
 .tp-add select.tx { flex: 1; min-width: 0; }
 .tp-add #tpEmoN { width: 90px; }
+.lab-multi-n { font-size: 11px; color: var(--pink); }

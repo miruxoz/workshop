@@ -160,8 +160,8 @@
   /* =========================== 홈 전용 =========================== */
   if(isHome){
     /* 갱신내역·알림 */
-    if($('updList')) $('updList').innerHTML=(KY.UPDATES||[]).map(function(u){
-      return '<div>'+(u.new?'<span class="n">NEW</span>':'')+'<time>'+u.d+'</time>'+u.t+'</div>'; }).join('');
+        if($('updList')) $('updList').innerHTML=(KY.UPDATES||[]).map(function(u){
+      return '<div><time>'+u.d+'</time>'+u.t+(u.new?'<span class="n">NEW</span>':'')+'</div>'; }).join('');
     if($('ntcD') && KY.NOTICE){ $('ntcD').textContent=KY.NOTICE.d; $('ntcT').textContent=KY.NOTICE.t; }
 
     /* ---- 글 불러오기 (티스토리 RSS) ---- */
