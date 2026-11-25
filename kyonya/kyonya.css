@@ -6,6 +6,8 @@
 @font-face{font-family:Mona12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2) format("woff2")}
 @font-face{font-family:Umdot12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2) format("woff2")}
 @font-face{font-family:ThinMulmaru;src:url(https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2) format("woff2")}
+@font-face{font-family:Mamemoji;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/Mamemoji.woff) format("woff");font-display:swap}
+@font-face{font-family:EmojiFont;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/EmojiFont.woff) format("woff");font-display:block}
 @font-face{font-family:entergal;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf) format("truetype");font-display:swap}
 .text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:-0.2em;margin:0 2px}
 
@@ -208,21 +210,37 @@ input.f:focus{border-color:var(--hot)}
 /* =========================================================
    8. 2단 위젯
    ========================================================= */
-/* 메인: 왼쪽 칸(.m-hi = 말풍선·Welcome.txt·인사말) | 오른쪽 칸(.upd = 갱신내역) */
+/* 메인: 왼쪽 칸(.m-hi = 고양이+말풍선 · Welcome.txt · 인사말) | 오른쪽 칸(.m-log = UPDATE LOG + 갱신내역) */
 .main{position:relative;margin-bottom:14px;padding:12px 14px;border:1px solid var(--choco);font-family:entergal;
   background:url(https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/heart-tile%403x.png) 0 0/34px}
 .main-2{display:grid;grid-template-columns:1.45fr 1fr;gap:0 16px;align-items:start}
 .main h2{margin:0 0 8px;font:18px Mona12;color:var(--hot)}
+/* ◀ 왼쪽 칸 */
+.m-hi{position:relative}
+.ky-duo{display:flex;align-items:center;gap:4px}
+.ky-duo img{flex:none;display:block}
+.ky-bub{position:relative;display:inline-block;max-width:240px;margin-left:14px;padding:10px 14px;background:#fff;border:1px solid #a7a7a7;border-radius:16px;font:11px/1.65 Mona12,ThinMulmaru,sans-serif;color:#000;text-align:left;word-break:keep-all}
+.ky-bub:before,.ky-bub:after{content:"";position:absolute;top:50%;border-style:solid}
+.ky-bub:before{left:-13px;margin-top:-4px;border-width:0 13px 9px 0;border-color:transparent #a7a7a7 transparent transparent}
+.ky-bub:after{left:-11px;margin-top:-3px;border-width:0 12px 7px 0;border-color:transparent #fff transparent transparent}
+.efont{font-family:EmojiFont;font-size:14px}      /* 영문 한 글자 = 그림 이모지 */
 .m-wel{margin:2px 0 6px}
-.main .intro{position:relative;text-align:justify;word-break:break-word;overflow-wrap:anywhere}
-.m-log{padding-left:14px}
-.upd{height:120px;overflow-y:auto;font-size:12px}
+.main .intro{position:relative;line-height:1.6;text-align:justify;word-break:break-word;overflow-wrap:anywhere;
+  text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff}
+/* ▶ 오른쪽 칸 */
+.m-log{position:relative;display:flex;align-items:center;justify-content:center;width:240px;height:230px;padding:12px 0 0;translate:10px;
+  background:url(https://64.media.tumblr.com/68448ecfe187918a3cd0a715bed79096/tumblr_inline_n27381gG7a1svwp6w.png) 0 0/34px;
+  border:7px solid transparent;border-image:url("https://raw.githubusercontent.com/okayletsgo555/img/main/%EA%B7%B8%EB%A0%88%EC%9D%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png") 8 / 7px / 0 round}
+.log-ttl{position:absolute;left:24px;top:0;z-index:60;translate:-9px 2px;font:22px/1 Mamemoji,sans-serif;letter-spacing:2px;color:#222;
+  text-shadow:2px 0 0 #fff,-2px 0 0 #fff,0 2px 0 #fff,0 -2px 0 #fff,2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff}
+.upd{position:relative;width:220px;height:210px;margin-top:-15px;padding:15px 0 0 6px;overflow-y:auto;font-size:12px;
+  border:18px solid transparent;border-image:url(https://i.ibb.co/B2V1n8Nh/tumblr-4b6c9c0de67b030673c1e73b3bb9355b-d5e71ae6-1280-3.png) 30 fill / 18px / 0 round}
 .upd::-webkit-scrollbar{width:6px}.upd::-webkit-scrollbar-thumb{background:var(--cocoa)}
 .upd div{padding:1px 0}
 .upd time{font:10px Mona12;color:#888;margin-right:6px}
-.upd .n{font:10px Mona12;color:#fff;background:#f3b9d8;padding:0 3px;margin-right:4px;animation:newbl 1.2s steps(1) infinite}
+.upd .n{font:10px Mona12;color:#fff;background:#f3b9d8;padding:0 3px;margin-left:4px;animation:newbl 1.2s steps(1) infinite}
 @keyframes newbl{50%{opacity:0}}
-@media(max-width:780px){.main-2{grid-template-columns:1fr}.upd{border-left:0;padding-left:0;margin-top:10px}}
+@media(max-width:780px){.main-2{grid-template-columns:1fr}.m-log{margin:10px auto 0;translate:none}}
 
 /* 한마디 + 알림 나란히 */
 .duo{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px}
@@ -577,14 +595,3 @@ h2{font-family:entergal!important}
 textarea{font:12px entergal!important}
 #tickTx,#gbName,#updList,
 .smenu,.hot,.news .in,.mb,.ntc .in,.npv .in,.gb,.gb h3,.cal h3,.ft2 h3,.poll,.poll h3{font-family:entergal}
-
-.m-hi{position:relative}
-.intro{line-height:1.6}
-.m-log{position:relative;padding-left:0px;display:flex;align-items:center;justify-content:center;background-image:url("https://64.media.tumblr.com/68448ecfe187918a3cd0a715bed79096/tumblr_inline_n27381gG7a1svwp6w.png");background-size:34px;background-position:0px 0px;height:220px;border-style:solid;border-width:7px;border-color:transparent;border-image:url("https://raw.githubusercontent.com/okayletsgo555/img/main/%EA%B7%B8%EB%A0%88%EC%9D%B4%20%ED%94%84%EB%A0%88%EC%9E%84.png") 8 / 7px / 0px round;width:240px;translate:10px}
-#updList{border-style:solid;border-width:18px;border-color:transparent;border-image:url("https://i.ibb.co/B2V1n8Nh/tumblr-4b6c9c0de67b030673c1e73b3bb9355b-d5e71ae6-1280-3.png") 30 fill / 18px / 0px round;position:relative;height:200px;width:220px;padding-left:6px;padding-top:15px;background-size:34px;background-position:0px 0px}
-
-.m-log{height:230px}
-#updList{height:210px;margin-top:-15px}
-.m-log img:nth-child(4){left:21px !important;top:14px !important}
-.m-log img:nth-child(5){top:189px !important}
-img:nth-child(6){left:181px !important;top:167px !important}
