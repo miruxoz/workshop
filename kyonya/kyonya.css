@@ -606,3 +606,19 @@ textarea{font:12px entergal!important}
 .smenu,.hot,.news .in,.mb,.ntc .in,.npv .in,.gb,.gb h3,.cal h3,.ft2 h3,.poll,.poll h3{font-family:entergal}
 
 .page{background-image:url("https://64.media.tumblr.com/5584085d0480189edf85b86524223c9e/tumblr_inline_ml9b238TTN1qz4rgp.gif");background-size:76px;background-position:0px 0px}
+
+/* Navigation */
+.nav{margin-bottom:14px}
+.nav-ttl{margin:0 0 6px 2px;font:20px/1 Mamemoji,Mona12;letter-spacing:2px;color:#222;
+  text-shadow:2px 0 0 #fff,-2px 0 0 #fff,0 2px 0 #fff,0 -2px 0 #fff,2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff}
+.nav ul{margin:0;padding:0;list-style:none}
+.nav li{border-bottom:1px solid #b9dcf3}
+.nav li a{display:flex;align-items:center;padding:4px 2px;font:12px entergal,Mona12;color:#000;text-decoration:none;transition:padding .15s,color .15s}
+.nav li a .t{text-decoration:underline;text-underline-offset:2px}
+.nav li a:hover{padding-left:8px;color:#3f9ad6}
+.nav .text-emoji{margin:0 4px 0 0}
+.nav li.lock a{color:#aaa}
+.nav li.lock.open a{color:#000}
+.nav .n,.nav .h{font:10px Mona12;color:#fff;padding:0 3px;margin-left:4px;animation:newbl 1.2s steps(1) infinite}
+.nav .n{background:#f3b9d8}
+.nav .h{background:#9fd0f2}

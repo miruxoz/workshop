@@ -65,7 +65,7 @@
     drawMail(); $('mRead').innerHTML='편지를 눌러서 읽어 보세요 ✉';
     $('chatLog').innerHTML=''; chatOpened=false;
     $('lgForm').hidden=true; $('lgCard').hidden=false; $('loginBox').classList.add('on');
-    var sm=$('secretMenu'); if(sm){ sm.classList.add('open'); sm.firstElementChild.innerHTML='🔓 회원 전용 게시판'; }
+        var sm=$('secretMenu'); if(sm){ sm.classList.add('open'); sm.querySelector('.t').innerHTML = id.toLowerCase()==='sei' ? '세이 전용 게시판' : '회원전용게시판'; }
     var gn=$('gbName'); if(gn) gn.value=u.name.replace(/<[^>]*>/g,'');
     var k=id.toLowerCase(); if(KY.MICRO_SET && (k==='kyohei'||k==='sei')) KY.MICRO_SET(k);
     return u.welcome;
@@ -74,6 +74,7 @@
     var id=$('lgId').value.trim(), pw=$('lgPw').value;
     if(!id){ pop('로그인','🙀','아이디를 입력해 주세요!'); return; }
     if(!pw){ pop('로그인','🙀','비밀번호를 입력해 주세요!'); return; }
+    if(id.toLowerCase()==='sei' && pw!==KY.SEI_PW){ $('lgPw').value=''; pop('로그인','🙀','비밀번호가 틀렸어요!'); return; }
     $('lgPw').value='';   // 비번은 바로 지움 — 어디에도 저장·전송 안 함
     pop('로그인','⏳','<span class="dots">로그인 중</span>',false);
     setTimeout(function(){ var msg=setUser(id); store.set('ky_login',id); if(typeof drawOnline==='function') drawOnline(); pop('로그인 성공','🎉',msg); },1200);
@@ -81,7 +82,7 @@
   on('lgPw','keydown',function(e){ if(e.key==='Enter') $('lgBtn').click(); });
   on('lgOut','click',function(e){ e.preventDefault(); me=null; store.set('ky_login','');
     $('lgForm').hidden=false; $('lgCard').hidden=true; $('loginBox').classList.remove('on');
-    var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.firstElementChild.innerHTML='🔒 회원 전용'; }
+    var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.firstElementChild.innerHTML = id.toLowerCase()==='sei' ? '🔐 세이 전용 게시판' : '🔓 회원 전용 게시판'; sm.firstElementChild.href = id.toLowerCase()==='sei' ? '세이게시판주소' : '회원게시판주소'; }
     document.querySelectorAll('#wMail,#wChat').forEach(function(w){w.classList.remove('show')});
     var gn=$('gbName'); if(gn) gn.value=''; if(KY.MICRO_SET) KY.MICRO_SET('all'); resetOmk();
     if(typeof drawOnline==='function') drawOnline(); pop('로그아웃','👋','또 놀러 오세요!'); });
