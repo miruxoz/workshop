@@ -22,7 +22,7 @@
   /* ---------- 팝업 (뒤 화면 안 덮음) ---------- */
   var bg=$('popBg'), ok=$('popOk');
   // design: 'dA'(기본·회색 땡땡이) / 'd14 st'(초코+초콜릿바+줄무늬) / 'd2'(하늘 초코칩)
-  function pop(t,i,m,btn,design){ $('popT').textContent=t; $('popI').textContent=i; $('popM').innerHTML=m;
+  function pop(t,i,m,btn,design){ $('popT').innerHTML=t; $('popI').innerHTML=i; $('popM').innerHTML=m;
     $('popW').className='kw pop '+(design||'dA');
     ok.parentNode.style.display=btn===false?'none':''; bg.classList.add('show'); }
   function close(){ bg.classList.remove('show'); }
@@ -58,14 +58,14 @@
     var u=USERS[id.toLowerCase()];
     if(!u) u={name:esc(id),av:'🐣',grade:'🌱 새싹회원',pt:10,welcome:'<b>'+esc(id)+'</b>님 환영합니다!<br>출석 포인트 10P 지급 ♡',blog:'#soon',chatWith:'kyohei',mails:(USERS.guest||{}).mails||[]};
     me=u;
-    $('cName').innerHTML=u.name; $('cAv').textContent=u.av; $('cGrade').textContent=u.grade; $('cPt').textContent=u.pt;
+    $('cName').innerHTML=u.name; $('cAv').innerHTML=u.av; $('cGrade').innerHTML=u.grade; $('cPt').innerHTML=u.pt;
     $('myBlog').href=u.blog;
     mails=u.mails.concat(KY.SPAM||[]).map(function(m){ var c={}; for(var k in m)c[k]=m[k]; c.unread=true; return c; });
     var read=(store.get('ky_read_'+id)||'').split(','); mails.forEach(function(m,i){ if(read.indexOf(String(i))>-1) m.unread=false; });
     drawMail(); $('mRead').innerHTML='편지를 눌러서 읽어 보세요 ✉';
     $('chatLog').innerHTML=''; chatOpened=false;
     $('lgForm').hidden=true; $('lgCard').hidden=false; $('loginBox').classList.add('on');
-    var sm=$('secretMenu'); if(sm){ sm.classList.add('open'); sm.firstElementChild.textContent='🔓 회원 전용 게시판'; }
+    var sm=$('secretMenu'); if(sm){ sm.classList.add('open'); sm.firstElementChild.innerHTML='🔓 회원 전용 게시판'; }
     var gn=$('gbName'); if(gn) gn.value=u.name.replace(/<[^>]*>/g,'');
     var k=id.toLowerCase(); if(KY.MICRO_SET && (k==='kyohei'||k==='sei')) KY.MICRO_SET(k);
     return u.welcome;
@@ -81,7 +81,7 @@
   on('lgPw','keydown',function(e){ if(e.key==='Enter') $('lgBtn').click(); });
   on('lgOut','click',function(e){ e.preventDefault(); me=null; store.set('ky_login','');
     $('lgForm').hidden=false; $('lgCard').hidden=true; $('loginBox').classList.remove('on');
-    var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.firstElementChild.textContent='🔒 회원 전용'; }
+    var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.firstElementChild.innerHTML='🔒 회원 전용'; }
     document.querySelectorAll('#wMail,#wChat').forEach(function(w){w.classList.remove('show')});
     var gn=$('gbName'); if(gn) gn.value=''; if(KY.MICRO_SET) KY.MICRO_SET('all'); resetOmk();
     if(typeof drawOnline==='function') drawOnline(); pop('로그아웃','👋','또 놀러 오세요!'); });
@@ -94,7 +94,7 @@
     $('mList').innerHTML=mails.map(function(m,i){
       return '<li data-i="'+i+'" class="'+(m.unread?'unread':'')+'"><b>'+(m.unread?'● ':'')+m.from+'</b><span>'+m.sub+'</span><time>'+m.date+'</time></li>'; }).join('');
     var n=mails.filter(function(m){return m.unread}).length;
-    $('mailN').textContent=n; $('mailN').style.display=n?'':'none';
+    $('mailN').innerHTML=n; $('mailN').style.display=n?'':'none';
   }
   on('mList','click',function(e){ var li=e.target.closest('li'); if(!li) return;
     var m=mails[li.dataset.i]; m.unread=false;
@@ -109,14 +109,14 @@
     var n=new Date(), tm=n.getHours()+':'+('0'+n.getMinutes()).slice(-2);
     d.innerHTML=(mine?'':'<div class="ca">'+who().av+'</div>')+'<p>'+t+'</p><small>'+tm+'</small>';
     $('chatLog').appendChild(d); $('chatLog').scrollTop=1e5; }
-  on('openChat','click',function(e){ e.preventDefault(); $('chatT').textContent='💬 쿄냐톡 · '+who().name; openWin($('wChat'));
+  on('openChat','click',function(e){ e.preventDefault(); $('chatT').innerHTML='💬 쿄냐톡 · '+who().name; openWin($('wChat'));
     if(!chatOpened){ chatOpened=true; say(false,who().hello); } $('chatIn').focus(); });
   function send(){ var t=$('chatIn').value.trim(); if(!t) return; $('chatIn').value='';
     say(true,esc(t)); var c=who(), rep=null;
     c.re.forEach(function(r){ if(!rep && r[0].test(t)) rep=r[1]; });
     if(!rep) rep=c.def[Math.floor(Math.random()*c.def.length)];
-    $('typing').textContent=c.name+' 님이 입력 중…';
-    setTimeout(function(){ $('typing').textContent=''; say(false,rep); }, 900+Math.random()*900); }
+    $('typing').innerHTML=c.name+' 님이 입력 중…';
+    setTimeout(function(){ $('typing').innerHTML=''; say(false,rep); }, 900+Math.random()*900); }
   on('chatSend','click',send);
   on('chatIn','keydown',function(e){ if(e.key==='Enter' && !e.isComposing) send(); });
   on('myBlog','click',function(e){ if(this.getAttribute('href')==='#soon') return; });
@@ -136,20 +136,20 @@
     c.innerHTML=('0'+d.getHours()).slice(-2)+'<i>:</i>'+('0'+d.getMinutes()).slice(-2); }
   clk(); setInterval(clk,10000);
   if($('dday') && KY.DDAY_START){ var p=KY.DDAY_START.split('-'), st0=new Date(+p[0],+p[1]-1,+p[2]), t0=new Date(); t0.setHours(0,0,0,0);
-    $('dday').textContent='D+'+(Math.round((t0-st0)/864e5)+1); }
+    $('dday').innerHTML='D+'+(Math.round((t0-st0)/864e5)+1); }
   function drawOnline(){ var L=(KY.ONLINE||[]).slice(), me2=store.get('ky_login');
     if(me2){ var u=USERS[me2.toLowerCase()]; L.unshift([u?u.av:'🐣',esc(me2),'나']); } else L.push(['👀','손님','나']);
     var seen={}; L=L.filter(function(x){ var k=String(x[1]).toLowerCase(); if(seen[k]) return false; seen[k]=1; return true; });
-    if($('onN')) $('onN').textContent=L.length;
+    if($('onN')) $('onN').innerHTML=L.length;
     if($('onList')) $('onList').innerHTML=L.map(function(x){return '<div>'+x[0]+' '+x[1]+' <em>'+x[2]+'</em></div>'}).join(''); }
   drawOnline();
   on('onBtn','click',function(e){ e.stopPropagation(); $('onList').classList.toggle('show'); });
   /* =========================== 흐르는 띠·인기 검색어·패밀리 =========================== */
-  if($('tickTx') && KY.TICKER) $('tickTx').textContent=KY.TICKER;
+  if($('tickTx') && KY.TICKER) $('tickTx').innerHTML=KY.TICKER;
   if($('hotList') && KY.HOT) $('hotList').innerHTML=KY.HOT.map(function(h,i){
     var v=h[1]==='NEW'?'<em class="n">NEW</em>':'<em>'+h[1]+'</em>';
     return '<li><b>'+(i+1)+'</b><a href="/search/'+encodeURIComponent(h[0])+'">'+esc(h[0])+'</a>'+v+'</li>'; }).join('');
-  if($('famSel') && KY.FAMILY) KY.FAMILY.forEach(function(f){ var o=document.createElement('option'); o.value=f[1]; o.textContent=f[0]; $('famSel').appendChild(o); });
+  if($('famSel') && KY.FAMILY) KY.FAMILY.forEach(function(f){ var o=document.createElement('option'); o.value=f[1]; o.innerHTML=f[0]; $('famSel').appendChild(o); });
   on('famGo','click',function(){ var v=$('famSel').value; if(!v){ pop('패밀리 사이트','🔗','갈 곳을 골라 주세요!'); return; } window.open(v,'_blank'); });
 
   /* 카운터: 숫자를 픽셀 칸으로 */
@@ -162,7 +162,7 @@
     /* 갱신내역·알림 */
         if($('updList')) $('updList').innerHTML=(KY.UPDATES||[]).map(function(u){
       return '<div><time>'+u.d+'</time>'+u.t+(u.new?'<span class="n">NEW</span>':'')+'</div>'; }).join('');
-    if($('ntcD') && KY.NOTICE){ $('ntcD').textContent=KY.NOTICE.d; $('ntcT').textContent=KY.NOTICE.t; }
+    if($('ntcD') && KY.NOTICE){ $('ntcD').innerHTML=KY.NOTICE.d; $('ntcT').innerHTML=KY.NOTICE.t; }
 
     /* ---- 글 불러오기 (티스토리 RSS) ---- */
     function ago(ms){ var m=Math.floor(ms/60000); if(m<60) return Math.max(m,1)+'분 전'; var h=Math.floor(m/60); if(h<24) return h+'시간 전';
@@ -227,7 +227,7 @@
     var cm=today.getMonth();
     function drawCal(){
       var first=new Date(2014,cm,1).getDay(), days=new Date(2014,cm+1,0).getDate(), h='<tr>', EV=KY.CAL_EVENTS||{};
-      $('calT').textContent='2014. '+(cm+1);
+      $('calT').innerHTML='2014. '+(cm+1);
       for(var i=0;i<first;i++) h+='<td></td>';
       for(var d=1;d<=days;d++){ var key=(cm+1)+'-'+d, cls=[];
         if(cm===today.getMonth()&&d===today.getDate()) cls.push('today'); if(EV[key]) cls.push('ev');
@@ -242,7 +242,7 @@
     var VOTE={ get:function(cb){ var mine=store.get('ky_vote'); var c=P.opts.map(function(o){return o[1]}); if(mine!==null&&mine!=='') c[+mine]++; cb(c); },
                send:function(i,cb){ store.set('ky_vote',i); VOTE.get(cb); } };
     if(P && $('pollQ')){
-      $('pollQ').textContent='Q. '+P.q;
+      $('pollQ').innerHTML='Q. '+P.q;
       $('pollOpts').innerHTML=P.opts.map(function(o,i){ return '<label><input type="radio" name="pv" value="'+i+'">'+o[0]+'</label>'; }).join('');
       var showRes=function(c,mine){ var tot=c.reduce(function(a,b){return a+b},0);
         $('pollRes').innerHTML=P.opts.map(function(o,i){ var p=Math.round(c[i]/tot*100);
@@ -271,7 +271,7 @@
   var L=KY.BGM_LIST||[], track=+(store.get('ky_bgm_track')||0)%Math.max(L.length,1), playing=false;
   var audio=null, ac=null, timer=null, step=0;
   function cur(){ return L[track]||{title:'',notes:''}; }
-  function setTitle(t,offc){ var b=$('bTitle'); if(!b) return; b.textContent=t; b.parentNode.classList.toggle('off',!!offc); }
+  function setTitle(t,offc){ var b=$('bTitle'); if(!b) return; b.innerHTML=t; b.parentNode.classList.toggle('off',!!offc); }
   function freq(n){ var m=n.match(/([A-G])(\d)/); if(!m) return 0; var k={C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2}[m[1]]+(+m[2]-4)*12; return 440*Math.pow(2,k/12); }
   function beep(f){ if(!f) return; var o=ac.createOscillator(), g=ac.createGain();
     o.type='square'; o.frequency.value=f; g.gain.setValueAtTime(.035,ac.currentTime); g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.22);
@@ -327,10 +327,10 @@
     var last=0, SP=['✦','✧','⋆','·'], CL=['','s','y'];
     addEventListener('mousemove',function(e){ var n=Date.now(); if(n-last<45) return; last=n;
       var d=document.createElement('span'); d.className='spk '+CL[Math.floor(Math.random()*3)];
-      d.textContent=SP[Math.floor(Math.random()*SP.length)];
+      d.innerHTML=SP[Math.floor(Math.random()*SP.length)];
       d.style.left=(e.clientX+(Math.random()*10-5))+'px'; d.style.top=(e.clientY+8)+'px';
       document.body.appendChild(d); setTimeout(function(){d.remove()},800); });
-    addEventListener('mousedown',function(e){ var d=document.createElement('span'); d.className='hrt'; d.textContent='♥';
+    addEventListener('mousedown',function(e){ var d=document.createElement('span'); d.className='hrt'; d.innerHTML='♥';
       d.style.left=e.clientX+'px'; d.style.top=e.clientY+'px'; document.body.appendChild(d); setTimeout(function(){d.remove()},700); });
   }
 })();

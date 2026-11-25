@@ -18,7 +18,7 @@ var KY = {
 
   /* 헤더 상태 줄 */
   DDAY_START: '2026-03-27',          /* 쿄냐 1일째 날짜 (D+ 자동 계산) */
-  ONLINE: [ ['🐶','kyohei','방금'], ['🐱','sei','3분 전'] ],   /* 접속 중 목록 [아이콘, 아이디, 시간] */
+  ONLINE: [ ['<img class="text-emoji" src="https://i.imgur.com/Sp6HITL.gif" />','kyohei','방금'], ['<img class="text-emoji" src="https://i.imgur.com/qyDkStE.gif" />','sei','3분 전'] ],   /* 접속 중 목록 [아이콘, 아이디, 시간] */
 
   /* 흐르는 띠 */
   TICKER: '[갱신] 쿄냐통신 오픈! ♥ 쿄냐뉴스 개시 ♥ 방명록은 고객센터로 ♥ 세이 관찰 안경 절찬 판매 중 ',
@@ -37,18 +37,18 @@ var KY = {
 
   /* ---------- 가짜 로그인 ---------- */
   USERS: {
-    kyohei: { name:'쿄헤이', av:'🐶', grade:'👑 관리자', pt:9999, hint:'사쿠라바 쿄헤이 (관리자)',
+    kyohei: { name:'쿄헤이', av:'<img class="text-emoji" src="https://i.imgur.com/Sp6HITL.gif" />', grade:'👑 관리자', pt:9999, hint:'사쿠라바 쿄헤이 (관리자)',
       welcome:'관리자님 어서오세요 💕<br>오늘의 세이 자랑 글쓰기 할당량: 0/30',
       blog:'#soon', chatWith:'sei',
       mails:[ {from:'세이',sub:'ㅇ',date:'11/21',body:'ㅇ'},
               {from:'운영팀',sub:'[경고] 관찰일지 업로드 빈도가 너무 높습니다',date:'11/20',body:'관리자님, 하루 12회 업로드는 서버에 무리가 갑니다.<br>세이 사진 용량도 줄여 주세요.<br>그리고 공지사항에 세이 자랑 쓰지 마세요. 이번이 7번째 경고입니다.'} ] },
-    sei: { name:'세이', av:'🐱', grade:'⭐ VIP 회원', pt:520, hint:'히비 세이 (VIP)',
+    sei: { name:'세이', av:'<img class="text-emoji" src="https://i.imgur.com/qyDkStE.gif" />', grade:'⭐ VIP 회원', pt:520, hint:'히비 세이 (VIP)',
       welcome:'세이님 접속을 확인했습니다.<br><small>(쿄헤이님에게 알림이 전송되었습니다)</small>',
       blog:'#soon', chatWith:'kyohei',
       mails:[ {from:'쿄헤이',sub:'세이야아아아 💕💕💕 연습 끝났어!!!!',date:'11/21',body:'세이야 🥺💕 나 방금 연습 끝났는데 오늘 블로킹 진짜 잘 됐거든?? 🏐✨ 근데 그거보다 중요한 거 있잖아… 오늘 아침에 세이가 내 후드티 입고 나간 거 🫠🫠🫠 나 그거 보고 하루 종일 집중 못 했어 진짜로 😭😭 감독님이 왜 웃냐고 했는데 세이 생각나서라고 할 수가 없었어 ㅠㅠㅠ 아무튼 편의점 들를 건데 뭐 먹고 싶어?? 푸딩? 푸딩이지?? 🍮🍮 두 개 살게!! 아니 세 개!!! 💕💕💕'},
               {from:'쿄헤이',sub:'ㅇ 이 무슨 뜻인지 3시간 고민함 🤔💭',date:'11/20',body:'세이야… ㅇ 은 좋다는 뜻이지?? 🥹 응의 줄임말이니까 YES 맞지?? 💕 나 팀원들한테 다 물어봤는데 다들 모른다고 해서 그냥 좋다는 뜻으로 해석하기로 했어!!! 🎉🎉 고마워 세이야 나도 좋아 💕💕💕💕💕'},
               {from:'쿄헤이',sub:'(자니…?) 🌙',date:'11/20',body:'자? 💤 안 자면 답장해 줘… 아니다 자면 푹 자 🥺🌙 세이 잘 자 사랑해 💕 내일 아침에 데리러 갈게!! 🚶‍♂️💨 아 그리고 오늘도 귀여웠어 (매일 하는 말이지만 매일 진심임) 💕💕'} ] },
-    guest: { name:'손님', av:'🐣', grade:'🌱 새싹회원', pt:10, hint:'놀러 온 손님용',
+    guest: { name:'손님', av:'<img class="text-emoji" src="https://mocha.crd.co/assets/images/gallery17/882c3fa6.gif?v=667e73fe" />', grade:'<img class="text-emoji" src="http://lh3.ggpht.com/_NZJzdRm10Y0/TUbe_zmFTKI/AAAAAAAAAek/N1LUyTKL98g/minivariados43.gif" /> 새싹회원', pt:10, hint:'놀러 온 손님용',
       welcome:'손님 환영합니다!<br>출석 포인트 10P 지급 ♡', blog:'#soon', chatWith:'kyohei',
       mails:[ {from:'운영팀',sub:'[쿄냐통신] 회원 가입을 환영합니다',date:'11/20',body:'쿄냐통신 회원이 되신 것을 환영합니다 ♡<br>가입 기념 포인트 10P가 지급되었습니다.<br>※ 쿄헤이 관련 문의는 받지 않습니다.'} ] }
   },
@@ -59,15 +59,15 @@ var KY = {
   ],
   /* 채팅 상대별 말투 [찾을 말, 답장] */
   CHAT: {
-    kyohei: { name:'쿄헤이', av:'🐶', hello:'세이야!!!!! 💕💕 왔어?? 나 계속 기다리고 있었어 🥺✨',
-      re:[ [/안녕|하이|ㅎㅇ/,'세이야 안녕안녕 🥰💕 오늘도 귀여워 (안 봐도 앎) 💕💕'],
-           [/보고\s*싶/,'헐 🥹🥹🥹 나도나도 진짜 너무 보고 싶어!!! 지금 갈게 기다려 🏃‍♂️💨💨 5분… 아니 3분!!!'],
+    kyohei: { name:'쿄헤이', av:'<img class="text-emoji" src="https://i.imgur.com/Sp6HITL.gif" />', hello:'세이!!!!! 💕💕 왔어?? 나 계속 기다리고 있었어 🥺✨',
+      re:[ [/안녕|하이|ㅎㅇ/,'세이 안녕안녕 🥰💕 오늘도 귀여워 💕💕'],
+           [/보고\s*싶/,'🥹🥹🥹 나도나도 진짜 너무 보고 싶어!!! 지금 갈게 기다려 🏃‍♂️💨💨 5분… 아니 3분!!!'],
            [/좋아|사랑/,'ㅠㅠㅠㅠㅠ 세이가 먼저 말해 줬어 😭💕 캡처했어 평생 간직할게 📸✨ 나도 사랑해 우주만큼 💕💕💕💕'],
            [/배고|밥|먹/,'배고파?? 🍚 뭐 먹고 싶어!! 다 사 갈게 🛒💕 푸딩도 사 갈게 당연히 🍮✨'],
            [/ㅋㅋ|ㅎㅎ/,'세이 웃었다… 🥹 오늘 하루 성공이다 진짜 🎉💕'],
            [/^ㅇ+$/,'ㅇ 받았다!!! 💕 이건 좋다는 뜻이지?? 그렇게 알게 🥰🥰'] ],
       def:['응응 💕 세이가 하는 말은 다 좋아 🥰','헉 그렇구나!! 🥺 더 얘기해 줘 세이야 💕💕','잠깐만 나 지금 세이 문자 보고 웃다가 감독님한테 혼남 ㅋㅋㅋ 😂💕','세이야 근데 오늘도 귀여운 거 알지?? 💕✨','알겠어!!! 🫡💕 세이 말이라면 뭐든지!!'] },
-    sei: { name:'세이', av:'🐱', hello:'ㅇ',
+    sei: { name:'세이', av:'<img class="text-emoji" src="https://i.imgur.com/qyDkStE.gif" />', hello:'ㅇ',
       re:[ [/보고\s*싶/,'…딱히 나는 안 보고 싶은데. 오고 싶으면 오던가.'], [/좋아|사랑/,'알아. 그만 말해. (읽씹 안 함)'],
            [/배고|밥|먹/,'푸딩. 두 개.'], [/뭐\s*해/,'누워 있음'], [/귀여/,'시끄러.'] ],
       def:['ㅇ','ㅇㅇ','…바보.','알았으니까 연습이나 해.','ㅋ'] }
@@ -77,7 +77,7 @@ var KY = {
   MICRO_WHO: { '쿄헤이':'kyohei', '세이':'sei' },
 
   /* 투표 (지금은 깡통) */
-  POLL: { q:'가장 멋진 동물은?', opts:[['🐶 강아지',128],['🐱 고양이',241],['🦖 공룡',9]] },
+  POLL: { q:'가장 멋진 동물은?', opts:[['<img class="text-emoji" src="https://64.media.tumblr.com/cec1d02bd3df2f190220271bb64ef9af/68f31a1e262c44bd-9b/s75x75_c1/a3b2937c036a622c30e2bf193635b24215335b2b.gifv" /> 강아지',128],['<img class="text-emoji" src="https://mypillowfort.net/media5/tumblr_c3ae761030463c4b0d5a8014a1e19a8f_b164b3db_75.gif" /> 고양이',241],['<img class="text-emoji" src="https://i.imgur.com/Jr6FVxq.gif" /> 공룡',9]] },
 
   /* BGM — src에 mp3 주소를 넣으면 진짜 음악, 비워 두면 삑삑 소리 */
   BGM_LIST: [

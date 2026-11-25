@@ -14,33 +14,30 @@
 
 <!-- ===== 1단 (고정) ===== -->
 <aside class="left">
-  <!-- ▼ ④ 로그인 상자 -->
-  <div class="box login" id="loginBox"><h3>LOGIN</h3><div class="in">
+    <!-- ▼ ④ 로그인 상자 (옛날 포털 스타일) -->
+  <div class="kc" id="loginBox">
+    <!-- 로그인 전 -->
     <div id="lgForm">
-      <div class="lg">
-        <label for="lgId">ID</label><input class="ip" id="lgId" autocomplete="off">
-        <button class="go" id="lgBtn">로그인</button>
-        <label for="lgPw">PW</label><input class="ip" id="lgPw" type="password" autocomplete="off">
+      <div class="kc-tabs"><b class="on">ID 로그인</b><b id="joinBtn" onclick="kyPop('회원가입','📝','죄송합니다<br>현재 신규 가입이 마감되었습니다<br><small>(정원 2명 · 쿄헤이, 세이)</small>')">회원가입</b></div>
+      <div class="kc-bd">
+        <div class="kc-lg">
+          <div class="kc-ips"><input class="ip" id="lgId" placeholder="ID" autocomplete="off"><input class="ip" id="lgPw" type="password" placeholder="PW" autocomplete="off"></div>
+          <button class="go" id="lgBtn">로그인</button>
+        </div>
+        <a class="find" id="findId">아이디/PW 찾기 ›</a>
       </div>
-      <a class="find" id="findId">아이디/PW 찾기 ›</a>
     </div>
+    <!-- 로그인 후 -->
     <div id="lgCard" hidden>
-      <div class="who"><div class="av" id="cAv">🐱</div><div><b class="pix" id="cName">손님</b>님<br><span class="grade" id="cGrade">🌱 새싹회원</span></div></div>
-      <div class="pt">쿄냐 포인트 <b id="cPt">0</b>P · 오늘 출석 ✅</div>
-      <div class="row"><a class="btn" id="openMail" href="#">📧 메일 <b class="badge" id="mailN">0</b></a><a class="btn" id="openChat" href="#">💬 채팅</a></div>
-      <div class="row2"><a class="btn" id="myBlog" href="#soon">📝 내 블로그</a></div>
-      <a class="out" id="lgOut" href="#">로그아웃</a>
+      <div class="kc-tabs"><b class="on">내 정보</b><b id="lgOut">로그아웃</b></div>
+      <div class="kc-bd">
+        <div class="kc-who"><div class="av" id="cAv"><img class="text-emoji" src="https://mocha.crd.co/assets/images/gallery17/882c3fa6.gif?v=667e73fe" /></div><div><b id="cName">손님</b>님<br><span class="grade" id="cGrade"><img class="text-emoji" src="http://lh3.ggpht.com/_NZJzdRm10Y0/TUbe_zmFTKI/AAAAAAAAAek/N1LUyTKL98g/minivariados43.gif" /> 새싹회원</span></div></div>
+        <div class="kc-pt"><img class="text-emoji" src="https://64.media.tumblr.com/tumblr_lkl76fB0f41qfamg6.png" /> 포인트 <b id="cPt">0</b>P · 오늘 출석 <img class="text-emoji" src="https://i.imgur.com/Ywz7tiE.gif" /></div>
+        <div class="kc-row"><a class="kc-btn" id="openMail" href="#"><img class="text-emoji" src="https://static.tumblr.com/rltvkjt/7LDlmr3si/mail2.gif" /> 메일 <b class="badge" id="mailN">0</b></a><a class="kc-btn" id="openChat" href="#"><img class="text-emoji" src="https://static.tumblr.com/rltvkjt/x9Xlnz7d9/iconecome.gif" /> 채팅</a></div>
+        <div class="kc-row"><a class="kc-btn" id="myBlog" href="#soon"><img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-162.gif" /> 내 블로그</a></div>
+      </div>
     </div>
-  </div></div>
-
-  <!-- ▼ 사이트 메뉴 -->
-  <div class="box sky smenu"><h3>SITE MENU</h3><div class="in"><ul>
-    <li><a href="#soon">🗣 쿄냐 2ch</a></li>
-    <li><a href="#soon">📖 쿄냐위키</a></li>
-    <li><a href="/category/にゃにゃニュース">🗞 쿄냐뉴스</a></li>
-    <li><a href="#soon">🌸 세이의 블로그</a></li>
-    <li class="lock" id="secretMenu"><a href="#soon">🔒 회원 전용</a></li>
-  </ul></div></div>
+  </div>
 
   <!-- ▼ ⑥ BGM -->
   <div class="box bgm"><h3>♪ BGM</h3><div class="in">
