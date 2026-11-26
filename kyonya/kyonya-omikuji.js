@@ -124,7 +124,7 @@ var LINES={
 var WEIGHT=[['대길',8],['중길',16],['소길',20],['길',22],['말길',18],['흉',13],['대흉',3]];
 var COST=10;
 var AV={'세이':'🐱','쿄헤이':'🐶','이쿠토':'🍙','레이':'☀️','료':'♟️','타케루':'🔥'};
-var PETAL='https://64.media.tumblr.com/6510234c8afcaa70a2737fa3d12e8b73/tumblr_inline_mkeohwPvl01qz4rgp.gif';
+var PETAL='https://i.imgur.com/4KL1Cv4.gif';
 
 /* ---------- 아래부터는 안 건드려도 돼요 ---------- */
 var FACE_OF={'대길':'heart','중길':'smile','소길':'wink','길':'sparkle','말길':'sleepy','흉':'cry','대흉':'shock'};
