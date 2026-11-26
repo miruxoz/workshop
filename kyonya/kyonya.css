@@ -640,7 +640,7 @@ textarea{font:12px entergal!important}
 .oj-e{font-family:"Mona12 Emoji",Mona12,sans-serif}
 /* 타이틀: 신사 현판 */
 .oj-ttl{width:fit-content;margin:4px auto 8px}
-.oj-ttl b{display:block;padding:4px 16px 3px;font:16px/1.2 MaruMonica,entergal;font-weight:normal;letter-spacing:3px;color:#e2455f;background:#fff;border:2px solid #e2455f;outline:2px solid #3a2a2e}
+.oj-ttl b{display:block;padding:4px 16px 3px;font:16px/1.2 MaruMonica,entergal;font-weight:normal;letter-spacing:3px;color:#e2455f;background:#fff;border:3px double #e2455f;}
 /* 상자 */
 .oj-box{position:relative;overflow:hidden;border:4px double #e2455f;border-radius:10px;padding-bottom:12px;background:radial-gradient(circle,#f8e3d5 1px,transparent 1.5px) 0 0/10px 10px,#fffaf2}
 .oj-scene{position:relative;height:224px;overflow:hidden;border-bottom:2px solid #c98f5a;background:url(https://media.tumblr.com/45baec53191971ec08c830217b64a3f0/tumblr_inline_mlmiq6m3DF1qz4rgp.gif) center top}
@@ -702,7 +702,7 @@ textarea{font:12px entergal!important}
 /* 캐릭터 말풍선 */
 .oj-say{display:flex;gap:6px;align-items:flex-start;margin-top:20px}
 .oj-say .av{flex:none;width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid #f3b9d8;display:flex;align-items:center;justify-content:center;font-size:16px}
-.oj-say .bub{position:relative;flex:1;background:#fff;border:1px solid #a7a7a7;border-radius:12px;padding:5px 9px 6px;font-size:11.5px;line-height:1.6;text-align:justify;word-break:break-word;overflow-wrap:anywhere}
+.oj-say .bub{position:relative;flex:1;background:#fff;border:1px solid #a7a7a7;border-radius:12px;padding:5px 9px 6px;font-size:11.5px;line-height:1.6;text-align:justify;word-break:break-all;justify-content: space-between; overflow-wrap:anywhere}
 .oj-say .bub:before,.oj-say .bub:after{content:"";position:absolute;top:11px;border-style:solid}
 .oj-say .bub:before{left:-10px;border-width:0 10px 7px 0;border-color:transparent #a7a7a7 transparent transparent}
 .oj-say .bub:after{left:-8px;top:12px;border-width:0 9px 5px 0;border-color:transparent #fff transparent transparent}
@@ -718,3 +718,6 @@ textarea{font:12px entergal!important}
 #lgOut{padding-top:5px}
 #hotRoll{transform:translateY(0px)}
 
+/* 1단 스크롤바 숨기기 (스크롤은 그대로) */
+.left{scrollbar-width:none;-ms-overflow-style:none}
+.left::-webkit-scrollbar{display:none}
