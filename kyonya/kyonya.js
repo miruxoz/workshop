@@ -190,18 +190,19 @@
     }
     loadPosts(function(all){
       var C=KY.CAT||{};
-      /* 한마디 */
+        /* 세이의 한마디 — 제목 = 한마디 / 본문 첫 그림 = 오늘의 기분 */
       var micro=all.filter(function(p){return p.cat.indexOf(C.micro)===0});
-      KY.MICRO_SET=function(w){
-        document.querySelectorAll('#mbTabs b').forEach(function(b){ b.classList.toggle('on',b.dataset.w===w); });
-        var list=micro.map(function(p){ var x=prefix(p.title); return {w:(KY.MICRO_WHO||{})[x.p]||'', t:x.t, p:p}; })
-                      .filter(function(m){ return w==='all'||m.w===w; });
-        $('mbList').innerHTML=list.length?list.map(function(m){ var c=CHAT[m.w]||{av:'📢',name:'운영자'};
-          return '<div class="tw"><div class="ca">'+c.av+'</div><div><a href="'+m.p.link+'"><p>'+esc(m.t)+'</p></a><small>'+c.name+' · '+md(m.p.date)+' '+m.p.date.getHours()+':'+('0'+m.p.date.getMinutes()).slice(-2)+'</small></div></div>'; }).join('')
-          :'<div class="tw"><p style="color:#888">아직 한마디가 없어요</p></div>';
+      var WK=['日','月','火','水','木','金','土'], p2=function(n){return ('0'+n).slice(-2)};
+      KY.MICRO_SET=function(){   // 로그인·로그아웃 때도 불려요 (예전 탭 자리)
+        var el=$('mbList'); if(!el) return;
+        if($('mbN')) $('mbN').textContent='('+micro.length+')';
+        el.innerHTML=micro.length?micro.map(function(p,i){ var d=p.date, x=prefix(p.title);
+          var dt=(KY.MICRO_YEAR||d.getFullYear())+'/'+p2(d.getMonth()+1)+'/'+p2(d.getDate())+'('+WK[d.getDay()]+') '+p2(d.getHours())+':'+p2(d.getMinutes());
+          return '<dt>'+(micro.length-i)+' ：<span class="nm">'+(KY.MICRO_NAME||'세이')+'</span> ：오늘의 기분: '+
+            (p.img?'<img class="text-emoji" src="'+esc(p.img)+'" alt="">':'－')+' ：'+dt+'</dt><dd><a href="'+p.link+'">'+esc(x.t)+'</a></dd>'; }).join('')
+          :'<dd style="color:#888;margin-left:0">아직 한마디가 없어요</dd>';
       };
-      on('mbTabs','click',function(e){ var b=e.target.closest('b'); if(b) KY.MICRO_SET(b.dataset.w); });
-      var lg=(store.get('ky_login')||'').toLowerCase(); KY.MICRO_SET(lg==='kyohei'||lg==='sei'?lg:'all');
+      KY.MICRO_SET();
 
       /* 쿄냐뉴스 */
       var news=all.filter(function(p){return p.cat.indexOf(C.news)===0});
