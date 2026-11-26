@@ -150,6 +150,10 @@
   if($('hotList') && KY.HOT) $('hotList').innerHTML=KY.HOT.map(function(h,i){
     var v=h[1]==='NEW'?'<em class="n">NEW</em>':'<em>'+h[1]+'</em>';
     return '<li><b>'+(i+1)+'</b><a href="/search/'+encodeURIComponent(h[0])+'">'+esc(h[0])+'</a>'+v+'</li>'; }).join('');
+      if($('hotRoll') && KY.HOT){ var hr=$('hotRoll'), ri=0;
+    hr.innerHTML=KY.HOT.map(function(h,i){ return '<p><b>'+(i+1)+'</b>'+esc(h[0])+'</p>'; }).join('');
+    setInterval(function(){ ri=(ri+1)%KY.HOT.length; hr.style.transform='translateY('+(-18*ri)+'px)'; },2500);
+    on('hotRollBtn','click',function(){ $('hotBox').classList.toggle('fold'); }); }
   if($('famSel') && KY.FAMILY) KY.FAMILY.forEach(function(f){ var o=document.createElement('option'); o.value=f[1]; o.innerHTML=f[0]; $('famSel').appendChild(o); });
   on('famGo','click',function(){ var v=$('famSel').value; if(!v){ pop('패밀리 사이트','🔗','갈 곳을 골라 주세요!'); return; } window.open(v,'_blank'); });
 
@@ -268,32 +272,7 @@
       '<dl><dt>행운템</dt><dd>'+pick(F.item,5)+'</dd><dt>쿄냐지수</dt><dd>'+love+'%</dd><dt>한마디</dt><dd>'+pick(F.tip,9)+'</dd></dl>';
     this.style.display='none'; $('omkRes').style.display='block'; });
 
-  /* =========================== BGM =========================== */
-  var L=KY.BGM_LIST||[], track=+(store.get('ky_bgm_track')||0)%Math.max(L.length,1), playing=false;
-  var audio=null, ac=null, timer=null, step=0;
-  function cur(){ return L[track]||{title:'',notes:''}; }
-  function setTitle(t,offc){ var b=$('bTitle'); if(!b) return; b.innerHTML=t; b.parentNode.classList.toggle('off',!!offc); }
-  function freq(n){ var m=n.match(/([A-G])(\d)/); if(!m) return 0; var k={C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2}[m[1]]+(+m[2]-4)*12; return 440*Math.pow(2,k/12); }
-  function beep(f){ if(!f) return; var o=ac.createOscillator(), g=ac.createGain();
-    o.type='square'; o.frequency.value=f; g.gain.setValueAtTime(.035,ac.currentTime); g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.22);
-    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+.24); }
-  function play(){ if(playing||!L.length) return; var c=cur(); playing=true; store.set('ky_bgm','on');
-    setTitle('♪ now playing … '+c.title);
-    if(c.src){ if(!audio){ audio=new Audio(); audio.loop=true;
-        audio.addEventListener('timeupdate',function(){ if(audio.duration){ $('bBar').style.width=(audio.currentTime/audio.duration*100)+'%'; store.set('ky_bgm_time',audio.currentTime); } }); }
-      if(audio.src.indexOf(c.src)<0){ audio.src=c.src; var t=+(store.get('ky_bgm_time')||0); if(t) audio.currentTime=t; }
-      audio.play().catch(function(){ playing=false; setTitle('▶를 눌러 주세요',true); });
-    } else {
-      try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); ac.resume(); }catch(e){ playing=false; return; }
-      var ns=c.notes.split(' ');
-      timer=setInterval(function(){ beep(freq(ns[step%ns.length])); step++; $('bBar').style.width=((step%ns.length)/ns.length*100)+'%'; },260);
-    } }
-  function stop(){ if(!playing) return; playing=false; clearInterval(timer); if(audio) audio.pause(); store.set('ky_bgm','off'); setTitle('❚❚ 일시정지 … '+cur().title,true); }
-  function go(d){ var was=playing; stop(); track=(track+d+L.length)%L.length; step=0; store.set('ky_bgm_track',track); store.set('ky_bgm_time',0);
-    if(audio){ audio.removeAttribute('src'); } $('bBar').style.width='0'; setTitle('♪ '+cur().title,true); if(was) play(); }
-  on('bPlay','click',play); on('bPause','click',stop);
-  on('bPrev','click',function(){go(-1)}); on('bNext','click',function(){go(1)});
-  setTitle('♪ BGM 꺼짐 … ▶를 누르면 켜져요',true);
+
 
   /* =========================== 들어올 때: BGM 묻기 → (홈이면) 팝업 광고 =========================== */
   var todayKey=today.toDateString();

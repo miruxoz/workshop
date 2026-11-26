@@ -198,23 +198,30 @@ input.f:focus{border-color:var(--hot)}
   box-shadow:inset -2px -2px 0 rgba(169,140,126,.25),inset 2px 2px 0 #fff}
 .lg .go:active{box-shadow:inset 2px 2px 0 rgba(169,140,126,.25),inset -2px -2px 0 #fff}
 
-/* BGM */
-.bgm .scr{background:var(--choco2);color:var(--cream);font:11px/18px Mona12;overflow:hidden;white-space:nowrap;padding:0 4px}
-.bgm .scr span{display:inline-block;animation:mv 9s linear infinite;padding-left:100%}
-.bgm .scr.off{color:#c8b3aa}
-.bgm .ctl{display:flex;gap:3px;margin-top:5px}.bgm .ctl .btn{flex:1;padding:0}
-.bgm .bar{height:6px;border:1px solid var(--cocoa);margin-top:5px;background:#fff}
-.bgm .bar i{display:block;height:100%;width:0;background:var(--hot);transition:width .3s linear}
 
 /* 검색 + 인기 검색어 */
 .srch{display:flex;gap:3px;margin-bottom:6px}
-.hot ol{margin:0;padding:0;list-style:none}
-.hot li{display:flex;gap:6px;font-size:12px;padding:1px 0;border-bottom:1px dotted #ddd}
-.hot li:last-child{border:0}
-.hot li b{font:11px Mona12;width:14px;color:var(--hot)}
-.hot li a{text-decoration:none;flex:1}
-.hot li em{margin-left:auto;font:10px Mona12;font-style:normal;color:#e5484d}
-.hot li em.n{color:#fff;background:var(--hot);padding:0 3px}
+.sbox{margin-bottom:14px;padding:8px;background:#fff;border:1px solid #c79ab0;box-shadow:2px 2px 0 rgba(125,93,79,.18);font-family:entergal}
+.srch{display:flex;gap:4px}
+.sbox .srch input{flex:1;min-width:0;width:auto;font:12px entergal,ThinMulmaru;padding:3px 7px;background:#fff;border:1px solid #d8b8c6;box-shadow:inset 2px 2px 0 #f6e6ed;outline:0}
+.sbox .srch input:focus{border-color:var(--hot)}
+.sbox .srch button{font:12px Mona12;padding:0 8px;background:#fbe7ef;border:1px solid #c4628b;border-radius:0;box-shadow:none;cursor:pointer}
+.roll{display:flex;align-items:center;gap:6px;height:24px;margin-top:8px;padding:3px 6px;overflow:hidden;font:12px entergal;cursor:pointer;background:#fdf1f6;border:1px solid #efc2d3}
+.roll small{flex:none;font:10px Mona12;color:#fff;background:#e584ac;padding:0 4px}
+.roll .rw{flex:1;min-width:0;height:18px;overflow:hidden}
+#hotRoll{transition:transform .4s}
+#hotRoll p{margin:0;height:18px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hotRoll b{font:10px Mona12;font-weight:normal;color:#e584ac;margin-right:4px}
+.roll i{font-style:normal;font-size:10px;color:#c4628b;transition:transform .2s}
+.sbox.fold .roll i{transform:rotate(180deg)}
+.sbox.fold ol{display:none}
+.hot ol{margin:6px 0 0;padding:4px 0 0;list-style:none;border-top:1px dashed #efc2d3}
+.hot li{display:flex;align-items:center;gap:6px;padding:1px 0;font-size:12px}
+.hot li b{flex:none;width:14px;font:11px Mona12;font-weight:normal;color:#e584ac}
+.hot li a{flex:1;min-width:0;color:#000;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hot li a:hover{color:#e0437f}
+.hot li em{font:10px Mona12;font-style:normal;color:#e5484d}
+.hot li em.n{color:#fff;background:#f3b9d8;padding:0 3px;animation:newbl 1.2s steps(1) infinite}
 
 /* =========================================================
    8. 2단 위젯
@@ -482,10 +489,10 @@ aside.right .box.poll{border:9px solid transparent;border-image:url(https://moch
 .totop .bw{position:absolute;left:50%;top:-4px;transform:translateX(-50%);font-size:18px}
 
 /* 커서 반짝이 + 클릭 하트 */
-.spk{position:fixed;pointer-events:none;z-index:999;font-size:11px;color:var(--hot);animation:spk .8s forwards;transform:translate(-50%,-50%)}
-.spk.s{color:#8cc4f5}.spk.y{color:#ffc93c}
+.spk{position:fixed;pointer-events:none;z-index:999;font-size:11px;color:var(--milk);animation:spk .8s forwards;transform:translate(-50%,-50%)}
+.spk.s{color:var(--sky2);}.spk.y{color:var(--cream);}
 @keyframes spk{to{opacity:0;transform:translate(-50%,10px) scale(.4)}}
-.hrt{position:fixed;pointer-events:none;z-index:999;font-size:16px;color:var(--hot);animation:hrt .7s ease-out forwards;transform:translate(-50%,-50%)}
+.hrt{position:fixed;pointer-events:none;z-index:999;font-size:16px;color:var(--milk);animation:hrt .7s ease-out forwards;transform:translate(-50%,-50%)}
 @keyframes hrt{to{opacity:0;transform:translate(-50%,-36px) scale(1.4)}}
 
 /* =========================================================

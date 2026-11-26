@@ -57,20 +57,13 @@
     </ul>
   </nav>
 
-  <!-- ▼ ⑥ BGM -->
-  <div class="box bgm"><h3>♪ BGM</h3><div class="in">
-    <div class="scr"><span id="bTitle">♪ BGM</span></div>
-    <div class="ctl"><button class="btn" id="bPrev">◀◀</button><button class="btn" id="bPlay">▶</button><button class="btn" id="bPause">❚❚</button><button class="btn" id="bNext">▶▶</button></div>
-    <div class="bar"><i id="bBar"></i></div>
-  </div></div>
 
-  <!-- ▼ ⑦ 검색 + 인기 검색어 -->
-  <div class="box sky hot"><h3>SEARCH</h3><div class="in">
-    
+    <!-- ▼ ⑦ 검색 + 인기 검색어 (한 줄 롤링) -->
+  <div class="sbox hot" id="hotBox">
     <div class="srch"><input class="f" type="text" name="search" value="" placeholder="쿄냐 검색" onkeypress="if (event.keyCode == 13) { kyPop('검색','🔍','티스토리에서는 검색 결과로 가요') }"><button class="btn" onclick="kyPop('검색','🔍','티스토리에서는 검색 결과로 가요')">🔍</button></div>
-    
+    <div class="roll" id="hotRollBtn"><small>실시간</small><div class="rw"><div id="hotRoll"></div></div><i>▼</i></div>
     <ol id="hotList"></ol>
-  </div></div>
+  </div>
 </aside>
 
 <div class="page">
