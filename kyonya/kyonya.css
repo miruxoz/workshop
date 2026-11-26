@@ -629,3 +629,92 @@ textarea{font:12px entergal!important}
 .nav .n,.nav .h{font:10px Mona12;color:#fff;padding:0 3px;margin-left:4px;animation:newbl 1.2s steps(1) infinite}
 .nav .n{background:#f3b9d8}
 .nav .h{background:#9fd0f2}
+
+/* =========================================================
+   오늘의 운세 — 고양이 새전함 (1단, 내비게이션 밑)
+   ========================================================= */
+@font-face{font-family:MaruMonica;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x12y16pxMaruMonica.woff) format("woff");font-display:swap}
+@font-face{font-family:"Mona12 Emoji";src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12ColorEmoji.woff2) format("woff2"),url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12Emoji.woff2) format("woff2"),url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12-Emoji.woff2) format("woff2")}
+.omj{margin-bottom:14px;font-family:entergal;color:#000}
+.omj svg{display:block}
+.oj-e{font-family:"Mona12 Emoji",Mona12,sans-serif}
+/* 타이틀: 신사 현판 */
+.oj-ttl{width:fit-content;margin:4px auto 8px}
+.oj-ttl b{display:block;padding:4px 16px 3px;font:16px/1.2 MaruMonica,entergal;font-weight:normal;letter-spacing:3px;color:#e2455f;background:#fff;border:2px solid #e2455f;outline:2px solid #3a2a2e}
+/* 상자 */
+.oj-box{position:relative;overflow:hidden;border:4px double #e2455f;border-radius:10px;padding-bottom:12px;background:radial-gradient(circle,#f8e3d5 1px,transparent 1.5px) 0 0/10px 10px,#fffaf2}
+.oj-scene{position:relative;height:224px;overflow:hidden;border-bottom:2px solid #c98f5a;background:url(https://media.tumblr.com/45baec53191971ec08c830217b64a3f0/tumblr_inline_mlmiq6m3DF1qz4rgp.gif) center top}
+.oj-ground{position:absolute;left:0;right:0;bottom:0;height:48px;background:0 0/192px 48px repeat-x}
+.oj-torii{position:absolute;left:50%;bottom:22px;margin-left:-112px}
+.oj-branch{position:absolute;left:0;top:4px;z-index:2}
+.oj-pts{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:11px;background:#fff;border:1px solid #e2455f;border-radius:10px;padding:1px 9px 1px 5px;box-shadow:2px 2px 0 rgba(226,69,95,.25)}
+.oj-pts b{font-weight:normal;color:#e2455f}
+/* 냥이 */
+.oj-neko{position:absolute;left:50%;bottom:14px;margin-left:-68px;z-index:2}
+.oj-fc{position:absolute;left:0;top:0}
+.oj-neko.hop{animation:ojHop .4s ease-in-out 3}
+@keyframes ojHop{50%{transform:translateY(-8px)}}
+.oj-heart{position:absolute;left:50%;top:-6px;margin-left:-8px;font-size:14px;color:#ff6f9c;opacity:0}
+.oj-neko.hop .oj-heart{animation:ojFloat 1.4s ease-out forwards}
+@keyframes ojFloat{0%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+/* 동전 */
+.oj-coin{position:absolute;right:30px;top:62px;z-index:3;cursor:pointer;animation:ojBob 1.6s ease-in-out infinite}
+.oj-coin small{display:block;text-align:center;font-size:9px;color:#fff;text-shadow:1px 1px 0 #b88416}
+.oj-coin.toss{animation:ojToss .8s cubic-bezier(.3,.6,.5,1) forwards}
+@keyframes ojBob{50%{transform:translateY(-3px)}}
+@keyframes ojToss{55%{transform:translate(-70px,-20px) rotate(300deg)}100%{transform:translate(-92px,62px) rotate(540deg) scale(.4);opacity:0}}
+.oj-ding{position:absolute;left:12px;top:70px;z-index:3;font:12px MaruMonica,entergal;color:#000;opacity:0;text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff}
+.oj-ding.on{animation:ojFloat 1.4s ease-out forwards}
+/* 꽃잎 · 반짝이 */
+.oj-petal{position:absolute;top:-14px;z-index:1;pointer-events:none;animation:ojFall linear infinite}
+@keyframes ojFall{to{transform:translate(-30px,240px) rotate(360deg)}}
+.oj-spark{position:absolute;left:50%;top:30%;z-index:5;font-size:12px;color:#ff86b0;pointer-events:none;animation:ojBurst .8s ease-out forwards}
+@keyframes ojBurst{to{transform:translate(var(--x),var(--y)) scale(.4);opacity:0}}
+/* 안내 · 다시 */
+.oj-hint{margin-top:8px;text-align:center;font-size:11px;color:#d77fa3;animation:ojBob 1.6s ease-in-out infinite}
+.oj-again{display:none;margin:8px auto 0;font:11px entergal;padding:2px 12px;color:#c4628b;background:#fff;border:1px solid #f3b9d8;border-radius:12px;cursor:pointer}
+/* 결과 종이 */
+.oj-res{display:none;margin:0 10px;animation:ojSlip .45s cubic-bezier(.3,1.4,.6,1)}
+@keyframes ojSlip{from{opacity:0;transform:translateY(-14px) scale(.9)}}
+.oj-paper{position:relative;margin-top:10px;padding:8px 10px 10px;text-align:center;background:#fffdf7;border:1px solid #f0c6d6;border-radius:4px;box-shadow:0 0 0 3px #fff,0 0 0 4px #f3b9d8,3px 4px 0 4px rgba(243,185,216,.35)}
+.oj-paper .hd{font:11px MaruMonica,entergal;letter-spacing:6px;color:#e5739c}
+.oj-paper .hd:before,.oj-paper .hd:after{content:"✿";color:#ffc2d6;margin:0 4px;letter-spacing:0}
+.oj-paper .tier{font-size:28px;line-height:1.15;letter-spacing:8px;margin:2px 0 0 8px;color:#e2455f}
+.oj-paper .hanko{position:absolute;right:8px;top:10px;width:30px;height:30px;border:2px solid #e2455f;border-radius:50%;color:#e2455f;font:13px/26px MaruMonica,entergal;text-align:center;transform:rotate(-12deg);opacity:.85}
+.oj-paper.bad .tier,.oj-paper.bad .hanko{color:#7c7cb6;border-color:#7c7cb6}
+.oj-paper.worst{background:#3b3040;border-color:#3b3040;box-shadow:0 0 0 3px #fff,0 0 0 4px #7c7cb6,3px 4px 0 4px rgba(124,124,182,.35);animation:ojQuake .4s linear 2}
+.oj-paper.worst .hd{color:#b9b0d6}
+.oj-paper.worst .tier,.oj-paper.worst .hanko{color:#c7b8ff;border-color:#c7b8ff}
+@keyframes ojQuake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.oj-paper.fold{animation:ojFold .7s ease-in forwards}
+@keyframes ojFold{40%{transform:scaleY(.15)}100%{transform:scaleY(.08) translate(-60px,-1600px) scale(.2);opacity:0}}
+/* 나무에 묶기 */
+.oj-tie{display:block;margin:8px auto 0;font:11px entergal;padding:2px 12px;color:#000;background:#f4fbef;border:1px solid #6bb85c;border-radius:12px;cursor:pointer;box-shadow:2px 2px 0 rgba(107,184,92,.3)}
+.oj-tie:hover{background:#e3f5da}
+.oj-tied{margin-top:10px;padding:8px 6px;text-align:center;font-size:11px;line-height:1.6;background:#f4fbef;border:1px dashed #6bb85c;border-radius:6px;animation:ojSlip .45s cubic-bezier(.3,1.4,.6,1)}
+.oj-tied small{display:block;font-size:10px;color:#4f9a43}
+.oj-knot{position:absolute;width:7px;height:13px;transform-origin:top center;animation:ojKnot .5s cubic-bezier(.3,1.6,.5,1),ojSway 2.4s ease-in-out .5s infinite}
+.oj-knot:before{content:"";position:absolute;left:0;top:0;width:7px;height:4px;background:#fff;box-shadow:0 0 0 1px #d8cfc0}
+.oj-knot:after{content:"";position:absolute;left:2px;top:4px;width:3px;height:9px;background:#fff;box-shadow:0 0 0 1px #d8cfc0;border-bottom:2px solid #e2455f}
+.oj-knot.dark:after{background:#3b3040;box-shadow:0 0 0 1px #7c7cb6;border-bottom-color:#c7b8ff}
+@keyframes ojKnot{from{transform:scale(0)}}
+@keyframes ojSway{50%{transform:rotate(6deg)}}
+/* 캐릭터 말풍선 */
+.oj-say{display:flex;gap:6px;align-items:flex-start;margin-top:20px}
+.oj-say .av{flex:none;width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid #f3b9d8;display:flex;align-items:center;justify-content:center;font-size:16px}
+.oj-say .bub{position:relative;flex:1;background:#fff;border:1px solid #a7a7a7;border-radius:12px;padding:5px 9px 6px;font-size:11.5px;line-height:1.6;text-align:justify;word-break:break-word;overflow-wrap:anywhere}
+.oj-say .bub:before,.oj-say .bub:after{content:"";position:absolute;top:11px;border-style:solid}
+.oj-say .bub:before{left:-10px;border-width:0 10px 7px 0;border-color:transparent #a7a7a7 transparent transparent}
+.oj-say .bub:after{left:-8px;top:12px;border-width:0 9px 5px 0;border-color:transparent #fff transparent transparent}
+.oj-say .nm{display:block;margin-bottom:1px;font-size:10.5px}
+.oj-say .nm:before{content:"【\00a0";color:#e2455f}
+.oj-say .nm:after{content:"\00a0】";color:#e2455f}
+
+#lgForm .kc-tabs{height:22px}
+#lgForm > .kc-tabs > b{padding-top:5px}
+#joinBtn{padding-top:5px}
+#lgCard .kc-tabs{height:22px}
+#lgCard > .kc-tabs > b{padding-top:5px}
+#lgOut{padding-top:5px}
+#hotRoll{transform:translateY(0px)}
+

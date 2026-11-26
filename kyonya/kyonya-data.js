@@ -77,7 +77,7 @@ var KY = {
   MICRO_WHO: { '쿄헤이':'kyohei', '세이':'sei' },
 
   /* 투표 (지금은 깡통) */
-  POLL: { q:'가장 멋진 동물은?', opts:[['<img class="text-emoji" src="https://64.media.tumblr.com/cec1d02bd3df2f190220271bb64ef9af/68f31a1e262c44bd-9b/s75x75_c1/a3b2937c036a622c30e2bf193635b24215335b2b.gifv" /> 강아지',128],['<img class="text-emoji" src="https://mypillowfort.net/media5/tumblr_c3ae761030463c4b0d5a8014a1e19a8f_b164b3db_75.gif" /> 고양이',241],['<img class="text-emoji" src="https://i.imgur.com/Jr6FVxq.gif" /> 공룡',9]] },
+  POLL: { q:'가장 멋진 동물은?', opts:[['<img class="text-emoji" src="https://graphic.neocities.org/barkbark.gif" /> 강아지',128],['<img class="text-emoji" src="https://mypillowfort.net/media5/tumblr_c3ae761030463c4b0d5a8014a1e19a8f_b164b3db_75.gif" /> 고양이',241],['<img class="text-emoji" src="https://i.imgur.com/Jr6FVxq.gif" /> 공룡',9]] },
 
   /* BGM — src에 mp3 주소를 넣으면 진짜 음악, 비워 두면 삑삑 소리 */
   BGM_LIST: [
