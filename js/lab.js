@@ -528,10 +528,12 @@ body[contenteditable]{outline:none}`;
     function sticker(html, base) {
       const d = doc(), w = frame.contentWindow;
       let par = /^(IMG|INPUT|BR|HR|TEXTAREA|SELECT|IFRAME|VIDEO|svg)$/i.test(base.tagName) ? base.parentElement || d.body : base;
-      // 고른 상자가 화면에 붙박이(고정·sticky) 칸 안이면 스티커도 같이 따라다니니까 → 페이지에 붙이기
+      // 글자 같은 줄 안 요소(span·a·b…)를 골랐으면 → 그걸 감싼 가장 가까운 "상자"에 붙이기
+      while (par && par !== d.body && /^(inline|contents)$/.test(w.getComputedStyle(par).display)) par = par.parentElement;
+      if (!par) par = d.body;
+      // 고정(헤더처럼 sticky·fixed) 칸 안이면 → 그 칸 안에 그대로 붙여서, 스크롤해도 칸이랑 같이 다녀요
       let pinned = false;
       for (let n = par; n && n !== d.documentElement; n = n.parentElement) { const p = w.getComputedStyle(n).position; if (p === 'fixed' || p === 'sticky') { pinned = true; break; } }
-      if (pinned) par = d.body;
       // 페이지에 붙일 땐: 가운데 정렬된 큰 틀(예: .wrap)이 있으면 거기에 → 창 크기가 바뀌어도 자리가 안 어긋나요
       if (par === d.body) {
         const box = [...d.body.children].find(n => !n.hasAttribute('data-lab') && /^(relative|absolute)$/.test(w.getComputedStyle(n).position) && n.offsetWidth > 300 && n.offsetHeight > 300);
@@ -565,7 +567,7 @@ body[contenteditable]{outline:none}`;
       st.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', () => { place(); commitSoon(); }, { once: true }); });
       if (st.tagName === 'IMG' && !st.complete) st.addEventListener('load', () => { place(); commitSoon(); }, { once: true });
       link([]);
-      commit(); fitFrame(); select(st); $('insPinRow').classList.add('on'); toast(pinned ? '🌟 고정된 칸 대신 페이지에 붙였어요 · 스크롤하면 같이 움직여요' : '🌟 스티커로 붙였어요 · 👆상자 모드에서 끌어서 옮겨요');
+      commit(); fitFrame(); select(st); $('insPinRow').classList.add('on'); toast(pinned ? '🌟 고정 칸(헤더 등) 안에 붙였어요 · 스크롤해도 칸이랑 같이 다녀요' : '🌟 고른 상자에 붙였어요 · 상자가 움직이면 같이 움직여요 · 👆끌어서 옮겨요');
     }
     // 📌 스티커 위치 확정: 지금 자리를 px 로 박아서 코드로 꺼내 주기
     async function pin() {

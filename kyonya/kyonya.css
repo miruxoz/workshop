@@ -62,8 +62,7 @@ a:hover{color:var(--hot)}
   background:url(https://i.postimg.cc/7LzcNPgF/205ef5190c8d09f59f2a72c3c98d7bec.jpg) 0 0/200px #fffce0}
 .left::-webkit-scrollbar{width:6px}.left::-webkit-scrollbar-thumb{background:var(--cocoa)}
 .page{flex:1;min-width:0;padding:0 16px 30px;min-height:100vh;background:url(https://raw.githubusercontent.com/miruxoz/workshop/main/pattern/4.jpg) rgba(255,255,255,.55);border-right:1px solid var(--choco)}
-.cols{display:grid;grid-template-columns:1fr minmax(230px,30%);gap:16px;align-items:start;margin-top:16px}
-
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:start;margin-top:16px}
 /* =========================================================
    4. 위쪽 고정 줄: 헤더(로고 / 메뉴 / 시계) + 상태 줄 + 흐르는 띠
    ========================================================= */
@@ -500,8 +499,6 @@ aside.right .box.poll{border:9px solid transparent;border-image:url(https://moch
    ========================================================= */
 body:not(#tt-body-index) .home-only{display:none!important}
 #tt-body-index .not-home{display:none!important}
-body:not(#tt-body-index) .cols{grid-template-columns:1fr}
-body:not(#tt-body-index) .cols>aside.right{display:none}
 /* 티스토리가 자동으로 붙이는 것 숨기기 */
 [class*="namecard"],[class*="NameCard"],.tt_box_namecard,.tt-box-namecard{display:none!important}
 .tt_category>li>.link_tit{display:none!important}
@@ -677,7 +674,7 @@ textarea{font:12px entergal!important}
 .oj-res{display:none;margin:0 10px;animation:ojSlip .45s cubic-bezier(.3,1.4,.6,1)}
 @keyframes ojSlip{from{opacity:0;transform:translateY(-14px) scale(.9)}}
 .oj-paper{position:relative;margin-top:10px;padding:8px 10px 10px;text-align:center;background:#fffdf7;border:1px solid #f0c6d6;border-radius:4px;box-shadow:0 0 0 3px #fff,0 0 0 4px #f3b9d8,3px 4px 0 4px rgba(243,185,216,.35)}
-.oj-paper .hd{font:11px MaruMonica,entergal;letter-spacing:6px;color:#e5739c}
+.oj-paper .hd{height:auto;display:block;padding:0;gap:0;background:none;font:11px MaruMonica,entergal;letter-spacing:6px;color:#e5739c}
 .oj-paper .hd:before,.oj-paper .hd:after{content:"✿";color:#ffc2d6;margin:0 4px;letter-spacing:0}
 .oj-paper .tier{font-size:28px;line-height:1.15;letter-spacing:8px;margin:2px 0 0 8px;color:#e2455f}
 .oj-paper .hanko{position:absolute;right:8px;top:10px;width:30px;height:30px;border:2px solid #e2455f;border-radius:50%;color:#e2455f;font:13px/26px MaruMonica,entergal;text-align:center;transform:rotate(-12deg);opacity:.85}
@@ -721,3 +718,5 @@ textarea{font:12px entergal!important}
 /* 1단 스크롤바 숨기기 (스크롤은 그대로) */
 .left{scrollbar-width:none;-ms-overflow-style:none}
 .left::-webkit-scrollbar{display:none}
+
+.topbar{z-index:60}   /* 고정 헤더를 스티커(50)보다 위로 */ 
