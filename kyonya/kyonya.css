@@ -754,3 +754,17 @@ textarea{font:12px entergal!important}
 #mbList dd a:hover{color:#e0306b}
 .mbk-bt{margin-top:4px;padding-top:3px;border-top:1px solid #d5bca2;font-size:11px}
 .mbk-bt a{color:#00f;margin-right:6px}
+
+.oj-petal:nth-child(8){left:38.3152% !important;animation-duration:11.9372s !important;animation-delay:-0.821336s !important;font-size:11.8038px !important}
+.oj-petal:nth-child(9){left:53.6138% !important;animation-duration:8.24492s !important;animation-delay:-2.70886s !important;font-size:9.76691px !important}
+.oj-petal:nth-child(10){left:35.6685% !important;animation-duration:11.991s !important;animation-delay:-3.42429s !important;font-size:13.7965px !important}
+.oj-petal:nth-child(11){left:42.9885% !important;animation-duration:11.2512s !important;animation-delay:-6.62643s !important;font-size:9.15891px !important}
+.oj-petal:nth-child(12){left:3.39385% !important;animation-duration:6.86631s !important;animation-delay:-0.516948s !important;font-size:13.3771px !important}
+.oj-petal:nth-child(13){left:53.0848% !important;animation-duration:8.77841s !important;animation-delay:-6.01642s !important;font-size:14.0323px !important}
+.oj-petal:nth-child(14){left:97.7655% !important;animation-duration:10.855s !important;animation-delay:-7.21153s !important;font-size:12.7022px !important}
+#hotRoll{transform:translateY(-72px) !important}
+.mbk{width:340px}
+.mbk-in{border-width:9px;border-color:transparent;border-image:url("https://i.postimg.cc/RhJCpKqH/testborder3.png") 15 / 9px / 0px round}
+dt:nth-child(1) .nm{color:#ff002a !important}
+dt:nth-child(3) .nm{color:#ff002a !important}
+dt:nth-child(5) .nm{color:#ff002a !important}
