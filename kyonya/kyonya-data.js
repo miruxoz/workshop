@@ -108,6 +108,15 @@ var KY = {
 
     /* 👏 박수 — 구글 Apps Script 웹 앱 주소 (비어 있으면 내 브라우저에만 세요) */
   CLAP_URL: 'https://script.google.com/macros/s/AKfycbxqTGo27UvKbWEqvJlIish-jg2RYkKhboWZ3yC8t_IOqsgHzHHesdAR5FGWfWdnEl7laA/exec',
+
+    // 🍡 오늘의 앙케이트 (선택지는 4개까지 추천)
+  //   id: 새 투표를 올릴 때마다 바꾸기 (v1 → v2 …). 바꾸면 표가 0부터 다시 시작
+  //   색: p 분홍 / y 노랑 / s 하늘 / l 라벤더 / m 민트 / '' 밀크티
+  VOTE:{
+    id:'v1',
+    q:'최강의 동물은?',
+    ops:[['강아지','p'],['고양이','y'],['토끼','s'],['공룡','']]
+  },
   
 };
 

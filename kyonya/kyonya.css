@@ -1,3 +1,4 @@
+@import url("https://cdn.jsdelivr.net/gh/MonadABXY/suhgung-font@main/suhgung.css");
 /* =========================================================
    쿄냐통신 KYONYA NEWS — kyonya.css
    티스토리 스킨과 preview.html이 같이 불러 쓰는 디자인 파일
@@ -477,32 +478,43 @@ input.f:focus{border-color:var(--hot)}
 .pud-more{display:block;text-align:right;font-size:11px;color:#7d5d4f;margin-top:4px;text-decoration:none}
 .pud-more:hover{text-decoration:underline}
 
-/* ---------- 광고판: 푸딩 밑 빈자리를 두 칸이 반씩 나눠 채워요 ---------- */
-.duo-r{display:flex;flex-direction:column;gap:10px}          /* 오른쪽 칸: 푸딩 + 광고 */
-.ad-stack{flex:1;display:flex;flex-direction:column;gap:8px;margin-top:4px}
-.ad{position:relative;flex:1;min-height:0;overflow:hidden;font-family:entergal;color:#000}   /* flex:1 → 두 광고 높이 똑같이 */
-.ad .pr{position:absolute;right:2px;top:2px;z-index:5;font:9px/1 Mona12;color:#a08560;background:rgba(255,255,255,.85);padding:1px 2px}
-
-/* ① 그림 광고 — 그림 전체가 보이게 (칸보다 크면 작아져요) */
-.ad-img{display:flex;align-items:center;justify-content:center}
-.ad-img img{display:block;max-width:100%;max-height:100%;width:auto;height:auto}
-.ad-img .pr{display:none}     /* 그림 위에 PR 딱지 보이게 하려면 이 줄 지우기 */
-
-/* ② 닌자 광고 — 몰래 붙인 전단 + 흐르는 띠 */
-.ad-nin{display:flex;flex-direction:column;background:#fffbe9;border:1px dashed #7d5d4f;line-height:1.45}
-.ad-nin .mq{flex:none;height:14px;overflow:hidden;white-space:nowrap;background:#7d5d4f;color:#fde6ef;font:10px/14px Mona12}
-.ad-nin .mq span{display:inline-block;padding-left:100%;animation:adMv 11s linear infinite}   /* 11s: 작을수록 빨리 흘러요 */
-.ad-nin .bd{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2px 10px 10px}
-.ad-nin h3{margin:0;font:14px/1.3 MaruMonica,entergal;letter-spacing:1px}
-.ad-nin h3 span{display:inline-block;animation:adSh .25s infinite}      /* 닌자 덜덜 */
-.ad-nin .m{font-size:11px;color:#7d5d4f}
-.ad-nin .blk{background:#5e4339;color:#5e4339;padding:0 2px;font-size:10px;cursor:help}   /* 까맣게 지운 글자 */
-.ad-nin .blk:hover{color:#fff}
-.ad-nin .tel{display:flex;gap:10px;font:10.5px/1.4 Mona12}
-.ad-nin .tel em{font-style:normal;color:#e0437f}
-.ad-nin .sm{position:absolute;left:10px;bottom:2px;font:8px Mona12;color:#b9a296}
-@keyframes adSh{0%,100%{transform:translate(0)}20%{transform:translate(-1px,0)}40%{transform:translate(1px,1px)}60%{transform:translate(0,-1px)}}
-@keyframes adMv{to{transform:translateX(-100%)}}
+/* ---------- 오른쪽 칸: 새 소식 푸딩 + 투표 자리 ---------- */
+.duo-r{display:flex;flex-direction:column;gap:10px}
+/* ---------- 오늘의 앙케이트 — 당고 가판대 (접시 네 개) ---------- */
+.vote-area{position:relative;flex:1;min-height:200px;margin-top:4px;overflow:hidden;display:flex;flex-direction:column;padding:0 12px 8px;
+  font-family:entergal;color:#000;border:1px solid #c9a77c;border-radius:6px;
+  background:repeating-linear-gradient(0deg,#f6e2c3 0 9px,#f1d8b2 9px 10px,#f6e2c3 10px 22px,#f3dcb9 22px 23px)}   /* 나무 판 */
+/* 지붕 */
+.vt-roof{position:relative;flex:none;height:40px;margin:0 -12px 12px;z-index:2}
+.vt-roof:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:rgba(0,0,0,.08)}
+.vt-roof:after{content:"";position:absolute;left:0;right:0;top:100%;height:10px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.08))}   /* 물결 끝 */
+.vote-area.gh .vt-roof{background:repeating-linear-gradient(90deg,rgba(226,69,95,.55) 0 10px,transparent 10px 20px),repeating-linear-gradient(0deg,rgba(226,69,95,.55) 0 10px,transparent 10px 20px),#fff}   /* 깅엄 */
+.vote-area.gh .vt-roof:after{background:radial-gradient(circle at 10px 0,#f19aac 10px,transparent 10.5px) 0 0/20px 10px}
+.vote-area.st .vt-roof{background:repeating-linear-gradient(90deg,#e2455f 0 20px,#fff 20px 40px)}   /* 줄무늬 */
+.vote-area.st .vt-roof:after{background:radial-gradient(circle at 10px 0,#e2455f 10px,transparent 10.5px) 0 0/40px 10px,radial-gradient(circle at 10px 0,#fff 10px,transparent 10.5px) 20px 0/40px 10px}
+/* 간판 */
+.vt-sign{position:absolute;left:50%;top:7px;z-index:3;transform:translateX(-50%);white-space:nowrap;padding:3px 14px 2px;
+  font:13px/1.3 MaruMonica,entergal;letter-spacing:2px;color:#e2455f;background:#fff;border:3px double #e2455f;border-radius:8px;box-shadow:0 2px 0 rgba(0,0,0,.1)}
+.vt-q{flex:none;margin-bottom:4px;text-align:center;font-size:12.5px;line-height:1.35}
+/* 접시 2×2 */
+.vt-body{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;align-content:center}
+.vt-op{position:relative;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.vt-plate{width:132px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid #cfd8e0;
+  background:radial-gradient(ellipse at center,#fff 55%,#eef2f6 56%,#fff 70%);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.vt-op:hover .vt-plate,.vt-op.me .vt-plate{border-color:#e2455f}
+.vt-stk{position:relative;display:flex;gap:1px;min-height:17px;padding-left:6px;transform:rotate(-8deg)}
+.vt-stk:before{content:"";position:absolute;left:-4px;right:-10px;top:50%;height:3px;margin-top:-1px;background:#c99a62;border-radius:2px}   /* 꼬치 */
+.vt-ball{position:relative;flex:none;width:17px;height:17px;border-radius:50%;background:#ead6c8;
+  box-shadow:inset -3px -3px 0 rgba(0,0,0,.07),inset 3px 3px 0 rgba(255,255,255,.7),0 1px 0 rgba(0,0,0,.12)}
+.vt-ball.p{background:#fbcfe0}.vt-ball.y{background:#fdeaa8}.vt-ball.s{background:#cbe4f8}.vt-ball.l{background:#ddd2f5}.vt-ball.m{background:#c9ebcf}
+.vt-ball.new{animation:vtPop .45s ease-out}
+@keyframes vtPop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+.vt-nm{margin-top:2px;font-size:10.5px;white-space:nowrap}
+.vt-op.me .vt-nm{color:#e2455f}
+.vt-cnt{position:absolute;right:6px;top:2px;font:10px Mona12;font-style:normal;color:#e0437f;visibility:hidden}
+.vote-area.done .vt-cnt{visibility:visible}
+.vote-area.done .vt-op{cursor:default}
+.vt-hint{flex:none;text-align:center;font:10px Mona12;color:#a08560}
 
 /* ---------- 쿄냐뉴스 미리보기 ---------- */
 .npv h3{display:flex;justify-content:space-between}
@@ -549,35 +561,86 @@ input.f:focus{border-color:var(--hot)}
 .cal td.ev span{text-decoration:underline dotted var(--hot)}
 .cal .yr{font:10px Mona12;color:#888;text-align:center;margin-top:3px}
 
-/* 투표 */
-aside.right .box.poll{border:9px solid transparent;border-image:url(https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe) 20 / 9px / 0 round}
-.poll .q{margin:0 0 6px;font:13px Mona12}
-.poll label{display:flex;align-items:center;gap:6px;padding:2px 4px;cursor:pointer;font-size:12px;border-bottom:1px dotted #ddd}
-.poll label:hover{background:var(--pink2)}
-.poll input[type=radio]{accent-color:var(--hot);margin:0}
-.poll .pgo{width:100%;margin-top:6px;padding:2px}
-.poll .pres{display:block;text-align:right;font:10px Mona12;color:#888;margin-top:4px;cursor:pointer}
-.pr{margin-bottom:5px;font-size:12px}
-.pr .pl{display:flex;justify-content:space-between}
-.pr .pl small{font:10px Mona12;color:#888}
-.pr .pb2{height:9px;border:1px solid var(--cocoa);background:#fff;margin-top:1px}
-.pr .pb2 i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--pink) 0 4px,#fbe3ec 4px 8px);width:0;transition:width .6s}
-.pr.mine .pl b{color:var(--hot)}
-.poll .tot{font:10px Mona12;color:#888;text-align:right}
-
-/* 광고 배너 */
-.adbn{position:relative;border:1px solid var(--choco);text-align:center;font:12px/1.5 Mona12;padding:14px 6px;margin-bottom:14px;
-  background:repeating-linear-gradient(90deg,var(--sky2) 0 10px,#fff 10px 20px)}
-.adbn.sq{background:repeating-linear-gradient(90deg,var(--milk) 0 10px,#fff 10px 20px);
-  border:20px solid transparent;border-image:url(https://mocha.crd.co/assets/images/gallery06/8258070e.png?v=667e73fe) 28 fill / 20px / 0 round}
-.adbn small{position:absolute;right:3px;top:1px;font-size:9px;color:#888}
-.adbn em{display:block;font-style:normal;font-size:16px;color:var(--hot)}
 
 /* 방문자 카운터 */
 .cnt .in{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
 .digits{display:inline-flex;gap:2px}
 .digits i{font:15px/20px Mona12;font-style:normal;width:15px;text-align:center;background:var(--choco);color:#fde6ef;border:1px solid var(--choco2)}
 .cnt p{margin:0;font:11px Mona12}
+
+/* ---------- 광고 (3단) ---------- */
+.ad3{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.adv{position:relative;overflow:hidden;color:#000;font-family:Suhgung12,entergal}
+.adv .blk{background:#5e4339;color:#5e4339;padding:0 2px;font-size:10px;cursor:help}   /* 까맣게 지운 글자 */
+.adv .blk:hover{color:#fff}
+@keyframes adSh{0%,100%{transform:translate(0)}20%{transform:translate(-1px,0)}40%{transform:translate(1px,1px)}60%{transform:translate(0,-1px)}}
+
+/* ① 부적 광고 — 빨강·흰 사선 테두리 + 신문 사진 */
+.ad-om{--r:#d1263f;padding:4px;line-height:1.35;background:repeating-linear-gradient(45deg,var(--r) 0 6px,#fff 6px 12px)}
+.om-in{background:#fff;padding:0 6px 3px}
+/* 💥 말도 안 돼!! */
+.om-boom{position:relative;z-index:3;width:168px;height:30px;margin:1px 0 0 -2px;display:flex;align-items:center;justify-content:center;
+  transform:rotate(-4deg);animation:omPop 1.4s ease-in-out infinite}
+.om-boom:before,.om-boom:after{content:"";position:absolute;inset:0;
+  clip-path:polygon(0% 40%,12% 30%,6% 8%,24% 22%,32% 0%,42% 20%,55% 4%,60% 22%,76% 2%,76% 26%,96% 14%,88% 38%,100% 52%,86% 62%,98% 88%,76% 76%,70% 100%,56% 80%,44% 98%,36% 78%,18% 96%,20% 72%,0% 78%,10% 58%)}
+.om-boom:before{background:var(--r)}             /* 빨간 테두리 */
+.om-boom:after{inset:3px;background:#ffe14d}      /* 노란 속 */
+.om-boom span{position:relative;z-index:1;font:10px/1 Suhgung11,Mona12;white-space:nowrap}
+.om-boom span b{font:12px/1 Suhgung12,entergal;font-weight:normal;color:var(--r)}
+@keyframes omPop{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(-2deg) scale(1.06)}}
+/* 使用前 | 글 | 使用後 */
+.om-mid{display:grid;grid-template-columns:48px 1fr 48px;gap:4px;align-items:center;margin:3px 0 2px}
+.om-tx{min-width:0;text-align:center}
+.om-q{font:10px/1.3 Suhgung11,Mona12;color:#555}
+.om-h{font:12px/1.25 Suhgung12,entergal}
+.om-h .emp{display:block;width:fit-content;margin:2px auto 1px;font:15px/1 Suhgung16,MaruMonica;letter-spacing:1px;color:#fff;transform:scaleX(1.15) skewX(-12deg);
+  text-shadow:1.5px 0 0 var(--r),-1.5px 0 0 var(--r),0 1.5px 0 var(--r),0 -1.5px 0 var(--r),1px 1px 0 var(--r),-1px -1px 0 var(--r),1px -1px 0 var(--r),-1px 1px 0 var(--r)}
+.om-who{font:9.5px Suhgung11,Mona12;color:#888}
+.om-price{font:10.5px Suhgung11,Mona12}
+.om-price s{color:#999}
+.om-price em{font:12px Suhgung12,entergal;font-style:normal;color:var(--r)}
+/* 사진 (신문 사진 액자) */
+.om-ph{position:relative;display:flex;flex-direction:column;align-items:center}
+.om-ph .lb{margin-bottom:2px;font:10px/1 Suhgung11,Mona12;white-space:nowrap}
+.om-ph .fr{width:44px;height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  border:1px solid #333;background:radial-gradient(circle,#cfcfcf 1px,transparent 1.3px) 0 0/4px 4px,#f4f4f4}
+.om-ph.af .lb{color:var(--r)}
+.om-ph.af .fr{border-color:var(--r);background:radial-gradient(circle,#f6c3cb 1px,transparent 1.3px) 0 0/4px 4px,#fff5f6}
+.om-ph img{display:block;max-width:38px;max-height:34px;image-rendering:pixelated}
+.om-ph.af:after{content:"✦";position:absolute;right:-2px;top:8px;font-size:9px;color:var(--r);animation:omTw 1s steps(1) infinite}       /* 반짝 */
+.om-ph.af:before{content:"✧";position:absolute;left:-1px;bottom:2px;z-index:2;font-size:8px;color:#f5b800;animation:omTw 1s steps(1) .5s infinite}
+@keyframes omTw{50%{opacity:0}}
+.om-sm{font:9px/12px Suhgung11,Mona12;color:#b0a0a6}
+
+/* ② 닌자 광고 — 회색 물음표 전단 + 초록 포인트 */
+.ad-nin{display:flex;flex-direction:column;padding:8px 8px 6px 20px;line-height:1.45;border:1px dashed #b9a6ae;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='46'><text x='6' y='30' font-size='26' font-family='Arial' font-style='italic' fill='%23d6d6d6'>?</text><text x='36' y='42' font-size='18' font-family='Arial' font-style='italic' fill='%23dedede'>?</text></svg>") 0 0/60px 46px,#ececec}
+.ad-nin h3{margin:0;display:flex;align-items:center;gap:6px;font:13px/1.3 Suhgung12,entergal}
+.ad-nin .m{font-size:11px;color:#7d5d4f}
+.ad-nin .hl{font-size:12px}
+/* 닌자 글자: 바깥 = 덜덜 / 안쪽 = 흰 글자 + 분홍 테두리, 글자마다 처짐 */
+.ad-nin .nj{display:inline-block;margin:2px 2px 2px 0;animation:adSh .25s infinite}
+.ad-nin .nj i{display:inline-block;margin-right:6px;font:20px/1 Suhgung20,MaruMonica;font-style:normal;color:#fff;letter-spacing:1px;
+  transform:scaleX(1.25) skewX(-14deg);transform-origin:left center;
+  text-shadow:1.5px 0 0 #f08db4,-1.5px 0 0 #f08db4,0 1.5px 0 #f08db4,0 -1.5px 0 #f08db4,1px 1px 0 #f08db4,-1px -1px 0 #f08db4,1px -1px 0 #f08db4,-1px 1px 0 #f08db4,2px 2px 0 #f6c2d6}
+.ad-nin .nj b{display:inline-block;font-weight:normal}
+.ad-nin .nj b:nth-child(1){transform:translateY(-2px) rotate(-6deg) scaleY(1.1)}   /* 닌 */
+.ad-nin .nj b:nth-child(2){transform:translateY(3px) rotate(9deg) scale(1.15,.8)}   /* 자 */
+/* 공중전화 딱지 + 번호 두 줄 */
+.ad-nin .tel{display:flex;flex-direction:column;align-items:flex-start;gap:1px;font:10.5px/1.4 Suhgung11,Mona12}
+.ad-nin .tel span{white-space:nowrap}
+.ad-nin .tel em{font-style:normal;color:#e0437f}
+.ad-nin .tel:before{content:"公衆電話";display:inline-flex;align-items:center;justify-content:center;height:13px;padding:0 4px;margin-bottom:2px;
+  font:9px/1 Mona12;color:#fff;background:#078f32;border-radius:2px}   /* 글자가 치우치면 padding:1px 4px 0 처럼 조절 */
+.ad-nin .sm{margin-top:3px;font:9px/1.2 Suhgung11,Mona12;color:#b0a0a6}
+/* 대나무 띠 */
+.ad-nin .bamboo{position:absolute;left:0;top:0;bottom:0;width:11px;z-index:3;
+  background:linear-gradient(90deg,#056b25 0 1px,#078f32 1px 7px,#3fb062 7px 9px,#078f32 9px 10px,#056b25 10px)}
+.ad-nin .bamboo:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(transparent 0 26px,#04561e 26px 28px,#6fcf8a 28px 29px,transparent 29px 40px)}
+/* 출입금지 테이프 */
+.ad-nin .tape{position:absolute;right:-30px;bottom:28px;z-index:4;width:150px;transform:rotate(-28deg);
+  font:9px/13px Mona12;letter-spacing:1px;text-align:center;white-space:nowrap;color:#fff;
+  background:repeating-linear-gradient(90deg,#078f32 0 6px,#0a7a2c 6px 8px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
 
 /* =========================================================
    10. 푸터

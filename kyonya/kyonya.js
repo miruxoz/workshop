@@ -334,6 +334,41 @@
     show();
   })();
 
+  /* ---------- 🍡 오늘의 앙케이트 (당고 접시) ---------- */
+(function(){
+  var box=$('voteArea'), P=KY.VOTE; if(!box||!P) return;
+  var URL=KY.CLAP_URL||'', N=P.ops.length, KEY='kyVote_'+P.id, mine=null, V=P.ops.map(function(){return 0});
+  try{ mine=localStorage.getItem(KEY); }catch(x){}
+  function draw(newI){
+    var mx=Math.max.apply(null,V)||1, t=V.reduce(function(a,b){return a+b},0);
+    box.classList.toggle('done',mine!==null);
+    box.innerHTML='<div class="vt-roof"><span class="vt-sign">今日のアンケート</span></div>'+
+      '<div class="vt-q">'+P.q+'</div><div class="vt-body">'+
+      P.ops.map(function(o,i){
+        var n=V[i]?Math.max(1,Math.round(V[i]/mx*4)):0, b='';   // 경단은 접시당 최대 4개
+        for(var k=0;k<n;k++) b+='<span class="vt-ball '+(o[1]||'')+(i==newI&&k==n-1?' new':'')+'"></span>';
+        return '<div class="vt-op'+(mine==i&&mine!==null?' me':'')+'" data-i="'+i+'"><em class="vt-cnt">'+V[i]+'표</em>'+
+          '<div class="vt-plate"><div class="vt-stk">'+b+'</div></div><div class="vt-nm">'+o[0]+'</div></div>';
+      }).join('')+'</div>'+
+      '<div class="vt-hint">'+(mine!==null?'총 '+t+'표 · 잘 먹겠습니다 ♡':'먹고 싶은 걸 골라 주세요 🍡')+'</div>';
+  }
+  function ask(q,newI){
+    if(!URL){ draw(newI); return; }
+    fetch(URL+'?'+q+'&id='+encodeURIComponent(P.id)+'&n='+N+'&_='+Date.now())
+      .then(function(r){return r.json()})
+      .then(function(d){ if(d&&d.counts){ V=P.ops.map(function(o,i){return Number(d.counts[i])||0}); } draw(newI); })
+      .catch(function(){ draw(newI); });
+  }
+  box.addEventListener('click',function(e){
+    var op=e.target.closest('.vt-op'); if(!op||mine!==null) return;
+    var i=+op.dataset.i; mine=String(i);
+    try{ localStorage.setItem(KEY,i); }catch(x){}
+    V[i]++; draw(i);                 // 화면에 먼저 보여 주고
+    ask('a=vote&o='+i,i);            // 시트에 저장
+  });
+  draw(); ask('a=vget');
+})();
+
   /* =========================== TOP · 커서 =========================== */
   addEventListener('scroll',function(){ var t=$('toTop'); if(t) t.classList.toggle('on',scrollY>300); },{passive:true});
   on('toTop','click',function(){ scrollTo({top:0,behavior:'smooth'}); });
