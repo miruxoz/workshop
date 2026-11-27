@@ -82,8 +82,7 @@
   on('lgPw','keydown',function(e){ if(e.key==='Enter') $('lgBtn').click(); });
   on('lgOut','click',function(e){ e.preventDefault(); me=null; store.set('ky_login','');
     $('lgForm').hidden=false; $('lgCard').hidden=true; $('loginBox').classList.remove('on');
-    var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.firstElementChild.innerHTML = id.toLowerCase()==='sei' ? '🔐 세이 전용 게시판' : '🔓 회원 전용 게시판'; sm.firstElementChild.href = id.toLowerCase()==='sei' ? '세이게시판주소' : '회원게시판주소'; }
-    document.querySelectorAll('#wMail,#wChat').forEach(function(w){w.classList.remove('show')});
+    var sm=$('secretMenu'); if(sm){ sm.classList.remove('open'); sm.querySelector('.t').innerHTML='회원전용게시판'; }    document.querySelectorAll('#wMail,#wChat').forEach(function(w){w.classList.remove('show')});
     var gn=$('gbName'); if(gn) gn.value=''; if(KY.MICRO_SET) KY.MICRO_SET('all'); resetOmk();
     if(typeof drawOnline==='function') drawOnline(); pop('로그아웃','👋','또 놀러 오세요!'); });
   on('secretMenu','click',function(e){ if(!this.classList.contains('open')){ e.preventDefault(); pop('회원 전용','🔒','로그인한 회원만 볼 수 있어요!'); } });
@@ -228,6 +227,7 @@
           var isNew=(Date.now()-p.date)<2*86400000;
           return '<li><span class="cat '+L[1]+'">'+esc(L[0])+'</span><a href="'+p.link+'">'+esc(x.t)+'</a>'+(isNew?'<span class="new">NEW</span>':'')+'<time>'+md(p.date)+'</time></li>'; }).join('')
         || '<li style="color:#888">아직 글이 없어요</li>';
+        });
 
     /* ---- 달력 (항상 2014년) ---- */
     var cm=today.getMonth();
