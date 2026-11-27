@@ -812,3 +812,6 @@ dt:nth-child(5) .nm{color:#ff002a !important}
 #pudList .cat.y{background:#fdeaa8}    /* 노랑 */
 .pud-more{display:block;text-align:right;font-size:11px;color:#7d5d4f;margin-top:4px;text-decoration:none}
 .pud-more:hover{text-decoration:underline}
+
+.pud{height:280px;width:320px}
+.duo{grid-template-columns:340px 320px;justify-content:center}   /* 케이크 340 + 푸딩 320 → 둘을 묶어서 가운데로 */
