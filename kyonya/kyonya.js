@@ -222,12 +222,12 @@
       setNews('all');
       var more=$('newsMore'); if(more) more.href='/category/'+encodeURIComponent(C.news);
 
-      /* 새 소식 */
-      $('newList').innerHTML=all.slice(0,6).map(function(p){ var top=p.cat.split('/')[0], L=(KY.CAT_LABEL||{})[top]||[top||'글',''];
-        var x=prefix(p.title);
-        return '<li><span class="cat '+L[1]+'">'+esc(L[0])+'</span><a href="'+p.link+'" style="text-decoration:none;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+esc(x.t)+'</a><time>'+md(p.date)+'</time></li>'; }).join('')
+            /* 새 소식 (푸딩) — 최근 글 7개 · 이틀 안에 쓴 글은 NEW */
+      var pl=$('pudList');
+      if(pl) pl.innerHTML=all.slice(0,7).map(function(p){ var top=p.cat.split('/')[0], L=(KY.CAT_LABEL||{})[top]||[top||'글',''], x=prefix(p.title);
+          var isNew=(Date.now()-p.date)<2*86400000;
+          return '<li><span class="cat '+L[1]+'">'+esc(L[0])+'</span><a href="'+p.link+'">'+esc(x.t)+'</a>'+(isNew?'<span class="new">NEW</span>':'')+'<time>'+md(p.date)+'</time></li>'; }).join('')
         || '<li style="color:#888">아직 글이 없어요</li>';
-    });
 
     /* ---- 달력 (항상 2014년) ---- */
     var cm=today.getMonth();

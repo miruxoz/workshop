@@ -770,3 +770,45 @@ dt:nth-child(3) .nm{color:#ff002a !important}
 dt:nth-child(5) .nm{color:#ff002a !important}
 
 .omj{background-image:url("https://i.postimg.cc/mkbCg86b/1.png");background-color:#ffffff;background-size:127px;background-position:0px 0px;border-style:solid;border-width:9px;border-color:transparent;border-image:url("https://i.postimg.cc/RhJCpKqH/testborder3.png") 15 / 9px / 0px round}
+
+/* =========================================================
+   새 소식 — 푸딩 칸 (케이크 옆)
+   ========================================================= */
+.duo{grid-template-columns:340px minmax(0,1fr)}      /* 케이크 340px + 남은 폭 전부 푸딩 */
+.pud{position:relative;display:flex;flex-direction:column;font-family:entergal;color:#000;transform-origin:50% 100%}
+.pud:hover{animation:pudJig .7s ease}               /* 마우스 올리면 흔들흔들 */
+@keyframes pudJig{0%,100%{transform:scale(1,1)}20%{transform:scale(1.03,.96)}40%{transform:scale(.97,1.03)}60%{transform:scale(1.015,.985)}80%{transform:scale(.995,1.005)}}
+/* 토핑: 생크림 + 체리 */
+.pud-crm{position:absolute;left:-2px;right:-2px;bottom:calc(100% - 12px);z-index:4;pointer-events:none}   /* -12px: 클수록 아래로 */
+.pud-crm img{display:block;width:100%;height:auto}
+.pud-cherry{position:absolute;right:14px;bottom:100%;margin-bottom:-26px;z-index:6;width:72px;height:auto;image-rendering:pixelated;pointer-events:none}  /* -26px: 클수록 아래로 */
+/* 카라멜 바 */
+.pud-bar{position:relative;z-index:3;padding:11px 12px 8px;font:13px entergal,Mona12;color:#fff;letter-spacing:.5px;
+  background:linear-gradient(#9a7362,#7d5d4f 55%,#6a4b3f);border-radius:10px 10px 4px 4px;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.18),0 2px 0 rgba(94,67,57,.25)}
+.pud-bar:before{content:"";position:absolute;right:18px;top:9px;width:34px;height:5px;border-radius:5px;background:rgba(255,255,255,.55)}
+.pud-bar i{position:absolute;right:11px;top:9px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.55)}
+.pud-bar:after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:10px;
+  background:radial-gradient(circle at 6px 2px,rgba(255,255,255,.55) 1.4px,transparent 2px) 0 0/12px 10px,radial-gradient(circle at 6px 0,#6a4b3f 6px,transparent 6.5px) 0 0/12px 10px;
+  filter:drop-shadow(0 2px 0 rgba(94,67,57,.2))}
+/* 커스터드 몸통 */
+.pud-in{flex:1;margin-top:-4px;padding:22px 12px 12px;background:#fffbd6;border:1px solid #c9ad86;border-top:0;border-radius:0 0 16px 16px;
+  box-shadow:inset 0 8px 12px rgba(255,255,255,.8),inset 0 -8px 0 rgba(233,205,140,.35)}
+/* 목록 */
+#pudList{margin:0;padding:0;list-style:none}
+#pudList li{display:flex;align-items:baseline;gap:5px;padding:4px 0;border-bottom:1px dotted #e3cf9a;font-size:12px}
+#pudList li:last-child{border:0}
+#pudList a{flex:1;min-width:0;color:#000;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pudList a:hover{color:#7d5d4f;text-decoration:underline}
+#pudList time{flex:none;font:10px Mona12;color:#a08560}
+#pudList .new{flex:none;font:9px Mona12;color:#fff;background:#f3b9d8;padding:0 3px;animation:newbl 1.2s steps(1) infinite}
+/* 카테고리 딱지 (파스텔 젤리) — 색 이름은 kyonya-data.js 의 CAT_LABEL 두 번째 칸 */
+#pudList .cat{flex:none;font:10px/15px Mona12;padding:0 6px;color:#000;border-radius:8px;background:#ead6c8;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(0,0,0,.08)}
+#pudList .cat.p{background:#fbcfe0}    /* 분홍 */
+#pudList .cat.l{background:#ddd2f5}    /* 라벤더 */
+#pudList .cat.m{background:#c9ebcf}    /* 민트 */
+#pudList .cat.s{background:#cbe4f8}    /* 하늘 */
+#pudList .cat.y{background:#fdeaa8}    /* 노랑 */
+.pud-more{display:block;text-align:right;font-size:11px;color:#7d5d4f;margin-top:4px;text-decoration:none}
+.pud-more:hover{text-decoration:underline}
