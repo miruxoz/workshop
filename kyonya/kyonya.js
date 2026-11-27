@@ -303,6 +303,36 @@
         var first=function(){ document.removeEventListener('pointerdown',first,true); play(); };
         document.addEventListener('pointerdown',first,true); } }
   }
+    /* =========================== 박수 (구글 시트에 모아요) =========================== */
+  (function(){
+    var W=$('wClap'); if(!W) return;
+    var URL=KY.CLAP_URL||'', MAX=10, key='ky_clap_'+new Date().toDateString();
+    var mine=+(store.get(key)||0), total=null;
+    function show(){
+      if(total!==null){ if($('clapN')) $('clapN').innerHTML=total; $('clapAll').innerHTML=total; }
+      $('clapMe').innerHTML=mine;
+      var b=$('clapMore'); b.disabled=mine>=MAX;
+      b.innerHTML=mine>=MAX?'오늘은 여기까지! 고마워요 ♡':'👏 한 번 더 (최대 '+MAX+'번)'; }
+    function call(q,cb){
+      if(!URL){   // 구글 시트 연결 전: 이 브라우저에만 세어 둠
+        var t=+(store.get('ky_clap_demo')||0); if(q==='a=clap'){ t++; store.set('ky_clap_demo',t); }
+        if(cb) cb({total:t}); return; }
+      fetch(URL+'?'+q).then(function(r){return r.json()}).then(function(d){ if(cb) cb(d); }).catch(function(){}); }
+    function pulse(){ var bd=$('clapBd'); bd.classList.remove('clap-pop'); void bd.offsetWidth; bd.classList.add('clap-pop'); }
+    function clap(){ if(mine>=MAX) return; mine++; store.set(key,mine); if(total!==null) total++; show(); pulse();
+      call('a=clap',function(d){ total=d.total; show(); }); }
+    function xmas(){ var t=new Date(); t.setHours(0,0,0,0); var x=new Date(t.getFullYear(),11,25); if(t>x) x=new Date(t.getFullYear()+1,11,25);
+      var d=Math.round((x-t)/864e5); $('clapX').innerHTML=d===0?'메리 크리스마스! 🎄':'크리스마스까지 앞으로 <b>'+d+'</b>일!'; }
+    document.addEventListener('click',function(e){ if(!e.target.closest('[data-clap]')) return;
+      e.preventDefault(); xmas(); openWin(W); clap(); });
+    on('clapMore','click',clap);
+    on('clapTx','input',function(){ $('clapLen').innerHTML=this.value.length+' / 200'; });
+    on('clapSend','click',function(){ var t=$('clapTx').value.trim(); if(!t) return;
+      call('a=msg&t='+encodeURIComponent(t.slice(0,200))); $('clapTx').value='';
+      $('clapLen').innerHTML='<span class="sent">보냈어요! 고마워요 ♡</span>'; });
+    call('a=get',function(d){ total=d.total; show(); });
+    show();
+  })();
 
   /* =========================== TOP · 커서 =========================== */
   addEventListener('scroll',function(){ var t=$('toTop'); if(t) t.classList.toggle('on',scrollY>300); },{passive:true});

@@ -145,9 +145,15 @@
             <div class="intro">
               와 줘서 고마워<img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif"> ꒰˘⸝⸝ | ⩊ | ⸝⸝ ˘꒱੭<br>
               이 홈페이지는 서기 <span style="background:linear-gradient(transparent 55%, #fffce0 55%)">2014년 일본</span>에 멈춰 있습니다 <img class="text-emoji" src="https://i.imgur.com/A47Rd6V.gif"> 쿄냥이의 이야기와 이것저것 좋아하는 것들을 모아두고 있어요 (╹ᗜ╹ *) 느긋하게 구경해 주세요 방명록에 한 마디 남겨주면 더 기쁠 거야<img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif">
+              <br><br>
             </div>
-            <!-- 스티커 -->
-            <img src="https://i.postimg.cc/d07Qxb6m/12.gif" alt="" style="position:absolute;z-index:50;left:289px;top:79px">
+                      <!-- ▼ 안내 줄글 (파란 밑줄 = 링크) -->
+          <div class="m-txt">
+            <span class="opt"><img class="text-emoji" src="https://static.tumblr.com/rltvkjt/tkjlo4euz/minigif045.gif"> PC 화면 최적화</span><br>
+            간단한 성향글은 <a class="lk" href="#soon">이쪽</a>에서 확인해 주세요 <img class="text-emoji" src="https://64.media.tumblr.com/536a661680b003928f3b4b8ed8463eca/d0c9662391bde33e-05/s75x75_c1/d141f9e29149d83db1fc6d96c6e24b5bb9f8444f.gifv"> 홈페이지 메뉴 설명이 필요하다면 <a class="lk" href="#soon">여기</a>로 <img class="text-emoji" src="https://i.imgur.com/f95yKqD.gif"> 방명록은 <a class="lk" href="/guestbook">고객센터</a>에 남겨주면 돼 <img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif"> 부끄러울 땐 <a class="lk" href="#" data-clap>박수</a>만 눌러 줘도 OK ♬ 그럼 천천히 즐겨 줘 <img class="text-emoji" src="https://i.imgur.com/dIAOe5j.gif">
+          </div>
+          <!-- ▼ 박수 버튼 (누르면 박수 창) -->
+          <div class="clap-wrap"><button class="clap-btn" data-clap><span>👏</span> [ 拍手する ] <b id="clapN">-</b></button></div>
           </div>
       </section>
 
@@ -169,6 +175,7 @@
             <div class="todo-in"><div class="todo-ttl">TO DO</div><ul id="todoList"></ul></div>
             <div class="todo-bot"></div>
           </div></div>
+          <img src="https://64.media.tumblr.com/5c13a5c5b1f6387f0e1917e43f791159/tumblr_mq9q46aqY31r6m856o1_500.gifv" style="position: absolute; margin: 0px; z-index: 50; width: 80px; left: 910px; top: 307px;">
       </div>
     </div>
 
@@ -338,7 +345,21 @@
   <div class="tt"><span id="chatT">💬 쿄냐톡</span><button class="x">✕</button></div><div class="scal"></div>
   <div class="kchat sunk" id="chatLog"></div><div class="ktyping" id="typing"></div>
   <div class="kin"><input class="sunk" id="chatIn" placeholder="메시지 입력…"><button class="btn" id="chatSend">전송</button></div><div class="choc"></div></div>
-<!-- BGM 묻기 (A) -->
+<!-- 박수 (하늘 초코칩) -->
+<div class="win kw d2 clap" id="wClap" style="left:calc(50% - 150px);top:110px">
+  <div class="tt"><span>👏 拍手ありがとう！</span><button class="x">✕</button></div>
+  <div class="sunk bd" id="clapBd">
+    <img class="clap-stk" src="https://64.media.tumblr.com/fe6a94d6813c1d3ed7cb986fee40eccc/tumblr_mydm51oh1v1rni86yo1_500.gifv" alt="">
+    <p class="clap-ty">박수 고마워 <img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif"><br><br><span id="clapX"></span></p>
+    <p class="clap-cnt">지금까지 <b id="clapAll">-</b>번 · 오늘 <b id="clapMe">0</b>번째 박수</p>
+    <button class="btn" id="clapMore">👏 한 번 더</button>
+    <div class="clap-msg">한마디 남기기 <small>(관리인만 볼 수 있어요)</small>
+      <textarea id="clapTx" maxlength="200" placeholder="한마디만 적어도 기뻐요 ♡"></textarea>
+      <div class="row"><small id="clapLen">0 / 200</small><button class="btn" id="clapSend">보내기</button></div>
+    </div>
+  </div>
+</div>
+  <!-- BGM 묻기 (A) -->
 <div class="win kw dA" id="wBgm">
   <div class="tt"><span>🎧 쿄냐통신 BGM</span><button class="x">✕</button></div>
   <div class="sunk bd"><div class="big">🎧</div>쿄냐통신에 오신 걸 환영해요!<br>BGM을 틀까요?<br><small style="color:#999">(소리가 나요)</small></div>

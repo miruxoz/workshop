@@ -104,7 +104,11 @@ var KY = {
     tip:['오늘은 먼저 연락해 보세요.','무표정이 통하는 날.','간식을 나누면 운이 올라요.','쿄헤이의 시선에 주의.','일찍 자면 좋은 꿈을 꿔요.','"ㅇ"보다는 "응"으로 답하세요.'] },
 
   /* 패밀리 사이트 */
-  FAMILY: [ ['🏪 쿄냐통신 분점 (러브로그)','https://luvlog.me/kyohei'], ['🧺 로그 공방','https://miruxoz.github.io/workshop/'] ]
+  FAMILY: [ ['🏪 쿄냐통신 분점 (러브로그)','https://luvlog.me/kyohei'], ['🧺 로그 공방','https://miruxoz.github.io/workshop/'] ],
+
+    /* 👏 박수 — 구글 Apps Script 웹 앱 주소 (비어 있으면 내 브라우저에만 세요) */
+  CLAP_URL: 'https://script.google.com/macros/s/AKfycbxqTGo27UvKbWEqvJlIish-jg2RYkKhboWZ3yC8t_IOqsgHzHHesdAR5FGWfWdnEl7laA/exec',
+  
 };
 
 /* ---------- preview.html 에서만 쓰는 가짜 글 (티스토리에서는 진짜 글을 불러와요) ---------- */

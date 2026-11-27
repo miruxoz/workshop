@@ -632,14 +632,14 @@ textarea{font:12px entergal!important}
    ========================================================= */
 @font-face{font-family:MaruMonica;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/x12y16pxMaruMonica.woff) format("woff");font-display:swap}
 @font-face{font-family:"Mona12 Emoji";src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12ColorEmoji.woff2) format("woff2"),url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12Emoji.woff2) format("woff2"),url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12-Emoji.woff2) format("woff2")}
-.omj{margin-bottom:14px;font-family:entergal;color:#000}
+.omj{padding-top: 10px;margin-bottom:14px;font-family:entergal;color:#000}
 .omj svg{display:block}
 .oj-e{font-family:"Mona12 Emoji",Mona12,sans-serif}
 /* 타이틀: 신사 현판 */
 .oj-ttl{width:fit-content;margin:4px auto 8px}
 .oj-ttl b{display:block;padding:4px 16px 3px;font:16px/1.2 MaruMonica,entergal;font-weight:normal;letter-spacing:3px;color:#e2455f;background:#fff;border:3px double #e2455f;}
 /* 상자 */
-.oj-box{position:relative;overflow:hidden;border:4px double #e2455f;padding-bottom:12px;background:radial-gradient(circle,#f8e3d5 1px,transparent 1.5px) 0 0/10px 10px,#fffaf2}
+.oj-box{position:relative;overflow:hidden;width:auto;padding-bottom:12px;background:radial-gradient(circle,#f8e3d5 1px,transparent 1.5px) 0 0/10px 10px,#fffaf2}
 .oj-scene{position:relative;height:224px;overflow:hidden;border-bottom:2px solid #c98f5a;background:url(https://media.tumblr.com/45baec53191971ec08c830217b64a3f0/tumblr_inline_mlmiq6m3DF1qz4rgp.gif) center top}
 .oj-ground{position:absolute;left:0;right:0;bottom:0;height:48px;background:0 0/192px 48px repeat-x}
 .oj-torii{position:absolute;left:50%;bottom:22px;margin-left:-112px}
@@ -841,3 +841,38 @@ dt:nth-child(5) .nm{color:#ff002a !important}
 @media(max-width:780px){.main-row{grid-template-columns:1fr}}
 
 .todo{border-width:8px;border-color:transparent;border-image:url("https://64.media.tumblr.com/b1c803155029d6ecc272f5bfdac158d6/eb4ce0e9a292d9f0-da/s100x200/e847546a00b31154592a12ed70da2921e97d954a.png") 10 fill / 8px / 0px round}
+
+.main-row .main{border-width:9px;border-color:transparent;border-image:url("https://i.postimg.cc/RhJCpKqH/testborder3.png") 15 / 9px / 0px round;height:365px}
+.m-log img:nth-child(5){left:-18px !important;top:177px !important}
+
+/* =========================================================
+   메인 안내 줄글 + 박수
+   ========================================================= */
+.m-txt{margin-top:8px;line-height:1.9;font-size:12.5px;text-align:justify;word-break:break-word;overflow-wrap:anywhere;
+  text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff}
+.m-txt .opt{display:inline-block;font:11px Mona12;color:#000;background:#fff;border:1px solid #c79ab0;padding:0 6px;margin-bottom:4px;text-shadow:none}
+.lk{color:#3955d4;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lk:hover{color:#e0437f}
+/* 박수 버튼 — 딸기우유색 윈도우 버튼 */
+.clap-wrap{text-align:right;margin-top:10px}
+.clap-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 12px;font:12px Mona12;color:#000;cursor:pointer;
+  background:linear-gradient(#fff0f6,#ffd6e5);border:2px solid;border-color:#fff #e08aaa #e08aaa #fff;
+  box-shadow:2px 2px 0 rgba(224,138,170,.35)}
+.clap-btn:hover{background:linear-gradient(#fff7fa,#ffe3ee)}
+.clap-btn:active{border-color:#e08aaa #fff #fff #e08aaa;box-shadow:none;transform:translate(1px,1px)}
+.clap-btn b{font-weight:normal;color:#e0437f}
+/* 박수 창 */
+.kw.clap{width:300px}
+.clap .bd{padding:12px 10px}
+.clap-stk{display:block;margin:0 auto 6px;max-width:140px;max-height:140px}
+.clap-ty{margin:2px 0;font:13px entergal}
+.clap-ty b{font-weight:normal;color:#e0437f}
+.clap-cnt{margin:6px 0;font:11px Mona12;color:#888}
+.clap-cnt b{font-weight:normal;color:#e0437f}
+.clap-msg{margin-top:8px;text-align:left;font:11px entergal}
+.clap-msg small{color:#999}
+.clap-msg textarea{display:block;width:100%;height:46px;resize:none;margin:2px 0;padding:3px 5px;border:1px solid #c9b3a8;box-shadow:inset 2px 2px 0 #eadfd9}
+.clap-msg .row{display:flex;justify-content:space-between;align-items:center}
+.clap-msg .sent{color:#e0437f}
+.clap-pop{animation:clapPop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes clapPop{from{transform:scale(.7)}}
