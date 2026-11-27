@@ -127,42 +127,50 @@
 
   <!-- ■■■■■■■■■■ 홈에서만 보이는 것 ■■■■■■■■■■ -->
   <div class="home-only">
-    <!-- ▼ ⑧ 메인 (소개 + 갱신내역) -->
-    <section class="main">
-      <div class="main-2">
-
-        <!-- ◀ 왼쪽 칸: 고양이 + 말풍선 / Welcome.txt / 인사말 -->
-        <div class="m-hi">
-          <div class="ky-duo">
-            <img src="https://mocha.crd.co/assets/images/gallery05/18739c14.gif?v=667e73fe" alt="" style="margin-left:20px">
-            <div class="ky-bub" style="padding:5px 5px 5px 10px;margin:10px 0 10px 14px;font-family:entergal;font-size:12px">
-              <span style="background:linear-gradient(transparent 55%, #ffebf3 55%)">야옹이 <span class="efont">V</span></span><br>
-              좋아하는 것: 쿄헤이 ♥ 초밥 ♥ 폰데링 도넛<br>
-              취미: 동물 다큐멘터리 감상 <span class="efont">E</span><br>
-              좌우명: 내일은 내일의 해가 뜬다 <span class="efont">d</span>
+        <!-- ▼ ⑧ 메인 줄: 왼쪽 소개 | 오른쪽 업데이트 로그 + 투두 -->
+    <div class="main-row">
+      <section class="main">
+          <!-- ◀ 왼쪽 칸: 고양이 + 말풍선 / Welcome.txt / 인사말 -->
+          <div class="m-hi">
+            <div class="ky-duo">
+              <img src="https://mocha.crd.co/assets/images/gallery05/18739c14.gif?v=667e73fe" alt="" style="margin-left:20px">
+              <div class="ky-bub" style="padding:5px 5px 5px 10px;margin:10px 0 10px 14px;font-family:entergal;font-size:12px">
+                <span style="background:linear-gradient(transparent 55%, #ffebf3 55%)">야옹이 <span class="efont">V</span></span><br>
+                좋아하는 것: 쿄헤이 ♥ 초밥 ♥ 폰데링 도넛<br>
+                취미: 동물 다큐멘터리 감상 <span class="efont">E</span><br>
+                좌우명: 내일은 내일의 해가 뜬다 <span class="efont">d</span>
+              </div>
             </div>
+            <div class="m-wel"><span style="color:#3955d4;text-decoration:underline;text-underline-offset:2px">Welcome.txt</span></div>
+            <div class="intro">
+              와 줘서 고마워<img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif"> ꒰˘⸝⸝ | ⩊ | ⸝⸝ ˘꒱੭<br>
+              이 홈페이지는 서기 <span style="background:linear-gradient(transparent 55%, #fffce0 55%)">2014년 일본</span>에 멈춰 있습니다 <img class="text-emoji" src="https://i.imgur.com/A47Rd6V.gif"> 쿄냥이의 이야기와 이것저것 좋아하는 것들을 모아두고 있어요 (╹ᗜ╹ *) 느긋하게 구경해 주세요 방명록에 한 마디 남겨주면 더 기쁠 거야<img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif">
+            </div>
+            <!-- 스티커 -->
+            <img src="https://i.postimg.cc/d07Qxb6m/12.gif" alt="" style="position:absolute;z-index:50;left:289px;top:79px">
           </div>
-          <div class="m-wel"><span style="color:#3955d4;text-decoration:underline;text-underline-offset:2px">Welcome.txt</span></div>
-          <div class="intro">
-            와 줘서 고마워<img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif"> ꒰˘⸝⸝ | ⩊ | ⸝⸝ ˘꒱੭<br>
-            이 홈페이지는 서기 <span style="background:linear-gradient(transparent 55%, #fffce0 55%)">2014년 일본</span>에 멈춰 있습니다 <img class="text-emoji" src="https://i.imgur.com/A47Rd6V.gif"> 쿄냥이의 이야기와 이것저것 좋아하는 것들을 모아두고 있어요 (╹ᗜ╹ *) 느긋하게 구경해 주세요 방명록에 한 마디 남겨주면 더 기쁠 거야<img class="text-emoji" src="http://i387.photobucket.com/albums/oo314/paravidatoda/mini-176.gif">
+      </section>
+
+      <div class="side">
+          <!-- ▶ 오른쪽 칸: UPDATE LOG + 갱신내역 -->
+          <div class="m-log">
+            <div class="log-ttl">UPDATE LOG</div>
+            <div class="upd" id="updList"></div>
+            <!-- 스티커 -->
+            <img src="https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj" alt="" style="position:absolute;z-index:50;width:190px;left:21px;top:14px">
+            <img src="https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj" alt="" style="position:absolute;z-index:50;width:190px;left:19px;top:189px">
+            <!-- 스티커: 자는 고양이 (위치는 실험실에서 다시 맞춰 주세요) -->
+            <img src="https://i.pinimg.com/originals/50/91/ec/5091ec6ae637f38943047898531fc5d3.gif" alt="" style="position:absolute;z-index:50;width:120px;left:-12px;top:150px">
           </div>
-          <!-- 스티커 -->
-          <img src="https://i.postimg.cc/d07Qxb6m/12.gif" alt="" style="position:absolute;z-index:50;left:289px;top:79px">
-        </div>
 
-        <!-- ▶ 오른쪽 칸: UPDATE LOG + 갱신내역 -->
-        <div class="m-log">
-          <div class="log-ttl">UPDATE LOG</div>
-          <div class="upd" id="updList"></div>
-          <!-- 스티커 -->
-          <img src="https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj" alt="" style="position:absolute;z-index:50;width:190px;left:21px;top:14px">
-          <img src="https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj" alt="" style="position:absolute;z-index:50;width:190px;left:19px;top:189px">
-        </div>
-
+          <!-- ▼ 투두 (할 일은 kyonya-data.js 의 TODO 에서) -->
+          <div class="todo-area"><div class="todo">
+            <div class="todo-top"></div>
+            <div class="todo-in"><div class="todo-ttl">TO DO</div><ul id="todoList"></ul></div>
+            <div class="todo-bot"></div>
+          </div></div>
       </div>
-      <img src="https://i.pinimg.com/originals/50/91/ec/5091ec6ae637f38943047898531fc5d3.gif" style="position: absolute; margin: 0px; z-index: 50; width: 120px; left: 416px; top: 177px;">
-    </section>
+    </div>
 
     <div class="duo">
              <!-- ▼ 세이의 한마디 (쇼트케이크 + 2ch) -->
@@ -179,6 +187,7 @@
           <div class="mbk-bt"><a href="/category/ひとりごと">全部読む</a><a href="/category/ひとりごと">最新50</a><a href="/category/ひとりごと">1-100</a></div>
         </div></div>
         <div class="mbk-bot"></div>
+        <img src="https://64.media.tumblr.com/dabb628bbc0ab825d79391ba8b2fa45f/7c7c65348bf23477-55/s400x600/46750e267dbb5dd3c2fcd2c9620f9cbe119dcc23.gifv" style="position: absolute; margin: 0px; z-index: 50; width: 350px; left: -3px; top: -6px;">
       </div>
             <!-- ▼ 새 소식 (푸딩) -->
       <div class="pud">

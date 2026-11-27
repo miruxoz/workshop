@@ -166,6 +166,9 @@
     /* 갱신내역·알림 */
         if($('updList')) $('updList').innerHTML=(KY.UPDATES||[]).map(function(u){
       return '<div><time>'+u.d+'</time>'+u.t+(u.new?'<span class="n">NEW</span>':'')+'</div>'; }).join('');
+          /* 투두 — kyonya-data.js 의 TODO */
+    if($('todoList')) $('todoList').innerHTML=(KY.TODO||[]).map(function(t){
+      return '<li'+(t[1]?' class="done"':'')+'>'+t[0]+'</li>'; }).join('') || '<li>할 일 없음 ♡</li>';
     if($('ntcD') && KY.NOTICE){ $('ntcD').innerHTML=KY.NOTICE.d; $('ntcT').innerHTML=KY.NOTICE.t; }
 
     /* ---- 글 불러오기 (티스토리 RSS) ---- */
@@ -223,7 +226,7 @@
 
             /* 새 소식 (푸딩) — 최근 글 7개 · 이틀 안에 쓴 글은 NEW */
       var pl=$('pudList');
-      if(pl) pl.innerHTML=all.slice(0,7).map(function(p){ var top=p.cat.split('/')[0], L=(KY.CAT_LABEL||{})[top]||[top||'글',''], x=prefix(p.title);
+      if(pl) pl.innerHTML=all.slice(0,4).map(function(p){ var top=p.cat.split('/')[0], L=(KY.CAT_LABEL||{})[top]||[top||'글',''], x=prefix(p.title);
           var isNew=(Date.now()-p.date)<2*86400000;
           return '<li><span class="cat '+L[1]+'">'+esc(L[0])+'</span><a href="'+p.link+'">'+esc(x.t)+'</a>'+(isNew?'<span class="new">NEW</span>':'')+'<time>'+md(p.date)+'</time></li>'; }).join('')
         || '<li style="color:#888">아직 글이 없어요</li>';
