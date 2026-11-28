@@ -87,8 +87,19 @@
   }
   let pT;
   inEl.addEventListener('input', () => { clearTimeout(pT); pT = setTimeout(preview, 250); });
-  inEl.addEventListener('paste', () => setTimeout(() => { preview(); record(true); }, 30));
-  $('c2Rec').addEventListener('click', () => { preview(); record(true); });
+  // 로그를 통째로 붙여도 2ch 답변만 남기기 (관찰일지처럼)
+  function pickOut() {
+    const raw = inEl.value; if (!/^\s*\[2ch\]\s*$/mi.test(raw.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '\n'))) return 0;
+    const segs = Ch2.extract(raw); if (!segs.length) return 0;
+    const out = segs.join('\n\n');
+    if (out.trim() !== cleanText()) { inEl.value = out; return segs.length; }
+    return 0;
+  }
+  inEl.addEventListener('paste', () => setTimeout(() => {
+    const n = pickOut(); preview(); record(false);
+    toast(n ? `✂ 로그에서 2ch 답변 ${n}개만 골라내서 장부에 기록했어요!` : '📒 장부에 기록했어요!');
+  }, 30));
+  $('c2Rec').addEventListener('click', () => { const n = pickOut(); preview(); record(true); if (n) toast(`✂ 2ch 답변 ${n}개만 골라냈어요`); });
   $('c2Clear').addEventListener('click', () => { inEl.value = ''; $('c2Got').innerHTML = ''; preview(); });
 
   $('c2Post').addEventListener('click', async () => {

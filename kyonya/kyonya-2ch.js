@@ -145,7 +145,29 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { mount(); }); else mount();
 
-  window.Ch2 = { CATS: CATS, classify: classify, parse: parse, render: render, mount: mount };
+  /* ---------- 로그 통째로 붙여도 2ch 답변만 골라내기 ---------- */
+  // [2ch] 한 줄로 시작 → 한줄 요약 줄 / 코드블록 끝 / 다음 OOC 직전까지. 레스가 하나도 없는 덩어리(OOC 양식 예시)는 버려요
+  function htmlToText(t) {
+    if (!/<\/?(p|div|br|span|li)[\s>/]/i.test(t) || typeof DOMParser === 'undefined') return t;
+    var d = new DOMParser().parseFromString(t.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li|h\d)>/gi, '$&\n'), 'text/html');
+    return d.body.textContent;
+  }
+  function extract(text) {
+    var lines = htmlToText(String(text || '')).replace(/\r/g, '').split('\n'), segs = [], cur = null;
+    lines.forEach(function (ln) {
+      var t = ln.trim();
+      if (/^\[2ch\]$/i.test(t)) { if (cur) segs.push(cur); cur = [ln]; return; }
+      if (!cur) return;
+      if (/^```/.test(t) || /^\(?\s*OOC\s*:/i.test(t)) { segs.push(cur); cur = null; return; }
+      cur.push(ln);
+      if (/^\[스레\s*한\s*줄\s*요약\]/.test(t)) { segs.push(cur); cur = null; }
+    });
+    if (cur) segs.push(cur);
+    segs = segs.map(function (x) { return x.join('\n').trim(); }).filter(function (x) { return parse(x).some(function (th) { return th.res.length; }); });
+    return segs;
+  }
+
+  window.Ch2 = { CATS: CATS, classify: classify, parse: parse, render: render, mount: mount, extract: extract };
 })();
 
 /* =========================================================
