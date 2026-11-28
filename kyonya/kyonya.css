@@ -854,9 +854,9 @@ body:not(#tt-body-index) .home-only{display:none!important}
 /* 글 보기 · 비번 · 공지 (얇은 베벨 2px) */
 .la-tw{margin-bottom:14px;padding:4px;background:#f7f5f4;border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl);outline:1px solid #ddd8d6}
 .la-tb{width:100%;border-collapse:separate;border-spacing:2px}
-.la-tb th{width:100px;padding:6px 8px;font:11px Mona12;font-weight:normal;text-align:left;color:var(--kd);background:var(--pat),var(--k5);
+.la-tb th{width:72px;padding:3px 6px;font:11px Mona12;font-weight:normal;text-align:left;color:var(--kd);background:var(--pat),var(--k5);
   border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl)}
-.la-tb td{padding:6px 10px;font-size:12px;background:#fff;border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
+.la-tb td{padding:3px 8px;font-size:12px;background:#fff;border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
 .la-tb td.tt{font-size:13px}
 .la-tb td a{color:var(--kt);text-decoration:none}
 .la-tb td a:hover{color:var(--hot)}
@@ -889,6 +889,11 @@ body:not(#tt-body-index) .home-only{display:none!important}
 
 .container_postbtn,.postbtn_like,[class*="container_postbtn"]{display:none!important}   /* 티스토리 공감·공유 버튼 숨김 */
 .la-list .d.no{color:#c9d6e2}                                                           /* {날짜} 없는 글은 ― 표시 */
+
+/* 글꼴: 흰 칸 내용 = 엔터갈 / 본문 = 모나 */
+.la-tb td,.la-list li a,.la-lkin{font-family:entergal,Mona12,sans-serif}
+.la-body{font-family:Mona12,sans-serif}
+.la-body *{font-family:inherit}
 
 /* 댓글 · 방명록 (상자 B1 모양) */
 .cmt{margin-bottom:14px;padding:5px;border:1px solid #8f8f8f;box-shadow:inset 2px 2px 0 var(--hi),inset -2px -2px 0 var(--lo);
