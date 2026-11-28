@@ -1066,6 +1066,13 @@ body.in-frame .gb-page .tt_ico_lock:after{content:"🔒";font-size:10px}
 body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):before,
 body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):after{content:none!important;display:none!important}
 body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt){background-image:none!important}
+/* 로그인 이름 칸 안의 티스토리 아이콘 숨기기 */
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) img,
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) [class*="img"],
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) [class*="thumb"],
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) [class*="ico"]{display:none!important}
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) *:before,
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) *:after{content:none!important;display:none!important}
 
 /* =========================================================
    13. 화면이 좁을 때
