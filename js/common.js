@@ -129,7 +129,7 @@ function pagerHtml(page, pages) {
    · [주소, 이름, 같이 켜질 주소들]
    ========================================================= */
 const SITE_MENU = [
-  { name: '작업대', icon: '🧺', items: [['index.html', '🧺 작업대'], ['journal.html', '📔 일지'], ['vault.html', '🗂 보관함', ['view.html']]] },
+  { name: '작업대', icon: '🧺', items: [['index.html', '🧺 작업대'], ['journal.html', '📔 일지'], ['2ch.html', '📺 2ch'], ['vault.html', '🗂 보관함', ['view.html']]] },
   { name: '실험실', icon: '🎨', items: [['lab.html', '🎨 실험실'], ['emoji.html', '🖼 이모지'], ['fonts.html', '🔤 폰트'], ['sketch.html', '📒 스케치북']] },
   { name: 'ETC', icon: '🎀', items: [['commands.html', '⌨ 명령어'], ['links.html', '🔗 링크']] },
 ];

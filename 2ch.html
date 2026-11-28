@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♡ ろぐ こうぼう ♡ 2ch</title>
+  <link rel="stylesheet" href="css/site.css?v=1128a">
+  <link rel="stylesheet" href="kyonya/kyonya-2ch.css?v=1128a">
+  <style>
+    .c2g { display: grid; grid-template-columns: 1fr 1.25fr; gap: 14px; align-items: start; }
+    @media (max-width: 760px) { .c2g { grid-template-columns: 1fr; } }
+    .c2-help { font-size: 11px; line-height: 1.7; color: #666; }
+    .c2-help code { background: var(--blue-pale); padding: 0 4px; border-radius: 3px; }
+    .c2-prev { max-height: 560px; overflow: auto; background: #fafafa; border: 1px solid var(--line); padding: 10px; }
+    .c2-got { font-size: 11px; line-height: 1.7; color: #2f6b45; background: #f0faf3; border: 1px dashed #9fd8b0; padding: 5px 8px; }
+    .c2-got:empty { display: none; }
+    /* 📒 스레 장부 */
+    .lg-tabs { display: flex; gap: 3px; flex-wrap: wrap; border-bottom: 3px double var(--line); }
+    .lg-tab { font-family: var(--title-font); font-size: 11px; padding: 3px 9px; cursor: pointer; background: #fff; border: 1px solid var(--line); border-bottom: 0; }
+    .lg-tab.on { background: var(--pink-bg); }
+    .lg-tab small { color: var(--pink); }
+    .lg-tools { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+    .lg-sync { margin-left: auto; font-size: 10px; color: var(--ink-soft); }
+    .lg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .lg-it { display: flex; gap: 8px; align-items: stretch; background: #fff; border: 1px solid var(--line); box-shadow: 3px 3px 0 var(--blue-bg); }
+    .lg-it.pick { box-shadow: 3px 3px 0 var(--pink); background: var(--pink-pale); }
+    .lg-main { flex: 1; min-width: 0; padding: 6px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .lg-top { display: flex; align-items: center; gap: 5px; }
+    .lg-cat { flex: none; font: 10px Mona12; padding: 0 5px; border: 1px solid var(--line); background: var(--blue-pale); cursor: pointer; }
+    .lg-title { flex: 1; min-width: 0; font: 12px/1.5 Mona12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lg-no { flex: none; font: 11px Mona12; color: var(--pink); }
+    .lg-no.full { color: #fff; background: var(--pink); padding: 0 4px; }
+    .lg-sum { width: 100%; font: 11px/1.6 entergal, Mona12; color: #555; border: 1px dotted transparent; background: none; resize: vertical; padding: 1px 3px; min-height: 2.2em; field-sizing: content; }
+    .lg-sum:hover, .lg-sum:focus { border-color: var(--line); background: #fffbea; outline: 0; }
+    .lg-meta { font-size: 10px; color: var(--ink-soft); }
+    .lg-btns { flex: none; width: 92px; display: flex; flex-direction: column; gap: 3px; padding: 6px; border-left: 1px dotted var(--line); }
+    .lg-btns .btn { min-width: 0; font-size: 11px; padding: 3px 4px; }
+    .ooc-mode { font: 11px Mona12; color: var(--pink); }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1><img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""> ろぐ こうぼう <img class="text-emoji" src="https://i.imgur.com/u0X82vZ.gif" alt=""></h1>
+    <p>📺 2ch ♪ 스레를 붙이면 장부에 쏙, OOC는 자동으로 채워져요</p>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html">작업대</a>
+    <a href="journal.html">♡ 일지 ♡</a>
+    <a href="2ch.html" class="on">📺 2ch</a>
+    <a href="vault.html">🗂 보관함</a>
+    <a href="commands.html">⌨ 명령어</a>
+    <a href="emoji.html">🖼 이모지</a>
+    <a href="fonts.html">🔤 폰트</a>
+    <a href="lab.html">🎨 실험실</a>
+    <a href="links.html">🔗 링크</a>
+  </nav>
+
+  <main class="main">
+    <div class="c2g">
+      <!-- 왼쪽: 붙여넣기 -->
+      <section class="win">
+        <div class="win-t pink"><span>✏️ AI가 쓴 스레 붙여넣기</span><button class="btn mini white" id="c2Clear">비우기</button></div>
+        <div class="win-b">
+          <textarea class="tx big" id="c2In" placeholder="AI 답변(코드블록 안 글)을 그대로 붙여넣으세요&#10;&#10;[2ch]&#10;[게시판] なんでも実況J&#10;[카테고리] 본스레(종합)&#10;[스레] …&#10;1 : 風吹けば名無し : 2014/02/01(土) 17:05:12.41 ID:bwFan001&#10;본문"></textarea>
+          <div class="c2-got" id="c2Got"></div>
+          <button class="btn pink" id="c2Rec">📒 장부에 기록</button>
+          <div class="c2-help">
+            · 붙여넣으면 스레가 <b>장부에 자동으로</b> 들어가요 (같은 제목이면 번호·요약만 갱신)<br>
+            · 붙인 뒤 글을 고쳤으면 「📒 장부에 기록」을 한 번 더 눌러 주세요<br>
+            · <code>==인기 레스==</code> <code>&gt;&gt;12</code> 앵커 · 아스키아트 모두 알아서 꾸며져요
+          </div>
+        </div>
+      </section>
+
+      <!-- 오른쪽: 미리보기 -->
+      <section class="win">
+        <div class="win-t"><span>👀 미리보기 <small>(블로그 401채널에 올라갈 모습)</small></span></div>
+        <div class="win-b">
+          <div class="c2-prev" id="c2Prev"><div class="empty">왼쪽에 스레를 붙여넣어 주세요 (｀・ω・´)</div></div>
+          <div class="row">
+            <button class="btn pink" id="c2Post">📋 게시용 복사</button>
+            <button class="btn white" id="c2Title">📋 글 제목 복사</button>
+          </div>
+          <div class="c2-help">
+            · <b>게시용 복사</b> → 티스토리 글쓰기 <b>HTML 모드</b>에 붙여넣기 (기본 모드는 아스키아트가 깨질 수 있어요)<br>
+            · <b>글 제목</b>은 첫 레스 날짜로 <code>{2/1} 스레 제목</code> 모양이라 홈 달력에도 올라가요
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 📒 스레 장부 -->
+    <section class="win">
+      <div class="win-t pink"><span>📒 스레 장부</span><span class="lg-sync" id="lgSync"></span></div>
+      <div class="win-b">
+        <div class="lg-tabs" id="lgTabs"></div>
+        <div class="lg-tools">
+          <button class="btn mini white" id="lgNew">✨ 이 카테고리로 새 스레</button>
+          <button class="btn mini white" id="lgAuto">🎲 AI한테 맡기기</button>
+          <button class="btn mini white" id="lgPull" title="보관함에서 다시 불러오기">🔄</button>
+        </div>
+        <ul class="lg-list" id="lgList"></ul>
+        <div class="c2-help">· 요약은 눌러서 바로 고칠 수 있어요 · 카테고리 칸을 누르면 다른 탭으로 옮겨요 · 마지막 레스가 1000을 넘으면 「Part.○로」 버튼이 떠요</div>
+      </div>
+    </section>
+
+    <!-- 💌 OOC -->
+    <section class="win">
+      <div class="win-t"><span>💌 AI에게 보낼 OOC <span class="ooc-mode" id="oocMode"></span></span><button class="btn mini white" id="oocCopy">📋 복사</button></div>
+      <div class="win-b">
+        <textarea class="tx code" id="oocOut" rows="9"></textarea>
+        <div class="c2-help">장부에서 「이어 쓰기」·「새 스레」를 누르면 괄호가 채워져요 · OOC 규칙은 <code>data/2ch-ooc.js</code> 에서 고쳐요</div>
+      </div>
+    </section>
+  </main>
+  <footer class="foot">장부는 이 브라우저 + 💾 내 비공개 깃허브 보관함(2ch/ledger.json)에 저장돼요 ♡</footer>
+</div>
+
+<script src="js/common.js?v=1128a"></script>
+<script src="js/vault.js"></script>
+<script src="data/2ch-ooc.js?v=1128a"></script>
+<script src="kyonya/kyonya-2ch.js?v=1128a"></script>
+<script src="js/ch2-page.js?v=1128a"></script>
+</body>
+</html>

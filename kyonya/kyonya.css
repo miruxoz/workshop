@@ -1062,17 +1062,13 @@ body.in-frame .gb-page .tt_ico_lock{display:inline-block;width:auto!important;he
 body.in-frame .gb-page .tt_ico_lock:after{content:"🔒";font-size:10px}
 /* 최신 글이 맨 위로 (티스토리는 오래된 글부터 줘서 순서만 뒤집기) */
 .gb-page .tt-list-reply{display:flex!important;flex-direction:column-reverse}
-/* 로그인 이름 칸: 티스토리 기본 장식(흰 세모) 숨기기 */
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):before,
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):after{content:none!important;display:none!important}
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt){background-image:none!important}
-/* 로그인 이름 칸 안의 티스토리 아이콘 숨기기 */
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) img,
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) [class*="img"],
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) [class*="thumb"],
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) [class*="ico"]{display:none!important}
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) *:before,
-body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt) *:after{content:none!important;display:none!important}
+/* 로그인 이름 뒤에 숨어 있는 「댓글」 라벨은 계속 숨기기 */
+.gb-page .tt-inner-g>.screen_out{display:none!important}
+
+/* 🍈 작은 창 목록: 이름 · 내용 말고는 전부 숨기기 */
+body.in-frame .gb-page .tt-item-reply>:not(.tt-wrap-cmt):not(.tt-list-reply-comment),
+body.in-frame .gb-page .tt-wrap-cmt>:not(.tt-box-content),
+body.in-frame .gb-page .tt-box-content>:not(.tt-box-meta):not(.tt-wrap-desc){display:none!important}
 
 /* =========================================================
    13. 화면이 좁을 때
