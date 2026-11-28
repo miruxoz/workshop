@@ -184,7 +184,7 @@
         /* ---- 🗓 달력 (2014 이야기 달력) — 제목 맨 앞 【2/14】 를 읽어서 스티커 ---- */
     (function(){
       var el=$('kCal'); if(!el) return;
-      var RE=/^\s*【\s*(?:(\d{4})\s*[\/.\-]\s*)?(\d{1,2})\s*[\/.\-]\s*(\d{1,2})\s*】\s*/;
+      var RE=/^\s*[【{｛]\s*(?:(\d{4})\s*[\/.\-]\s*)?(\d{1,2})\s*[\/.\-]\s*(\d{1,2})\s*[】}｝]\s*/;
       var F=KY.CAL_FROM||[2014,2], T=KY.CAL_TO||[2014,12], STK=KY.CAL_STK||{}, DAYS=KY.CAL_DAYS||{}, EV={}, cur=F.slice();
       var YK='日月火水木金土'.split('');
       function pad(n){ return (n<10?'0':'')+n; }
@@ -428,23 +428,41 @@
   }
 })();
 
-/* =========================== 🗂 로그 아카이브: 제목의 【날짜】 → 日付 · 비밀글 🔒 =========================== */
+/* =========================== 🗂 로그 아카이브: 제목의 {날짜} → 日付 · 비밀글 🔒 =========================== */
 (function(){
   var KY=window.KY||{}, Y0=(KY.CAL_FROM||[2014])[0], YK='日月火水木金土';
-  var RE=/^\s*【\s*(?:(\d{4})\s*[\/.\-]\s*)?(\d{1,2})\s*[\/.\-]\s*(\d{1,2})\s*】\s*/;
-  function sd(m){ var y=+(m[1]||Y0), mo=+m[2], d=+m[3]; return y+'.'+mo+'.'+d+' ('+YK.charAt(new Date(y,mo-1,d).getDay())+')'; }
-  function cut(el){ if(!el) return null; var m=el.textContent.match(RE); if(m) el.textContent=el.textContent.replace(RE,''); return m; }
+  var RE=/^\s*[【{｛]\s*(?:(\d{4})\s*[\/.\-]\s*)?(\d{1,2})\s*[\/.\-]\s*(\d{1,2})\s*[】}｝]\s*/;   // {2/14} 또는 {2014/2/14} (【】도 그대로 돼요)
+  var p2=function(n){ return ('0'+n).slice(-2); };
+  function sd(y,mo,d){ return y+'.'+mo+'.'+d+' ('+YK.charAt(new Date(y,mo-1,d).getDay())+')'; }
+  function story(m){ return sd(+(m[1]||Y0),+m[2],+m[3]); }
+  function cut(el){   // 맨 앞 글자 덩어리에서만 {날짜}를 떼요 (뒤에 붙는 N 아이콘 같은 건 그대로)
+    if(!el) return null; var t=el.firstChild; while(t && !(t.nodeType===3 && t.nodeValue.trim())) t=t.firstChild||t.nextSibling;
+    if(!t) return null; var m=t.nodeValue.match(RE); if(m) t.nodeValue=t.nodeValue.replace(RE,''); return m;
+  }
+  function real(t){   // 티스토리 날짜 "2026. 11. 28. 15:38" / 오늘 글은 "15:38:36" 처럼 시간만 와요
+    var m=String(t).match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    if(m) return [+m[1],+m[2],+m[3]];
+    var n=new Date(); return [n.getFullYear(),n.getMonth()+1,n.getDate()];
+  }
   /* 글 목록 */
   document.querySelectorAll('.la-list li').forEach(function(li){
     var a=li.querySelector('a'), m=cut(a), d=li.querySelector('.d'), w=li.querySelector('.w'), s=li.querySelector('.sum');
-    if(d) d.textContent=m?sd(m):'';
-    var n=w?(w.textContent.match(/\d+/g)||[]):[]; if(n.length>=3) w.textContent=('0'+n[1]).slice(-2)+'.'+('0'+n[2]).slice(-2);
-    if(s && /보호되어 있는 글|보호된 글|protected/i.test(s.textContent)){ li.classList.add('lock'); a.textContent='🔒 '+a.textContent; }
+    if(d){ if(m) d.textContent=story(m); else { d.textContent='―'; d.classList.add('no'); } }
+    if(w){ var r=real(w.textContent); w.textContent=p2(r[1])+'.'+p2(r[2]); }
+    if(s && /보호되어 있는 글|보호된 글|protected/i.test(s.textContent)){ li.classList.add('lock'); a.insertAdjacentText('afterbegin','🔒 '); }
   });
-  /* 글 보기 · 비번 화면 · 이전/다음 */
+  /* 글 보기 */
   var m=cut(document.querySelector('.la-post .tt')), dt=document.querySelector('.la-post .la-date');
-  if(m && dt) dt.textContent=sd(m);
+  if(dt){ if(m) dt.textContent=story(m); else { var r=real(dt.textContent); dt.textContent=sd(r[0],r[1],r[2]); } }
+  /* 目次 = 이 글의 카테고리 목록으로 */
+  var toc=document.querySelector('.la-nav .toc'), ca=document.querySelector('.la-post .la-cat');
+  if(toc && ca){
+    var href=ca.getAttribute('href');
+    if(!href || href==='#') href='/category/'+ca.textContent.trim().split('/').map(encodeURIComponent).join('/');
+    toc.href=ca.href=href;
+  }
+  /* 비번 화면 · 이전/다음 · 탭 제목 */
   cut(document.querySelector('.la-lkt'));
   document.querySelectorAll('.la-nav .t').forEach(cut);
-  document.title=document.title.replace(/【[^】]*】\s*/,'');
+  document.title=document.title.replace(/[【{｛][^】}｝]*[】}｝]\s*/,'');
 })();

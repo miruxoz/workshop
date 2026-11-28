@@ -887,6 +887,9 @@ body:not(#tt-body-index) .home-only{display:none!important}
   border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl)}
 .la-lkin button:active{border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
 
+.container_postbtn,.postbtn_like,[class*="container_postbtn"]{display:none!important}   /* 티스토리 공감·공유 버튼 숨김 */
+.la-list .d.no{color:#c9d6e2}                                                           /* {날짜} 없는 글은 ― 표시 */
+
 /* 댓글 · 방명록 (상자 B1 모양) */
 .cmt{margin-bottom:14px;padding:5px;border:1px solid #8f8f8f;box-shadow:inset 2px 2px 0 var(--hi),inset -2px -2px 0 var(--lo);
   background:radial-gradient(circle,#fff 3.2px,transparent 3.8px) 0 0/24px 24px,radial-gradient(circle,#fff 3.2px,transparent 3.8px) 12px 12px/24px 24px,#e6e6e6}
