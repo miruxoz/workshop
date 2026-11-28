@@ -122,7 +122,7 @@ var KY = {
     { at:'.m-log', src:'https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj', left:21, top:14, w:190 },   // 업데이트 로그: 위 장식
     { at:'.m-log', src:'https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj', left:19, top:195, w:190 },   // 업데이트 로그: 아래 장식
     { at:'.m-log', src:'https://i.pinimg.com/originals/50/91/ec/5091ec6ae637f38943047898531fc5d3.gif', left:-18, top:177, w:120 },   // 업데이트 로그: 자는 고양이
-    { at:'.wrap', src:'https://64.media.tumblr.com/5c13a5c5b1f6387f0e1917e43f791159/tumblr_mq9q46aqY31r6m856o1_500.gifv', left:910, top:307, w:80 },   // 사이트 전체 기준
+    { at:'.wrap', src:'https://64.media.tumblr.com/5c13a5c5b1f6387f0e1917e43f791159/tumblr_mq9q46aqY31r6m856o1_500.gifv', left:910, top:307, w:80, home:true },   // 사이트 전체 기준
     { at:'.mbk', src:'https://64.media.tumblr.com/dabb628bbc0ab825d79391ba8b2fa45f/7c7c65348bf23477-55/s400x600/46750e267dbb5dd3c2fcd2c9620f9cbe119dcc23.gifv', left:-3, top:-6, w:350 },   // 세이의 한마디
   ],
 

@@ -28,6 +28,7 @@
     var u=function(v){ return typeof v==='number'? v+'px' : String(v); };
     var im=document.createElement('img'); im.src=s.src; im.alt=''; im.className='ky-stk';
     im.style.cssText='position:absolute;margin:0;z-index:'+(s.z||50)+';left:'+u(s.left||0)+';top:'+u(s.top||0)+(s.w?';width:'+u(s.w):'');
+        if(s.home) im.classList.add('home-only');   // home:true 면 홈에서만 보여요
     p.appendChild(im);
   });
 
