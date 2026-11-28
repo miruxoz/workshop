@@ -4,10 +4,9 @@
    ========================================================= */
 @font-face{font-family:Mona12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2) format("woff2")}
 @font-face{font-family:entergal;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf) format("truetype");font-display:swap}
+/* 아스키아트 안의 한글만 이 글꼴로 (주소만 바꾸면 다른 폰트로) */
+@font-face{font-family:c2ko;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2) format("woff2");unicode-range:U+1100-11FF,U+3130-318F,U+AC00-D7A3}
 .text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:middle;margin:0 2px}
-/* 아스키아트 안 한글만 엔터갈로 (한글 글자 범위만 이 글꼴을 써요) */
-@font-face{font-family:c2ko;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf) format("truetype");
-  unicode-range:U+1100-11FF,U+3130-318F,U+AC00-D7A3;font-display:swap}
 
 .c2{--c2-bg:#efefef;--c2-title:#ff0000;--c2-name:#008000;--c2-hot:#e5004f;--c2-anc:#0033cc;
   font:13px/1.7 entergal,Mona12,sans-serif;color:#000;text-align:left}
@@ -39,3 +38,86 @@
 /* >>앵커 미리보기 창 */
 .c2-pop{position:absolute;z-index:99999;max-width:min(520px,92vw);padding:8px 10px;background:#f7f7f7;border:1px solid #999;box-shadow:3px 3px 0 rgba(0,0,0,.12)}
 .c2-pop .c2-r{margin:0}
+
+/* =========================================================
+   📺 블로그 401채널 전체 화면 (body.ch-mode · kyonya-2ch.js 가 만들어요)
+   · 글꼴은 --ch-font 한 줄만 바꾸면 돼요
+   ========================================================= */
+@font-face{font-family:Umdot12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2) format("woff2")}
+body.ch-mode{margin:0!important;padding:0!important;min-width:0!important;background:#efefef!important;overflow-x:hidden}
+body.ch-mode>:not(#chScreen):not(.pop-bg):not(.ch-lr-bg):not(.c2-pop):not(script):not(style):not(link){display:none!important}
+#chScreen{--ch-font:Umdot12,Mona12,sans-serif;color:#000}
+#chScreen,#chScreen *:not(.c2-aa){font-family:var(--ch-font)!important}
+#chScreen a{color:#0033cc}
+.ch-screen{display:flex;min-height:100vh;background:#efefef}
+.ch-screen.post{display:block}
+.ch-main{flex:1;min-width:0;padding:10px 14px 30px}
+
+/* 왼쪽 게시판 메뉴 */
+.ch-bm{flex:none;width:150px;padding:8px 8px 30px;background:#fff;border-right:1px solid #999;font-size:11px;line-height:1.55}
+.ch-logo{margin:0 0 6px;font-size:15px;color:#c00;text-align:center}
+.ch-logo small{display:block;font-size:9px;color:#888}
+#chScreen .ch-back,#chScreen .ch-back2{color:#c00;text-decoration:none}
+.ch-back{display:block;margin:0 0 8px;padding:3px 0;text-align:center;font-size:11px;background:#ffffe0;border:1px solid #e0d89a}
+.ch-back:hover{background:#fff6b0}
+.ch-bm b{display:block;margin:8px 0 1px;padding:0 3px;font-weight:normal;background:#e8e8e8}
+.ch-bm a{display:block;padding-left:8px}
+#chScreen .ch-bm a.soon{color:#888}
+#chScreen .ch-bm a.here{color:#c00;font-weight:bold;text-decoration:none}
+.ch-bm a.here:before{content:"▶";font-size:8px;margin-right:2px}
+.ch-ft{margin-top:12px;font-size:9px;color:#999;text-align:center}
+
+/* 광고 */
+.ch-ad{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:468px;max-width:100%;height:60px;margin:0 auto 10px;overflow:hidden;
+  font-size:12px;text-decoration:none!important;border:1px solid #999;color:#000}
+.ch-ad small{position:absolute;right:3px;top:1px;font-size:8px;color:#888}
+.ch-ad.img{display:block;padding:0}.ch-ad.img img{display:block;width:100%;height:100%;object-fit:cover}
+#chScreen .ch-ad.ad1{color:#fff;background:linear-gradient(90deg,#1d4fa3,#5aa0e6)}
+.ch-ad.ad1 .big{font-size:17px;color:#ffef5a;animation:chBlk 1s steps(1) infinite}
+#chScreen .ch-ad.ad2{color:#c00;background:repeating-linear-gradient(45deg,#fff 0 8px,#fff3f3 8px 16px)}
+.ch-ad.ad2 .big{font-size:16px}
+#chScreen .ch-ad.ad3{color:#0f0;background:#000}
+@keyframes chBlk{50%{opacity:.2}}
+.ch-ads{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.ch-ads .ch-ad{width:234px;margin:0 0 10px;font-size:11px}
+
+/* 게시판 머리 · 로컬 룰 · 카테고리 */
+.ch-bh{margin-bottom:10px;padding:8px 12px;text-align:center;background:#fff;border:1px solid #bbb}
+.ch-bt{font-size:22px;line-height:1.3;color:#c00}
+.ch-path{margin-top:2px;font-size:10px;color:#888}
+.ch-rule{margin:6px auto 0;max-width:560px;border-collapse:collapse;text-align:left;font-size:11px;line-height:1.7;background:#ffffe8;border:1px solid #e0d89a}
+.ch-rule td{padding:4px 10px}
+.ch-cats{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin:0 0 10px;font-size:11px}
+#chScreen .ch-cats a{padding:1px 7px;color:#000;text-decoration:none;background:#fff;border:1px solid #bbb}
+#chScreen .ch-cats a.on{color:#fff;background:#c00;border-color:#c00}
+
+/* 스레 목록 */
+.ch-subj{margin:0 0 10px;padding:8px 12px;background:#fff;border:1px solid #bbb}
+.ch-st{margin:0 0 4px;font-size:11px;color:#666}
+.ch-sl{margin:0;padding:0;list-style:none;font-size:12.5px;line-height:2}
+.ch-sl li{border-bottom:1px dotted #ccc}
+.ch-sl .n{display:inline-block;width:26px;font-size:11px;color:#888}
+.ch-sl .k{margin-right:2px;font-size:11px}
+.ch-sl .c{font-size:11px;color:#c00}
+#chScreen .ch-sl li.lock a{color:#999}
+.ch-none{padding:16px;text-align:center;color:#888}
+.ch-pg .paging{margin:8px 0 0}
+.ch-new{margin:0 0 12px;padding:8px 12px;font-size:11px;background:#fff;border:1px solid #bbb}
+.ch-new input,.ch-new textarea{font-size:12px;border:1px solid #999;padding:1px 4px}
+.ch-new textarea{display:block;width:100%;height:44px;margin-top:4px;resize:none;box-sizing:border-box}
+.ch-new button{font-size:11px;padding:1px 10px}
+
+/* 스레 화면 */
+.ch-vbar{display:flex;flex-wrap:wrap;gap:4px 10px;margin:0 0 8px;font-size:11px}
+.ch-body{margin-bottom:8px}
+
+/* 로컬 룰 창 */
+.ch-lr-bg{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25)}
+.ch-lr{width:440px;max-width:92vw;font:12px/1.8 Umdot12,Mona12,sans-serif;background:#efefef;border:1px solid #666;box-shadow:4px 4px 0 rgba(0,0,0,.2)}
+.ch-lr-t{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 2px 8px;font-size:11px;color:#fff;background:linear-gradient(90deg,#0a246a,#a6caf0)}
+.ch-lr-t button{width:16px;height:14px;padding:0;font:10px/1 Mona12;cursor:pointer;background:#d4d0c8;border:1px solid;border-color:#fff #404040 #404040 #fff}
+.ch-lr-b{padding:10px 14px}
+.ch-lr-b h4{margin:0 0 6px;font-size:14px;font-weight:normal;color:#c00}
+.ch-lr-b ol{margin:0;padding-left:20px}
+.ch-lr-b .ps{margin-top:8px;font-size:11px;color:#666}
+@media (max-width:640px){.ch-screen{display:block}.ch-bm{width:auto;border-right:0;border-bottom:1px solid #999}}

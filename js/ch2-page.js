@@ -100,7 +100,7 @@
     const th = Ch2.parse(inEl.value)[0];
     if (!th || !th.title) return toast('아직 스레 제목이 없어요');
     const m = th.res[0] && th.res[0].date.match(/\d{4}\/(\d{1,2})\/(\d{1,2})/);
-    const title = (m ? `{${+m[1]}/${+m[2]}} ` : '') + th.title;
+    const title = (m ? `{${+m[1]}/${+m[2]}} ` : '') + th.title + ` (${th.last})`;
     toast(await copyText(title) ? '📋 ' + title : '복사 실패…');
   });
 

@@ -464,7 +464,7 @@
   /* 비번 화면 · 이전/다음 · 탭 제목 */
   cut(document.querySelector('.la-lkt'));
   document.querySelectorAll('.la-nav .t').forEach(cut);
-  document.title=document.title.replace(/[【{｛][^】}｝]*[】}｝]\s*/,'');
+  document.title=document.title.replace(/^\s*[【{｛]\s*(?:\d{4}\D)?\d{1,2}\D\d{1,2}\s*[】}｝]\s*/,'');
 })();
 
 /* =========================== ☎ 고객센터 (방명록 페이지 + 3단 작은 창) =========================== */
