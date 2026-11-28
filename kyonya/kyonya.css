@@ -821,57 +821,71 @@ body:not(#tt-body-index) .home-only{display:none!important}
 .tt_category>li>.link_tit{display:none!important}
 .another_category{display:none!important}
 
-/* 목록 */
-.list-head{background:#fff;border:1px solid var(--choco);padding:6px 12px;margin-bottom:12px;font:15px Mona12;display:flex;align-items:center;gap:8px;
-  box-shadow:inset -2px -2px 0 var(--lo),inset 2px 2px 0 #fff}
-.list-head small{font:11px Mona12;color:#fff;background:var(--choco);padding:0 6px}
-.empty{background:#fff;border:1px dashed var(--pink);padding:20px;text-align:center}
-.item{display:flex;gap:12px;background:#fff;border:1px solid var(--choco);padding:10px;margin-bottom:10px;text-decoration:none;color:var(--ink);
-  box-shadow:inset -2px -2px 0 rgba(184,184,184,.35),inset 2px 2px 0 #fff}
-.item:hover{background:var(--pink2)}
-.item .thumb{flex:none;width:110px;height:76px;border:1px solid var(--choco);background:radial-gradient(circle,var(--mdot) 2px,transparent 2.5px) 0 0/12px 12px,var(--milk);overflow:hidden}
-.item .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.item .it{min-width:0;flex:1}
-.item h3{margin:0 0 3px;font:14px Mona12}
-.item p{margin:0;font-size:12px;color:#555;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.item .meta{font:10px Mona12;color:#888;margin-top:3px}
-.paging{display:flex;justify-content:center;gap:4px;margin:14px 0;font:12px Mona12}
-.paging a{display:inline-block;min-width:24px;text-align:center;border:1px solid var(--cocoa);border-radius:4px;background:#fff;padding:1px 6px;text-decoration:none;
-  box-shadow:inset -1px -1px 0 rgba(184,184,184,.35),inset 1px 1px 0 #fff}
-.paging a.selected,.paging .selected{background:var(--choco);color:#fff}
-.paging a.no-more-prev,.paging a.no-more-next{opacity:.35;pointer-events:none}
+/* ---------- 🗂 로그 아카이브 기본 디자인 (목록 · 글 보기 · 비번) ---------- */
+/* 색·무늬는 여기만 바꾸면 돼요 (☁️ 하늘 + 별) */
+.not-home{--k1:#7cb2dd;--k2:#9cc6e8;--k3:#bcd5ec;--k5:#f3f8fc;--kt:#5b84a8;--kd:#4a7398;
+  --pat:url(https://miruxoz.github.io/workshop/pattern/3.jpg) 0 0/160px auto;
+  --hl:#fff;--sh:#cbc5c2}
+/* 🐰 슈가버니즈 + 하트로 바꾸고 싶으면 위 세 줄 대신 이거:
+.not-home{--k1:#b9a296;--k2:#dccabf;--k3:#f2c3d3;--k5:#fff6f9;--kt:#a5857a;--kd:#7d6158;
+  --pat:url(https://miruxoz.github.io/workshop/pattern/heart.png) 0 0/300px auto;
+  --hl:#fff;--sh:#cbc5c2} */
+.la-hb,.la-tb th,.la-nav a,.la-cap{text-shadow:1px 0 #fff,-1px 0 #fff,0 1px #fff,0 -1px #fff,1px 1px #fff,-1px -1px #fff,1px -1px #fff,-1px 1px #fff}
 
-/* 글 보기 */
-.post{margin-bottom:14px;padding:5px;border:1px solid var(--choco);box-shadow:inset 2px 2px 0 var(--hi),inset -2px -2px 0 var(--lo);
-  background:radial-gradient(circle,var(--mdot) 3px,transparent 3.6px) 0 0/22px 22px,radial-gradient(circle,var(--mdot) 3px,transparent 3.6px) 11px 11px/22px 22px,var(--milk)}
-.post .ph{padding:14px 16px 10px;border:2px solid;border-color:var(--lo) #fff #fff var(--lo);border-bottom:0;
-  background:radial-gradient(circle,#f6d6e2 1.4px,transparent 1.9px) 0 0/10px 10px,#fff}
-.post .ph .cat{display:inline-block;font:11px Mona12;border:1px solid var(--choco);background:var(--pink2);padding:0 6px;text-decoration:none;margin-bottom:6px}
-.post .ph h1{margin:0;font:20px/1.4 Mona12;word-break:keep-all}
-.post .ph .meta{font:11px Mona12;color:#888;margin-top:6px}
-.post .ph .meta a{color:#888}
-.entry,.post .tags{background:#fff;border:2px solid;border-color:var(--lo) #fff #fff var(--lo);border-top:0}
-.entry{padding:18px 20px;font-size:14px;line-height:1.85}
-.entry img{max-width:100%;height:auto}
-.entry a{color:var(--hot)}
-.entry blockquote{margin:10px 0;border-left:3px solid var(--pink);background:var(--pink2);padding:6px 12px}
-.entry pre{white-space:pre-wrap;background:#fff8fb;border:1px solid var(--pink);padding:8px}
-.entry table{border-collapse:collapse;max-width:100%}
-.entry td,.entry th{border:1px solid #ccc;padding:3px 6px}
-.tags{padding:6px 20px 12px;font:11px Mona12}
-.tags a{display:inline-block;border:1px solid var(--cocoa);border-radius:3px;background:var(--sky2);padding:0 6px;margin:2px 2px 0 0;text-decoration:none}
-.tags a:before{content:"#"}
-/* 비밀번호 글 */
-.protect{text-align:center;padding:24px;background:#fff}
-.lg{display:grid;grid-template-columns:auto 1fr 50px;gap:5px 6px;align-items:center}
-.lg label{font:11px Mona12}
-.lg .ip{width:100%;font:12px ThinMulmaru;padding:3px 6px;background:#fff;border:1px solid #c9b3a8;box-shadow:inset 2px 2px 0 #eadfd9;outline:0}
-.lg .ip:focus{border-color:var(--hot)}
-.lg .go{grid-column:3;grid-row:1/3;height:100%;font:11px/1.3 Mona12;background:var(--pink2);border:1px solid var(--cocoa);border-radius:4px;cursor:pointer;
-  box-shadow:inset -2px -2px 0 rgba(169,140,126,.25),inset 2px 2px 0 #fff}
-.lg .go:active{box-shadow:inset 2px 2px 0 rgba(169,140,126,.25),inset -2px -2px 0 #fff}
-.protect .lg{max-width:260px;margin:10px auto 0;grid-template-columns:1fr 54px}
-.protect .go{grid-row:auto}
+/* 글 목록 (숨구멍 · 배경 없음) */
+.la-hb{padding:4px 2px;font:12px Mona12;color:var(--kd);border-bottom:2px solid var(--k2)}
+.la-hb small{font:11px Mona12;color:var(--kt)}
+.la-list ul{margin:0 0 4px;padding:4px 2px 6px;list-style:none}
+.la-list li{display:flex;align-items:baseline;gap:6px;padding:5px 0;border-bottom:1px dotted var(--k3);font-size:12.5px}
+.la-list li:before{content:"・";color:var(--k1)}
+.la-list .d{flex:none;width:96px;font:11px Mona12;color:var(--kt)}
+.la-list li a{flex:1;min-width:0;color:#000;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.la-list li a:hover{color:var(--hot);text-decoration:underline}
+.la-list .w{flex:none;font:10px Mona12;color:#aaa}
+.la-list li.lock a{color:#aaa}
+.la-empty{padding:20px;text-align:center;font:12px Mona12;color:var(--kt)}
+/* 쪽 번호 */
+.paging{display:flex;justify-content:center;gap:2px;margin:10px 0;font:11px Mona12}
+.paging a{padding:0 4px;text-decoration:none;color:var(--kt)}
+.paging a.selected,.paging .selected{color:var(--hot);text-decoration:underline}
+.paging a.no-more-prev,.paging a.no-more-next{opacity:.35;pointer-events:none}
+#tt-body-page .paging{display:none}   /* 글 보기 화면에선 숨김 (이전·다음 글 줄이 대신해요) */
+
+/* 글 보기 · 비번 · 공지 (얇은 베벨 2px) */
+.la-tw{margin-bottom:14px;padding:4px;background:#f7f5f4;border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl);outline:1px solid #ddd8d6}
+.la-tb{width:100%;border-collapse:separate;border-spacing:2px}
+.la-tb th{width:100px;padding:6px 8px;font:11px Mona12;font-weight:normal;text-align:left;color:var(--kd);background:var(--pat),var(--k5);
+  border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl)}
+.la-tb td{padding:6px 10px;font-size:12px;background:#fff;border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
+.la-tb td.tt{font-size:13px}
+.la-tb td a{color:var(--kt);text-decoration:none}
+.la-tb td a:hover{color:var(--hot)}
+.la-tags{font-size:0}                                   /* 태그 사이 쉼표 숨김 */
+.la-tags:before{content:" · ";font-size:12px;color:#999}
+.la-tags a{font-size:12px}
+.la-tags a+a{margin-left:5px}
+.la-tags a:before{content:"#"}
+.la-body{margin:3px 2px 2px;padding:24px 16px 26px;font-size:13px;line-height:1.85;background:#fff;
+  border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
+.la-body img{max-width:100%;height:auto}
+.la-nav{display:flex;gap:10px;margin:3px 2px 2px;padding:5px 8px;font:11px Mona12;background:var(--pat),var(--k5);
+  border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl)}
+.la-nav a{color:var(--kd);text-decoration:none}
+.la-nav a:hover{color:var(--hot)}
+.la-nav .p,.la-nav .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.la-nav .n{text-align:right}
+.la-nav .toc{flex:none}
+/* 비번 화면 */
+.la-lk{width:340px;max-width:100%;margin:30px auto}
+.la-cap{padding:5px 8px;margin-bottom:3px;font:12px Mona12;color:var(--kd);background:var(--pat),var(--k5);
+  border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl)}
+.la-lkin{padding:16px;text-align:center;font-size:12px;color:#666;background:#fff;border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
+.la-lkt{font-weight:normal;color:var(--kd)}
+.la-lkin input{margin-top:8px;width:170px;padding:2px 6px;font:12px ThinMulmaru;outline:0;background:#fff;
+  border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
+.la-lkin button{padding:2px 12px;font:11px Mona12;color:var(--kd);cursor:pointer;background:var(--k5);
+  border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl)}
+.la-lkin button:active{border-color:var(--sh) var(--hl) var(--hl) var(--sh)}
 
 /* 댓글 · 방명록 (상자 B1 모양) */
 .cmt{margin-bottom:14px;padding:5px;border:1px solid #8f8f8f;box-shadow:inset 2px 2px 0 var(--hi),inset -2px -2px 0 var(--lo);

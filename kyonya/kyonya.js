@@ -427,3 +427,24 @@
       d.style.left=e.clientX+'px'; d.style.top=e.clientY+'px'; document.body.appendChild(d); setTimeout(function(){d.remove()},700); });
   }
 })();
+
+/* =========================== 🗂 로그 아카이브: 제목의 【날짜】 → 日付 · 비밀글 🔒 =========================== */
+(function(){
+  var KY=window.KY||{}, Y0=(KY.CAL_FROM||[2014])[0], YK='日月火水木金土';
+  var RE=/^\s*【\s*(?:(\d{4})\s*[\/.\-]\s*)?(\d{1,2})\s*[\/.\-]\s*(\d{1,2})\s*】\s*/;
+  function sd(m){ var y=+(m[1]||Y0), mo=+m[2], d=+m[3]; return y+'.'+mo+'.'+d+' ('+YK.charAt(new Date(y,mo-1,d).getDay())+')'; }
+  function cut(el){ if(!el) return null; var m=el.textContent.match(RE); if(m) el.textContent=el.textContent.replace(RE,''); return m; }
+  /* 글 목록 */
+  document.querySelectorAll('.la-list li').forEach(function(li){
+    var a=li.querySelector('a'), m=cut(a), d=li.querySelector('.d'), w=li.querySelector('.w'), s=li.querySelector('.sum');
+    if(d) d.textContent=m?sd(m):'';
+    var n=w?(w.textContent.match(/\d+/g)||[]):[]; if(n.length>=3) w.textContent=('0'+n[1]).slice(-2)+'.'+('0'+n[2]).slice(-2);
+    if(s && /보호되어 있는 글|보호된 글|protected/i.test(s.textContent)){ li.classList.add('lock'); a.textContent='🔒 '+a.textContent; }
+  });
+  /* 글 보기 · 비번 화면 · 이전/다음 */
+  var m=cut(document.querySelector('.la-post .tt')), dt=document.querySelector('.la-post .la-date');
+  if(m && dt) dt.textContent=sd(m);
+  cut(document.querySelector('.la-lkt'));
+  document.querySelectorAll('.la-nav .t').forEach(cut);
+  document.title=document.title.replace(/【[^】]*】\s*/,'');
+})();
