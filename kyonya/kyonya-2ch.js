@@ -273,6 +273,15 @@
     scrollTo(0, 0);
   }
   // 화면 가리개(skin.html 머리의 ch-wait)는 2ch든 아니든 다 그린 뒤에 벗겨요
-  function run() { try { board(); } finally { document.documentElement.classList.remove('ch-wait'); } }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  function run() { try { board(); } finally { document.documentElement.classList.remove('ch-wait', 'ch-bg'); } }
+  // 2ch 화면 안에서 다른 글로 갈 땐 「다음 화면도 2ch」 표시 → 머리 스크립트가 처음부터 회색 바탕으로 가려요
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('#chScreen a[href]'); if (!a) return;
+    var h = a.getAttribute('href'); if (!h || h === '/' || h.charAt(0) === '#') return;
+    try { sessionStorage.setItem('chNext', '1'); } catch (x) {}
+  });
+  // 기다리지 않고 바로! (이 파일은 skin.html 맨 아래에서 불려서, 필요한 글 목록·본문은 이미 다 있어요)
+  //   → 티스토리의 다른 스크립트·광고가 다 끝날 때까지 회색 화면으로 기다리지 않아요
+  if (document.querySelector('.not-home') || document.readyState !== 'loading') run();
+  else document.addEventListener('DOMContentLoaded', run);
 })();
