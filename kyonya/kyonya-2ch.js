@@ -167,7 +167,14 @@
     return segs;
   }
 
-  window.Ch2 = { CATS: CATS, classify: classify, parse: parse, render: render, mount: mount, extract: extract };
+  /* ---------- 스레 하나 → 원문 글 (게시용으로 스레별로 나눌 때) ---------- */
+  function toText(th) {
+    return ['[2ch]', '[게시판] ' + (th.board || 'なんでも実況J'), '[카테고리] ' + (th.cat || ''), '[스레] ' + th.title, ''].join('\n') +
+      th.res.map(function (r) { return r.no + ' : ' + r.name + ' : ' + r.date + ' ID:' + r.id + '\n' + r.body; }).join('\n\n') +
+      (th.summary ? '\n\n[스레 한줄 요약] ' + th.summary : '');
+  }
+
+  window.Ch2 = { CATS: CATS, classify: classify, parse: parse, render: render, mount: mount, extract: extract, toText: toText };
 })();
 
 /* =========================================================

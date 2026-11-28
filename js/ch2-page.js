@@ -60,6 +60,7 @@
   const cleanText = () => inEl.value.replace(/\r/g, '').split('\n').filter(l => !/^\s*```/.test(l)).join('\n').trim();
   function preview() {
     store.set('2ch.input', inEl.value);
+    if (typeof renderPick === 'function') renderPick();
     const th = Ch2.parse(inEl.value);
     $('c2Prev').innerHTML = th.length ? Ch2.render(th, { summary: true }) : '<div class="empty">왼쪽에 스레를 붙여넣어 주세요 (｀・ω・´)</div>';
     return th;
@@ -102,13 +103,30 @@
   $('c2Rec').addEventListener('click', () => { const n = pickOut(); preview(); record(true); if (n) toast(`✂ 2ch 답변 ${n}개만 골라냈어요`); });
   $('c2Clear').addEventListener('click', () => { inEl.value = ''; $('c2Got').innerHTML = ''; preview(); });
 
+  /* 스레가 여러 개면 하나씩 골라서 복사 (스레 = 블로그 글 하나) */
+  let pickNo = 0;
+  const done = {};
+  function threadsNow() { return Ch2.parse(inEl.value).filter(t => t.res.length); }
+  function renderPick() {
+    const th = threadsNow(), box = $('c2Pick');
+    if (pickNo >= th.length) pickNo = 0;
+    if (th.length < 2) { box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="c2-help">📑 스레가 <b>${th.length}개</b>예요 · 블로그엔 <b>스레마다 글 하나씩</b> 올려 주세요 (고른 스레만 복사돼요)</div>` +
+      th.map((t, i) => { const c = catOf(t.catId); const k = keyOf(t.title);
+        return `<label class="c2-pk${i === pickNo ? ' on' : ''}"><input type="radio" name="c2pk" value="${i}"${i === pickNo ? ' checked' : ''}> ${c ? c.emo : '📦'} ${esc(t.title)} <small>#${t.last}</small>${done[k] ? ' <b>✓</b>' : ''}</label>`; }).join('');
+  }
+  $('c2Pick').addEventListener('change', e => { if (e.target.name === 'c2pk') { pickNo = +e.target.value; renderPick(); } });
+  const picked = () => threadsNow()[pickNo];
   $('c2Post').addEventListener('click', async () => {
-    const t = cleanText();
-    if (!Ch2.parse(t).length) return toast('아직 스레가 없어요');
-    toast(await copyText('<pre class="ch2">' + esc(t) + '</pre>') ? '📋 게시용 복사 완료! HTML 모드에 붙여넣어 주세요' : '복사 실패…');
+    const all = threadsNow(), th = picked();
+    if (!th) return toast('아직 스레가 없어요');
+    const t = all.length > 1 ? Ch2.toText(th) : cleanText();
+    const ok = await copyText('<pre class="ch2">' + esc(t) + '</pre>');
+    if (ok) { done[keyOf(th.title)] = 1; renderPick(); }
+    toast(ok ? (all.length > 1 ? `📋 「${th.title}」만 게시용 복사했어요!` : '📋 게시용 복사 완료! HTML 모드에 붙여넣어 주세요') : '복사 실패…');
   });
   $('c2Title').addEventListener('click', async () => {
-    const th = Ch2.parse(inEl.value)[0];
+    const th = picked();
     if (!th || !th.title) return toast('아직 스레 제목이 없어요');
     const m = th.res[0] && th.res[0].date.match(/\d{4}\/(\d{1,2})\/(\d{1,2})/);
     const title = (m ? `{${+m[1]}/${+m[2]}} ` : '') + th.title + ` (${th.last})`;

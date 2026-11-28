@@ -35,6 +35,11 @@
     .lg-meta { font-size: 10px; color: var(--ink-soft); }
     .lg-btns { flex: none; width: 92px; display: flex; flex-direction: column; gap: 3px; padding: 6px; border-left: 1px dotted var(--line); }
     .lg-btns .btn { min-width: 0; font-size: 11px; padding: 3px 4px; }
+    .c2-pick { display: flex; flex-direction: column; gap: 3px; }
+    .c2-pick:empty { display: none; }
+    .c2-pk { display: block; padding: 3px 8px; font: 12px/1.5 Mona12; cursor: pointer; background: #fff; border: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .c2-pk.on { background: var(--pink-bg); box-shadow: inset 2px 2px 0 rgba(0,0,0,.08); }
+    .c2-pk small { color: var(--pink); } .c2-pk b { color: #2e9a5b; font-weight: normal; }
     .ooc-mode { font: 11px Mona12; color: var(--pink); }
   </style>
 </head>
@@ -80,6 +85,7 @@
         <div class="win-t"><span>👀 미리보기 <small>(블로그 401채널에 올라갈 모습)</small></span></div>
         <div class="win-b">
           <div class="c2-prev" id="c2Prev"><div class="empty">왼쪽에 스레를 붙여넣어 주세요 (｀・ω・´)</div></div>
+          <div class="c2-pick" id="c2Pick"></div>
           <div class="row">
             <button class="btn pink" id="c2Post">📋 게시용 복사</button>
             <button class="btn white" id="c2Title">📋 글 제목 복사</button>

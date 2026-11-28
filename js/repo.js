@@ -72,7 +72,9 @@ const Templates = (() => {
   const cached = () => {
     const folder = store.json(LIST_KEY, []);
     const builtin = (window.BUILTIN_TEMPLATES || []).map(t => parse(t.file, t.html)).filter(b => !folder.some(f => f.file === b.file));
-    return builtin.concat(folder);
+    // 이름 앞 번호(①②③…)대로 줄 세우기 · 번호 없는 건 맨 뒤
+    const no = t => { const i = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳'.indexOf((t.name || '').trim()[0]); return i < 0 ? 99 : i; };
+    return builtin.concat(folder).sort((a, b) => no(a) - no(b) || a.name.localeCompare(b.name, 'ko'));
   };
   const current = () => store.json('tpl.cur', null);
   function select(file) {

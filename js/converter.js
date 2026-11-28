@@ -110,7 +110,7 @@
       if (line.startsWith('🗣️') || line.startsWith('🗣')) {
         const t = line.replace(/^🗣️?\s*/, '');
         const q = t.search(/[「『"]/);
-        s.talk = q > 0 ? { who: t.slice(0, q).trim(), say: t.slice(q).trim() } : { who: '', say: t };
+        s.talk = q > 0 ? { who: t.slice(0, q).trim().replace(/[:：]$/, '').trim(), say: t.slice(q).trim() } : { who: '', say: t };
         return;
       }
       const parts = line.split('|').map(p => p.trim()).filter(Boolean);
