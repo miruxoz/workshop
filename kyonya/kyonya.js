@@ -467,12 +467,12 @@
   document.title=document.title.replace(/[【{｛][^】}｝]*[】}｝]\s*/,'');
 })();
 
-/* =========================== ☎ 고객센터 (방명록 페이지) =========================== */
+/* =========================== ☎ 고객센터 (방명록 페이지 + 3단 작은 창) =========================== */
 (function(){
   var B=document.body;
-  if(B.id!=='tt-body-guestbook' || B.classList.contains('in-frame')) return;   // 3단 작은 창은 건드리지 않음
-  var CS=(window.KY||{}).CS||{}, top=document.getElementById('csTop');
-  if(top){
+  if(B.id!=='tt-body-guestbook') return;
+  var FRAME=B.classList.contains('in-frame'), CS=(window.KY||{}).CS||{}, top=document.getElementById('csTop');
+  if(top && !FRAME){
     top.innerHTML='<div class="cs-ttl"><span class="bell">☎</span> サポートセンター <small id="csCnt"></small></div>'+
       ((CS.faq||[]).length?'<div class="cs-h">❓ よくあるご質問</div><div class="cs-faq">'+CS.faq.map(function(f){
         return '<details><summary>'+f[0]+'</summary><div class="a">'+f[1]+'</div></details>'}).join('')+'</div>':'')+
@@ -484,18 +484,23 @@
     busy=true;
     var box=document.querySelector('.gb-page .tt-comment-cont');
     if(box){
-      var n=box.querySelector('.tt_num_g'), c=document.getElementById('csCnt');
-      if(n && c) c.textContent='문의 '+n.textContent+'건';
-      var more=box.querySelector('.tt_btn_prev_more');
-      box.querySelectorAll('.tt-list-reply > li.tt-item-reply').forEach(function(li,i){
-        var meta=li.querySelector(':scope > .tt-wrap-cmt .tt-box-meta');
-        if(meta){ var no=more?'':'No.'+(i+1)+' '; if(meta.getAttribute('data-no')!==no) meta.setAttribute('data-no',no); }
-        li.classList.toggle('cs-wait', !li.querySelector('.tt-list-reply-comment .tt-item-reply'));
-      });
-      box.querySelectorAll('.tt_date').forEach(function(d){           // 2026. 11. 28. 18:20 → 11.28 18:20
-        var m=d.textContent.match(/^\s*\d{4}\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2}:\d{2})/);
-        if(m) d.textContent=('0'+m[1]).slice(-2)+'.'+('0'+m[2]).slice(-2)+' '+m[3];
-      });
+      if(!FRAME){
+        var n=box.querySelector('.tt_num_g'), c=document.getElementById('csCnt');
+        if(n && c) c.textContent='문의 '+n.textContent+'건';
+        var more=box.querySelector('.tt_btn_prev_more');
+        box.querySelectorAll('.tt-list-reply > li.tt-item-reply').forEach(function(li,i){
+          var meta=li.querySelector(':scope > .tt-wrap-cmt .tt-box-meta');
+          if(meta){ var no=more?'':'No.'+(i+1)+' '; if(meta.getAttribute('data-no')!==no) meta.setAttribute('data-no',no); }
+          var w=!li.querySelector('.tt-list-reply-comment .tt-item-reply'); if(li.classList.contains('cs-wait')!==w) li.classList.toggle('cs-wait',w);
+        });
+        box.querySelectorAll('.tt_date').forEach(function(d){           // 2026. 11. 28. 18:20 → 11.28 18:20
+          var m=d.textContent.match(/^\s*\d{4}\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2}:\d{2})/);
+          if(m) d.textContent=('0'+m[1]).slice(-2)+'.'+('0'+m[2]).slice(-2)+' '+m[3];
+        });
+        box.querySelectorAll('.tt-list-modify li:not(.cs-hide)').forEach(function(li){   // 수정 · 삭제만 남기기
+          if(/신고|링크복사/.test(li.textContent)) li.classList.add('cs-hide');
+        });
+      }
       if(CS.opFrom) box.querySelectorAll('.tt-link-user').forEach(function(u){   // 블로그 주인 이름 → 상담원 이름
         if(u.textContent.trim()===CS.opFrom) u.textContent=CS.op;
       });

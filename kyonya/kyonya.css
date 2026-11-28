@@ -959,11 +959,13 @@ body:not(.in-frame) .gb-page .tt-box-textarea:before{content:"内容"}
 body:not(.in-frame) .gb-page .tt-box-account input,body:not(.in-frame) .gb-page .tt-cmt{
   width:100%!important;height:auto;margin:0!important;padding:4px 8px!important;font:12px/1.6 entergal,Mona12!important;color:#000;outline:0;
   background:#fff!important;border:2px solid!important;border-color:var(--sh) var(--hl) var(--hl) var(--sh)!important;border-radius:0!important;box-shadow:none!important}
-body:not(.in-frame) .gb-page .tt-inner-g{margin:0;padding:0;border:0;background:none}
-body:not(.in-frame) .gb-page .tt-cmt{min-height:64px}
+body:not(.in-frame) .gb-page .tt-inner-g{display:flex;flex-direction:column;gap:2px;height:auto!important;max-height:none!important;margin:0;padding:0;border:0;background:none;overflow:visible!important}
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt){display:block;margin:0!important;padding:4px 8px!important;font:12px entergal,Mona12!important;font-weight:normal!important;color:var(--kd)!important;
+  background:#fff;border:2px solid;border-color:var(--sh) var(--hl) var(--hl) var(--sh)}          /* 로그인했을 때 이름 줄 */
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):before{content:"✎ ";color:var(--k1)}
+body:not(.in-frame) .gb-page .tt-cmt{min-height:64px;max-height:none!important;overflow-y:auto!important}
 body:not(.in-frame) .gb-page .tt-cmt:empty:before{content:"문의 내용을 적어 주세요"!important;color:#aaa}
 body:not(.in-frame) .gb-page .tt-box-write{display:flex;align-items:center;justify-content:flex-start!important;gap:8px;margin:1px 0 0;padding:0;border:0;background:none;height:auto}
-body:not(.in-frame) .gb-page .tt-xe-label{display:flex;align-items:center;gap:3px;margin:0!important}
 body:not(.in-frame) .gb-page .tt-xe-label-text{font-size:0}
 body:not(.in-frame) .gb-page .tt-xe-label-text:after{content:"🔒 비공개 문의";font:11px Mona12;color:#666}
 body:not(.in-frame) .gb-page .tt-btn_register{position:static;float:none;width:auto;height:auto;margin-left:auto;padding:3px 14px;font-size:0;cursor:pointer;
@@ -975,11 +977,12 @@ body:not(.in-frame) .gb-page .tt-btn_register:disabled{opacity:.6;cursor:default
 /* 상담 기록 (게시판 · 답글은 └ 야옹이) */
 body:not(.in-frame) .gb-page .tt-area-reply:before{content:"💬 相談ログ"}
 body:not(.in-frame) .gb-page .tt-list-reply,body:not(.in-frame) .gb-page .tt-list-reply-comment{margin:0;padding:0;border:0;list-style:none}
-body:not(.in-frame) .gb-page .tt-list-reply>li.tt-item-reply{margin:0;padding:8px 2px 10px;border:0;border-bottom:1px dashed var(--k2)}
-body:not(.in-frame) .gb-page .tt-list-reply-comment>li.tt-item-reply{margin:5px 0 0 12px;padding:0;border:0;background:none}
-body:not(.in-frame) .gb-page .tt-wrap-cmt{display:block!important;position:relative;margin:0;padding:0;min-height:0;border:0;background:none}
+body:not(.in-frame) .gb-page .tt-list-reply>li.tt-item-reply{margin:0!important;padding:8px 2px 10px!important;border:0!important;border-bottom:1px dashed var(--k2)!important}
+body:not(.in-frame) .gb-page .tt-list-reply-comment{margin:4px 0 0!important;padding:0!important}
+body:not(.in-frame) .gb-page .tt-list-reply-comment>li.tt-item-reply{margin:2px 0 0 12px!important;padding:0!important;border:0!important;background:none}
+body:not(.in-frame) .gb-page .tt-wrap-cmt{display:block!important;position:relative;margin:0!important;padding:0!important;min-height:0!important;border:0;background:none}
 body:not(.in-frame) .gb-page .tt-wrap-cmt .tt-box-thumb,body:not(.in-frame) .gb-page .tt_cmt_profile{display:none!important}
-body:not(.in-frame) .gb-page .tt-box-content{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;width:auto;margin:0!important;padding:0 24px 0 0;float:none}
+body:not(.in-frame) .gb-page .tt-box-content{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;width:auto;margin:0!important;padding:0!important;min-height:0!important;float:none}
 body:not(.in-frame) .gb-page .tt-box-meta{flex:none;width:auto!important;order:1;display:flex;align-items:baseline;gap:4px;margin:0;padding:0;font:11px Mona12}
 body:not(.in-frame) .gb-page .tt-box-meta:before{content:"■ " attr(data-no);color:var(--k1);white-space:pre}
 body:not(.in-frame) .gb-page .tt-link-user{flex:none;width:auto!important;max-width:none!important;overflow:visible!important;white-space:nowrap;font:11px Mona12!important;color:var(--kd)!important;text-decoration:none}
@@ -990,20 +993,74 @@ body:not(.in-frame) .gb-page .tt-link-comment .tt_txt_g{font:inherit;color:inher
 body:not(.in-frame) .gb-page .tt-wrap-desc{order:3;flex-basis:100%;margin:4px 0 0 12px;padding:0}
 body:not(.in-frame) .gb-page .tt_desc{margin:0;font:12.5px/1.75 Mona12!important;color:#000;text-align:justify;word-break:break-word;overflow-wrap:anywhere}
 body:not(.in-frame) .gb-page .tt_box_pwd{order:4;flex-basis:100%}
-body:not(.in-frame) .gb-page .tt-box-modify{position:absolute;top:0;right:0}
+/* ⋮ 버튼 대신 밑줄 글자 「수정 · 삭제」 */
+body:not(.in-frame) .gb-page .tt-box-modify{order:2;position:static!important;margin:0!important;padding:0!important;width:auto!important;height:auto!important}
+body:not(.in-frame) .gb-page .tt-button-modify{display:none!important}
+body:not(.in-frame) .gb-page .tt-list-modify{display:flex!important;gap:6px;position:static!important;width:auto!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
+body:not(.in-frame) .gb-page .tt-list-modify li{margin:0;padding:0;border:0;list-style:none}
+body:not(.in-frame) .gb-page .tt-list-modify li.cs-hide{display:none!important}
+body:not(.in-frame) .gb-page .tt-list-modify a{display:inline!important;padding:0!important;font:10px Mona12!important;color:var(--kt)!important;text-decoration:underline!important;text-underline-offset:2px;background:none!important}
+body:not(.in-frame) .gb-page .tt-list-modify a:hover{color:var(--hot)!important}
 body:not(.in-frame) .gb-page .tt_ico_lock{display:inline-block;width:auto!important;height:auto!important;margin:0;font-size:0!important;background:none!important;text-indent:0!important}
 body:not(.in-frame) .gb-page .tt_ico_lock:after{content:"🔒";font-size:10px}
+/* 글 ↔ 답글 사이 촘촘하게 (티스토리 기본 높이·여백 지우기) */
+body:not(.in-frame) .gb-page .tt-wrap-info,body:not(.in-frame) .gb-page .tt-wrap-info *,body:not(.in-frame) .gb-page .tt-box-modify,body:not(.in-frame) .gb-page .tt-list-modify,
+body:not(.in-frame) .gb-page .tt-list-modify *,body:not(.in-frame) .gb-page .tt-box-meta,body:not(.in-frame) .gb-page .tt-box-meta *{
+  height:auto!important;min-height:0!important;line-height:1.4!important;padding-top:0!important;padding-bottom:0!important;margin-top:0!important;margin-bottom:0!important}
 /* 답글 한 줄: └ 야옹이 🐱 내용 날짜 */
 body:not(.in-frame) .gb-page .tt-list-reply-comment .tt-box-meta:before{content:"└ ";color:var(--k1)}
 body:not(.in-frame) .gb-page .tt-list-reply-comment .tt-wrap-desc{order:2;flex:1;flex-basis:0;min-width:200px;margin:0}
 body:not(.in-frame) .gb-page .tt-list-reply-comment .tt_desc{font-size:12px!important;color:#4a7398}
-body:not(.in-frame) .gb-page .tt-list-reply-comment .tt-wrap-info{order:3}
+body:not(.in-frame) .gb-page .tt-list-reply-comment .tt-wrap-info,body:not(.in-frame) .gb-page .tt-list-reply-comment .tt-box-modify{order:3}
 body:not(.in-frame) .gb-page .tt-list-reply-comment .tt-link-comment{display:none}
 /* 답글 아직 없음 */
 body:not(.in-frame) .gb-page li.cs-wait>.tt-wrap-cmt:after{content:"└ 対応中…";display:block;margin:5px 0 0 12px;font:10px Mona12;color:#aaa}
 /* 이전 글 더 보기 */
 body:not(.in-frame) .gb-page .tt_btn_prev_more{display:block;width:100%;margin:4px 0;padding:3px;font:11px Mona12;color:var(--kd);cursor:pointer;
   background:var(--pat),var(--k5);border:2px solid;border-color:var(--hl) var(--sh) var(--sh) var(--hl);border-radius:0}
+
+/* 입력칸 높이 고정 풀기 (스크롤바 · 빈칸 없애기) */
+.gb-page .tt-inner-g,.gb-page .tt-box-textarea{min-height:0!important}
+body.in-frame .paging{display:none!important}
+
+/* 비공개 체크박스 (티스토리 회색 자물쇠 대신 진짜 체크 칸 · 큰 화면 · 작은 창 둘 다) */
+.gb-page .tt-xe-input-helper{display:none!important}
+.gb-page .tt-xe-label{display:flex!important;align-items:center;gap:4px;margin:0!important;cursor:pointer}
+.gb-page .tt-xe-label input[type=checkbox]{display:grid!important;place-content:center;position:static!important;flex:none;width:14px!important;height:14px!important;margin:0!important;
+  opacity:1!important;clip:auto!important;-webkit-appearance:none;appearance:none;cursor:pointer;background:#fff;border:2px solid;border-color:#cbc5c2 #fff #fff #cbc5c2;outline:1px solid #ddd8d6}
+.gb-page .tt-xe-label input[type=checkbox]:checked:after{content:"✓";font:bold 10px/1 Mona12;color:#4a7398}
+
+/* ---------- 🍈 3단 메론소다 작은 창 안 (티스토리 방명록 → 처음 시안 모양) ---------- */
+body.in-frame .gb-page .tt-comment-cont{display:flex;flex-direction:column;margin:0!important;padding:0!important;border:0!important}
+body.in-frame .gb-page .tt-comment-cont>form{order:-1}
+body.in-frame .gb-page .tt-box-total,body.in-frame .gb-page .tt-box-thumb,body.in-frame .gb-page .tt_cmt_profile,body.in-frame .gb-page .tt-wrap-info,
+body.in-frame .gb-page .tt-box-modify,body.in-frame .gb-page .tt_box_pwd,body.in-frame .gb-page .tt_btn_prev_more,body.in-frame .gb-page .tt-inner-g>:not(.tt-cmt){display:none!important}
+body.in-frame .gb-page .tt-area-write,body.in-frame .gb-page .tt_wrap_write,body.in-frame .gb-page .tt-box-textarea,body.in-frame .gb-page .tt-inner-g{display:block;width:auto;height:auto!important;margin:0!important;padding:0!important;border:0!important;background:none!important;float:none;overflow:visible!important}
+body.in-frame .gb-page .tt-box-account{display:flex!important;gap:3px;margin:0!important;padding:0!important;border:0!important;height:auto}
+body.in-frame .gb-page .tt-box-account input,body.in-frame .gb-page .tt-cmt{flex:1;min-width:0;width:100%!important;height:auto;margin:0!important;padding:2px 6px!important;
+  font:12px ThinMulmaru,Mona12!important;color:var(--ink);background:#fff!important;border:1px solid #c9b3a8!important;border-radius:0!important;box-shadow:inset 2px 2px 0 #eadfd9!important;outline:0}
+body.in-frame .gb-page .tt-box-textarea{margin:3px 0 2px!important}
+body.in-frame .gb-page .tt-cmt{min-height:50px;max-height:80px!important;overflow-y:auto!important}
+body.in-frame .gb-page .tt-cmt:empty:before{content:"문의사항이나 한마디를 남겨 주세요"!important;color:#aaa}
+body.in-frame .gb-page .tt-box-write{display:flex!important;align-items:center;gap:5px;margin:0 0 10px!important;padding:0!important;border:0!important;background:none!important;height:auto}
+body.in-frame .gb-page .tt-xe-label-text{font:10px Mona12;color:#888}
+body.in-frame .gb-page .tt-btn_register{flex:1;position:static;float:none;width:auto!important;height:auto!important;margin:0!important;padding:2px 8px!important;font-size:0!important;cursor:pointer;
+  background:var(--pink2)!important;border:1px solid var(--cocoa)!important;border-radius:4px!important;box-shadow:inset -2px -2px 0 rgba(169,140,126,.25),inset 2px 2px 0 #fff!important}
+body.in-frame .gb-page .tt-btn_register:after{content:"남기기 ♡";font:11px Mona12;color:var(--ink)}
+body.in-frame .gb-page .tt-btn_register:disabled{opacity:.7;cursor:default}
+body.in-frame .gb-page .tt-area-reply,body.in-frame .gb-page .tt-list-reply,body.in-frame .gb-page .tt-list-reply-comment{margin:0!important;padding:0!important;border:0!important;list-style:none}
+body.in-frame .gb-page .tt-list-reply>li.tt-item-reply{margin:0!important;padding:3px 0!important;border:0!important;border-top:1px dotted #cfe9d7!important}
+body.in-frame .gb-page .tt-list-reply-comment>li.tt-item-reply{margin:0!important;padding:0 0 0 10px!important;border:0!important}
+body.in-frame .gb-page .tt-wrap-cmt,body.in-frame .gb-page .tt-box-content{display:block!important;width:auto;margin:0!important;padding:0!important;min-height:0!important;border:0;background:none;float:none}
+body.in-frame .gb-page .tt-box-meta,body.in-frame .gb-page .tt-wrap-desc,body.in-frame .gb-page .tt_desc{display:inline!important;margin:0!important;padding:0!important}
+body.in-frame .gb-page .tt-link-user{display:inline!important;width:auto!important;max-width:none!important;overflow:visible!important;margin-right:5px;font:11px Mona12!important;color:#1f7a3e!important;text-decoration:none}
+body.in-frame .gb-page .tt_desc{font:12px/1.6 ThinMulmaru,Mona12!important;color:var(--ink);word-break:break-word}
+body.in-frame .gb-page .tt-list-reply-comment .tt-box-meta:before{content:"└ ";color:#666}
+body.in-frame .gb-page .tt-list-reply-comment .tt-link-user{margin-right:0}
+body.in-frame .gb-page .tt-list-reply-comment .tt-link-user:after{content:": ";color:#666}
+body.in-frame .gb-page .tt-list-reply-comment .tt_desc{color:#666}
+body.in-frame .gb-page .tt_ico_lock{display:inline-block;width:auto!important;height:auto!important;margin:0 4px 0 -2px;font-size:0!important;background:none!important;text-indent:0!important}
+body.in-frame .gb-page .tt_ico_lock:after{content:"🔒";font-size:10px}
 
 /* =========================================================
    13. 화면이 좁을 때
