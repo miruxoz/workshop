@@ -156,10 +156,7 @@
   if($('famSel') && KY.FAMILY) KY.FAMILY.forEach(function(f){ var o=document.createElement('option'); o.value=f[1]; o.innerHTML=f[0]; $('famSel').appendChild(o); });
   on('famGo','click',function(){ var v=$('famSel').value; if(!v){ pop('패밀리 사이트','🔗','갈 곳을 골라 주세요!'); return; } window.open(v,'_blank'); });
 
-  /* 카운터: 숫자를 픽셀 칸으로 */
-  var ct=$('cntTotal');
-  if(ct){ var n=(ct.textContent||'0').replace(/\D/g,'')||'0'; while(n.length<6) n='0'+n;
-    $('cntDigits').innerHTML=n.split('').map(function(d){return '<i>'+d+'</i>'}).join(''); }
+
 
   /* =========================== 홈 전용 =========================== */
   if(isHome){
@@ -170,6 +167,59 @@
     if($('todoList')) $('todoList').innerHTML=(KY.TODO||[]).map(function(t){
       return '<li'+(t[1]?' class="done"':'')+'>'+t[0]+'</li>'; }).join('') || '<li>할 일 없음 ♡</li>';
     if($('ntcD') && KY.NOTICE){ $('ntcD').innerHTML=KY.NOTICE.d; $('ntcT').innerHTML=KY.NOTICE.t; }
+
+        /* ---- 🗓 달력 (2014 이야기 달력) — 제목 맨 앞 【2/14】 를 읽어서 스티커 ---- */
+    (function(){
+      var el=$('kCal'); if(!el) return;
+      var RE=/^\s*【\s*(?:(\d{4})\s*[\/.\-]\s*)?(\d{1,2})\s*[\/.\-]\s*(\d{1,2})\s*】\s*/;
+      var F=KY.CAL_FROM||[2014,2], T=KY.CAL_TO||[2014,12], STK=KY.CAL_STK||{}, DAYS=KY.CAL_DAYS||{}, EV={}, cur=F.slice();
+      var YK='日月火水木金土'.split('');
+      function pad(n){ return (n<10?'0':'')+n; }
+      function key(y,m,d){ return y+'-'+pad(m)+'-'+pad(d); }
+      function idx(a){ return a[0]*12+a[1]; }
+      function stk(s,i,r){
+        var face=/^https?:/.test(s.e)?'<img src="'+s.e+'" alt="">':s.e, tag=s.link?'a':'span';
+        return '<'+tag+(s.link?' href="'+s.link+'"':'')+' class="kcal-stk'+(i?' two':'')+'" style="--r:'+r+'deg" data-t="'+esc(s.t)+'">'+face+'</'+tag+'>';
+      }
+      function draw(){
+        var y=cur[0], m=cur[1], first=new Date(y,m-1,1).getDay(), days=new Date(y,m,0).getDate(), h='', d=1-first;
+        for(var w=0;w<6&&d<=days;w++){ h+='<tr>';
+          for(var k=0;k<7;k++,d++){
+            if(d<1||d>days){ h+='<td class="out"><span class="n">0</span></td>'; continue; }
+            var fix=DAYS[m+'-'+d], st=(fix?[{e:fix[0],t:fix[1]}]:[]).concat(EV[key(y,m,d)]||[]), r=[-12,8,-6,12,-9][d%5];
+            h+='<td'+(st.length?' class="ev"':'')+'><span class="n">'+d+'</span>'+st.slice(0,2).map(function(s,i){ return stk(s,i,i?-r:r); }).join('')+'</td>';
+          }
+          h+='</tr>'; }
+        el.innerHTML='<div class="kcal-nav"><span class="kcal-arw'+(idx(cur)<=idx(F)?' off':'')+'" data-d="-1">◀</span>'+
+          '<span class="kcal-rb">'+y+'年 '+m+'月</span>'+
+          '<span class="kcal-arw'+(idx(cur)>=idx(T)?' off':'')+'" data-d="1">▶</span></div>'+
+          '<table><thead><tr>'+YK.map(function(x){return '<th>'+x+'</th>'}).join('')+'</tr></thead><tbody>'+h+'</tbody></table>';
+      }
+      el.addEventListener('click',function(e){
+        var a=e.target.closest('[data-d]'); if(!a) return;
+        var n=[cur[0],cur[1]+(+a.dataset.d)]; if(n[1]<1){n=[n[0]-1,12];} if(n[1]>12){n=[n[0]+1,1];}
+        if(idx(n)<idx(F)||idx(n)>idx(T)) return; cur=n; draw();
+      });
+      /* 말풍선 */
+      var tip=document.createElement('div'); tip.className='kcal-tip'; document.body.appendChild(tip);
+      el.addEventListener('mouseover',function(e){ var s=e.target.closest('.kcal-stk'); tip.style.display=s?'block':'none'; if(s) tip.textContent=s.dataset.t; });
+      el.addEventListener('mouseleave',function(){ tip.style.display='none'; });
+      el.addEventListener('mousemove',function(e){ tip.style.left=e.clientX+12+'px'; tip.style.top=e.clientY+12+'px'; });
+      /* 글 목록을 받으면: 제목에서 【날짜】를 떼고 → 달력에 기록 */
+      KY.CAL_PREP=function(all){
+        var latest=null;
+        all.forEach(function(p){
+          var mm=p.title.match(RE); if(!mm) return;
+          p.title=p.title.replace(RE,'');
+          var y=+(mm[1]||F[0]), m=+mm[2], d=+mm[3], top=(p.cat||'').split('/')[0];
+          (EV[key(y,m,d)]=EV[key(y,m,d)]||[]).push({e:STK[top]||STK['']||'📝', t:p.title, link:p.link});
+          if(!latest && idx([y,m])>=idx(F) && idx([y,m])<=idx(T)) latest=[y,m];   // 제일 최근 글의 달로 열기
+        });
+        if(latest) cur=latest;
+        draw();
+      };
+      draw();
+    })();
 
     /* ---- 글 불러오기 (티스토리 RSS) ---- */
     function ago(ms){ var m=Math.floor(ms/60000); if(m<60) return Math.max(m,1)+'분 전'; var h=Math.floor(m/60); if(h<24) return h+'시간 전';
@@ -191,6 +241,7 @@
       }).catch(function(){ cb([]); });
     }
     loadPosts(function(all){
+            if(KY.CAL_PREP) KY.CAL_PREP(all);   // 🗓 제목의 【날짜】 → 달력 (다른 칸보다 먼저!)
       var C=KY.CAT||{};
         /* 세이의 한마디 — 제목 = 한마디 / 본문 첫 그림 = 오늘의 기분 */
       var micro=all.filter(function(p){return p.cat.indexOf(C.micro)===0});
@@ -232,19 +283,6 @@
         || '<li style="color:#888">아직 글이 없어요</li>';
         });
 
-    /* ---- 달력 (항상 2014년) ---- */
-    var cm=today.getMonth();
-    function drawCal(){
-      var first=new Date(2014,cm,1).getDay(), days=new Date(2014,cm+1,0).getDate(), h='<tr>', EV=KY.CAL_EVENTS||{};
-      $('calT').innerHTML='2014. '+(cm+1);
-      for(var i=0;i<first;i++) h+='<td></td>';
-      for(var d=1;d<=days;d++){ var key=(cm+1)+'-'+d, cls=[];
-        if(cm===today.getMonth()&&d===today.getDate()) cls.push('today'); if(EV[key]) cls.push('ev');
-        h+='<td class="'+cls.join(' ')+'"'+(EV[key]?' title="'+esc(EV[key])+'"':'')+'><span>'+d+'</span></td>';
-        if((first+d)%7===0 && d<days) h+='</tr><tr>'; }
-      $('calB').innerHTML=h+'</tr>';
-    }
-    if($('calB')){ on('calP','click',function(){ cm=(cm+11)%12; drawCal(); }); on('calN','click',function(){ cm=(cm+1)%12; drawCal(); }); drawCal(); }
 
     /* ---- 투표 (깡통: 내 표만 더해짐 / 나중에 VOTE만 구글 시트로 교체) ---- */
     var P=KY.POLL;
@@ -266,6 +304,16 @@
       var voted=store.get('ky_vote'); if(voted!==null && voted!=='') VOTE.get(function(c){ showRes(c,+voted); });
     }
   }
+
+  /* ---------- 🔢 방문자 카운터 (숫자 → gif) ---------- */
+(function(){
+  var D=KY.CNT_DIGITS; if(!D) return;
+  document.querySelectorAll('.kcnt-d').forEach(function(e){
+    var s=String(e.dataset.n||'0').replace(/\D/g,'')||'0';      // 쉼표 등 숫자 아닌 건 빼기
+    while(s.length<(+e.dataset.p||0)) s='0'+s;                  // data-p 자리수만큼 앞에 0 채우기
+    e.innerHTML=s.split('').map(function(c){ return '<img src="'+D[c]+'" alt="'+c+'">'; }).join('');
+  });
+})();
 
   /* ---- 운세 (날짜 + 아이디로 정해짐) ---- */
   function hash(s){ var h=0; for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h; }
@@ -338,12 +386,13 @@
 (function(){
   var box=$('voteArea'), P=KY.VOTE; if(!box||!P) return;
   var URL=KY.CLAP_URL||'', N=P.ops.length, KEY='kyVote_'+P.id, mine=null, V=P.ops.map(function(){return 0});
-  try{ mine=localStorage.getItem(KEY); }catch(x){}
+  var DAY=new Date().toDateString();   // 오늘 날짜 (밤 12시 지나면 바뀜)
+  try{ var s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&s.d==DAY) mine=String(s.o); }catch(x){}
   function draw(newI){
     var mx=Math.max.apply(null,V)||1, t=V.reduce(function(a,b){return a+b},0);
     box.classList.toggle('done',mine!==null);
-    box.innerHTML='<div class="vt-roof"><span class="vt-sign">今日のアンケート</span></div>'+
-      '<div class="vt-q">'+P.q+'</div><div class="vt-body">'+
+    box.innerHTML='<div class="vt-roof"><span class="vt-sign">'+P.q+'</span></div>'+
+      '<div class="vt-body">'+
       P.ops.map(function(o,i){
         var n=V[i]?Math.max(1,Math.round(V[i]/mx*4)):0, b='';   // 경단은 접시당 최대 4개
         for(var k=0;k<n;k++) b+='<span class="vt-ball '+(o[1]||'')+(i==newI&&k==n-1?' new':'')+'"></span>';
@@ -362,7 +411,7 @@
   box.addEventListener('click',function(e){
     var op=e.target.closest('.vt-op'); if(!op||mine!==null) return;
     var i=+op.dataset.i; mine=String(i);
-    try{ localStorage.setItem(KEY,i); }catch(x){}
+    try{ localStorage.setItem(KEY,JSON.stringify({d:DAY,o:i})); }catch(x){}
     V[i]++; draw(i);                 // 화면에 먼저 보여 주고
     ask('a=vote&o='+i,i);            // 시트에 저장
   });

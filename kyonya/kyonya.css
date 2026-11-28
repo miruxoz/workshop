@@ -479,9 +479,9 @@ input.f:focus{border-color:var(--hot)}
 .pud-more:hover{text-decoration:underline}
 
 /* ---------- 오른쪽 칸: 새 소식 푸딩 + 투표 자리 ---------- */
-.duo-r{display:flex;flex-direction:column;gap:10px}
+.duo-r{display:flex;flex-direction:column;gap:10px;height:0;min-height:100%}   /* 높이는 쇼트케이크가 정하고, 오른쪽은 따라가기 */
 /* ---------- 오늘의 앙케이트 — 당고 가판대 (접시 네 개) ---------- */
-.vote-area{position:relative;flex:1;min-height:200px;margin-top:4px;overflow:hidden;display:flex;flex-direction:column;padding:0 12px 8px;
+.vote-area{position:relative;flex:1;min-height:0px;margin-top:4px;overflow:hidden;display:flex;flex-direction:column;padding:0 12px 8px;
   font-family:entergal;color:#000;border:1px solid #c9a77c;border-radius:6px;
   background:repeating-linear-gradient(0deg,#f6e2c3 0 9px,#f1d8b2 9px 10px,#f6e2c3 10px 22px,#f3dcb9 22px 23px)}   /* 나무 판 */
 /* 지붕 */
@@ -542,31 +542,85 @@ input.f:focus{border-color:var(--hot)}
 /* =========================================================
    9. 3단 위젯
    ========================================================= */
-/* 방명록 */
-.gbframe{width:100%;height:340px;border:0;background:#fff;display:block}
-.gb textarea{width:100%;height:50px;resize:none;font:12px ThinMulmaru;border:1px solid #c9b3a8;box-shadow:inset 2px 2px 0 #eadfd9;padding:3px 5px;margin:3px 0}
-.gb .msg{border-top:1px dotted #efc2d3;padding:3px 0;font-size:12px}
-.gb .msg b{font:11px Mona12;color:var(--hot)}
+/* ---------- 방명록 — 고객센터 (메론소다 + 기포) ---------- */
+.gbx{--g:#5bbd7c;position:relative;margin:46px 0 14px;padding:8px;border:1px solid var(--g);font-family:entergal;
+  background:radial-gradient(circle,rgba(255,255,255,.9) 2px,transparent 2.6px) 0 0/22px 26px,
+             radial-gradient(circle,rgba(255,255,255,.7) 1.3px,transparent 1.8px) 11px 13px/22px 26px,
+             linear-gradient(#ecfbf1,#d3f2dd 45%,#a8e0bb 80%,#7fcf98)}   /* 아래로 갈수록 진한 메론 */
+/* 보글보글 올라가는 기포 */
+.gbx-bbs{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.gbx-bbs i{position:absolute;bottom:-10px;width:6px;height:6px;border-radius:50%;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.4);animation:gbxBub 6s linear infinite}
+.gbx-bbs i:nth-child(1){left:6%;width:5px;height:5px;animation-duration:5s}
+.gbx-bbs i:nth-child(2){left:18%;width:9px;height:9px;animation-duration:7s;animation-delay:-2s}
+.gbx-bbs i:nth-child(3){left:31%;animation-duration:6s;animation-delay:-4s}
+.gbx-bbs i:nth-child(4){left:45%;width:4px;height:4px;animation-duration:4.5s;animation-delay:-1s}
+.gbx-bbs i:nth-child(5){left:58%;width:8px;height:8px;animation-duration:8s;animation-delay:-5s}
+.gbx-bbs i:nth-child(6){left:70%;width:5px;height:5px;animation-duration:5.5s;animation-delay:-3s}
+.gbx-bbs i:nth-child(7){left:82%;width:10px;height:10px;animation-duration:9s;animation-delay:-6s}
+.gbx-bbs i:nth-child(8){left:93%;width:6px;height:6px;animation-duration:6.5s;animation-delay:-.5s}
+@keyframes gbxBub{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(-420px);opacity:0}}
+/* 오른쪽 위: 아이스크림 + 체리 + 빨대 */
+.gbx-top{position:absolute;right:-6px;top:-42px;z-index:4;width:96px;height:56px;pointer-events:none}
+.gbx-ice{position:absolute;left:4px;bottom:0;width:86px;height:40px;background:#fffdf3;
+  border-radius:60% 60% 30% 30%/90% 90% 25% 25%;box-shadow:0 2px 0 #e8dfc6,inset 0 -5px 0 #f6efd9}
+.gbx-cherry{position:absolute;left:38px;top:4px;z-index:2;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 4px 4px,#ff9bb0 2px,#e2455f 3px)}
+.gbx-cherry:after{content:"";position:absolute;left:7px;top:-9px;width:8px;height:11px;border-left:2px solid #6a8f3c;border-top:2px solid #6a8f3c;border-radius:10px 0 0 0;transform:rotate(20deg)}
+.gbx-straw{position:absolute;left:66px;top:-14px;z-index:-1;width:8px;height:60px;transform:rotate(16deg);border-radius:3px;
+  background:repeating-linear-gradient(-30deg,#ff8fb1 0 6px,#fff 6px 12px);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+/* 간판 */
+.gbx-hd{position:relative;z-index:2;display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:4px 8px;background:#fffdf3;border:3px double var(--g)}
+.gbx-soda{flex:none;position:relative;width:22px;height:30px}
+.gbx-soda:before{content:"";position:absolute;left:3px;top:10px;width:16px;height:18px;border-radius:0 0 6px 6px;background:#7fd79b;border:1px solid var(--g)}
+.gbx-soda:after{content:"";position:absolute;left:2px;top:2px;width:18px;height:11px;border-radius:50% 50% 30% 30%;background:#fffdf3;border:1px solid #e3d9bd}
+.gbx-hd b{font:14px MaruMonica,entergal;font-weight:normal;letter-spacing:2px;color:var(--g)}
+.gbx-hd small{display:block;font:9px Mona12;color:#a08560}
+/* 안쪽 흰 칸 (방명록) */
+.gbx-in{position:relative;z-index:2;padding:6px 8px;background:#fff;border:1px solid var(--g)}
+.gbx-ft{position:relative;z-index:2;margin-top:6px;padding:2px 0;text-align:center;font:10px Mona12;color:var(--g);background:#fffdf3;border:1px dashed var(--g)}
+
+/* 방명록 안 글 */
+.gbframe{display:block;width:100%;height:340px;border:0;background:#fff}
+.gb textarea{width:100%;height:50px;resize:none;margin:3px 0;padding:3px 5px;font:12px ThinMulmaru;border:1px solid #c9b3a8;box-shadow:inset 2px 2px 0 #eadfd9}
+.gb .msg{padding:3px 0;border-top:1px dotted #cfe9d7;font-size:12px}
+.gb .msg b{font:11px Mona12;color:#1f7a3e}           /* 이름: 진한 초록 */
 .gb .msg .re{display:block;padding-left:10px;color:#666}
-.gb .more{display:block;text-align:right;font:11px Mona12;margin-top:3px}
+.gb .more{display:block;margin-top:3px;text-align:right;font:11px Mona12;color:#1f7a3e}
+.gb textarea{display:block;margin:3px 0 2px}   /* 입력칸 ↔ 남기기 붙이기 (2px: 숫자 작을수록 더 붙어요) */
+.gb .btn{display:block;margin-bottom:10px}     /* 남기기 ↔ 글 목록 띄우기 (10px: 클수록 더 멀어져요) */
 
-/* 달력 */
-.cal .cm2{display:flex;justify-content:space-between;align-items:center;font:12px Mona12;margin-bottom:4px}
-.cal .cm2 button{font:10px Mona12;border:1px solid #8f8f8f;border-radius:3px;background:#fdf7fa;cursor:pointer;padding:0 5px;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 var(--lo)}
-.cal table{width:100%;border-collapse:collapse;font:11px Mona12;text-align:center}
-.cal th{font-weight:normal;border-bottom:1px solid #c9c9c9;padding:1px 0}
-.cal th:first-child,.cal td:first-child{color:#e5484d}.cal th:last-child,.cal td:last-child{color:#3d86c9}
-.cal td{padding:2px 0}
-.cal td.today span{display:inline-block;width:18px;background:var(--hot);color:#fff}
-.cal td.ev span{text-decoration:underline dotted var(--hot)}
-.cal .yr{font:10px Mona12;color:#888;text-align:center;margin-top:3px}
+/* ---------- 달력 — 2014 이야기 달력 (배경 없음) ---------- */
+.kcal{margin-bottom:14px;font-family:entergal}
+.kcal-nav{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:8px}
+.kcal-arw{padding:0 4px;font:11px Mona12;color:#c4628b;cursor:pointer;user-select:none}
+.kcal-arw.off{visibility:hidden}
+.kcal-rb{padding:2px 22px 1px;font:13px MaruMonica,entergal;letter-spacing:2px;color:#fff;background:#f3a0bc;
+  clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%)}   /* 리본 */
+.kcal table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:2px}
+.kcal th{padding:2px 0;font:11px MaruMonica,Mona12;font-weight:normal;color:#7d5d4f;
+  text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff}
+.kcal th:first-child,.kcal td:first-child .n{color:#e5484d}
+.kcal th:last-child,.kcal td:last-child .n{color:#3d86c9}
+.kcal td{position:relative;height:30px;padding:2px 0 0;text-align:center;vertical-align:top}
+.kcal td .n{display:inline-block;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.85);font:10px/18px Mona12}
+.kcal td.ev .n{background:#fde3ec}          /* 스티커 있는 날 */
+.kcal td.out .n{visibility:hidden}
+/* 스티커 (테두리 없음) */
+.kcal-stk{position:absolute;right:-1px;bottom:-2px;font:13px/1 "Mona12 Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;
+  text-decoration:none;transform:rotate(var(--r,-8deg));transition:transform .15s;cursor:pointer}
+.kcal-stk:hover{z-index:5;transform:rotate(0) scale(1.4)}
+.kcal-stk.two{right:10px;bottom:4px}
+.kcal-stk img{display:block;height:16px;width:auto}
+.kcal-tip{position:fixed;z-index:999;display:none;pointer-events:none;padding:2px 7px;font:11px entergal;color:#000;
+  background:#fff;border:1px solid #e584ac;border-radius:8px;box-shadow:2px 2px 0 rgba(229,132,172,.25)}
 
 
-/* 방문자 카운터 */
-.cnt .in{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.digits{display:inline-flex;gap:2px}
-.digits i{font:15px/20px Mona12;font-style:normal;width:15px;text-align:center;background:var(--choco);color:#fde6ef;border:1px solid var(--choco2)}
-.cnt p{margin:0;font:11px Mona12}
+/* ---------- 방문자 카운터 — 옛날 카운터 문장 (배경 없음) ---------- */
+.kcnt{margin-bottom:14px;text-align:center;font:12px/1.8 MaruminyaHangeul,entergal;color:#000;
+  text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff}
+.kcnt-d{display:inline-flex;gap:1px;align-items:center;vertical-align:middle;margin:0 3px}
+.kcnt-d img{display:block;height:20px;width:auto;image-rendering:pixelated}   /* 큰 숫자 높이 */
+.kcnt-td{font-size:11px;color:#7d5d4f}
+.kcnt-td .kcnt-d img{height:13px}                                               /* 오늘·어제 숫자 높이 */
 
 /* ---------- 광고 (3단) ---------- */
 .ad3{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
@@ -896,3 +950,36 @@ h2{font-family:entergal!important}
 textarea{font:12px entergal!important}
 #tickTx,#gbName,#updList,
 .hot,.npv .in,.gb,.gb h3,.cal h3,.poll,.poll h3{font-family:entergal}
+
+#voteArea{background-image:url("https://decomail.space/bg/white/68.gif");background-size:127px auto;background-position:0px 0px}
+
+/* 투표 칸 살짝 줄이기 */
+.vt-roof{height:34px;margin-bottom:10px}
+.vt-sign{top:4px}
+.vt-op{height:52px}
+.vt-plate{width:120px;height:34px}
+
+.vt-sign{max-width:90%;overflow:hidden;text-overflow:ellipsis;letter-spacing:1px}   /* 제목이 길면 … 으로 자르기 */
+
+/* 투표 칸 톤 다운 */
+.vote-area.st .vt-roof{height:28px;background:repeating-linear-gradient(90deg,#f6b8c8 0 16px,#fff 16px 32px)}   /* 연한 딸기색 + 얇게 */
+.vote-area.st .vt-roof:after{background:radial-gradient(circle at 8px 0,#f6b8c8 8px,transparent 8.5px) 0 0/32px 8px,radial-gradient(circle at 8px 0,#fff 8px,transparent 8.5px) 16px 0/32px 8px;height:8px}
+.vt-sign{top:3px;padding:1px 12px 0;font-size:12px;border-width:3px;border-color:#f08aa5;color:#e0437f}
+.vote-area{background:#fffbea;border-color:#e3cf9a}       /* 바탕: 푸딩이랑 같은 크림색, 무늬 없이 */
+.vt-plate{width:110px;height:30px;box-shadow:none}         /* 접시 작게 */
+.vt-op{height:48px}
+
+/* ===== 투표: 상자·지붕 빼고 접시만 (지우면 원래대로) ===== */
+.vote-area{background: none !important;border:0;padding:0 4px}
+.vt-roof{height:auto;margin:0 0 6px;background:none!important}
+.vt-roof:before,.vt-roof:after{display:none}
+.vt-sign{position:static;transform:none;display:block;width:fit-content;margin:0 auto}   /* 간판이 제목 역할 */
+.vt-plate{box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.vt-nm,.vt-hint,.vt-cnt{text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff}   /* 바탕 무늬 위에서도 읽히게 */
+.vt-hint{color:#7d5d4f}
+
+/* 투표 수를 이름 옆으로 + 가운데 정렬 */
+.vt-op{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:5px}   /* 빈칸 | 이름 | 표 | 빈칸 */
+.vt-plate{grid-column:1/-1;grid-row:1;justify-self:center}
+.vt-nm{grid-column:2;grid-row:2}
+.vt-cnt{grid-column:3;grid-row:2;position:static}

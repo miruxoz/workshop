@@ -95,13 +95,20 @@ var KY = {
     { title:'세이의 낮잠 왈츠',       src:'', notes:'C5 E5 G5 E5 F5 A5 C6 A5 G5 E5 C5 E5 D5 - C5 -' }
   ],
 
-  /* 달력(2014년) 이벤트 '월-일' */
-  CAL_EVENTS: { '11-22':'쿄냐통신 오픈', '12-24':'크리스마스 이브' },
-
-  /* 운세 */
-  FORTUNE: { luck:['대길','중길','소길','길','말길','흉'],
-    item:['푸딩','배구공','쿄헤이 후드티','편의점 영수증','고양이 스티커','교환일기장'],
-    tip:['오늘은 먼저 연락해 보세요.','무표정이 통하는 날.','간식을 나누면 운이 올라요.','쿄헤이의 시선에 주의.','일찍 자면 좋은 꿈을 꿔요.','"ㅇ"보다는 "응"으로 답하세요.'] },
+   // 🗓 달력 (2014 이야기 달력)
+  //   글 제목 맨 앞에 【2/14】 처럼 이야기 날짜 → 그날에 스티커 (사이트 제목에선 자동으로 지워짐)
+  CAL_FROM:[2014,2], CAL_TO:[2014,12],     // 넘길 수 있는 범위 [년,월]
+  CAL_STK:{'にゃにゃニュース':'📰','ひとりごと':'💬','':'📝'},   // 카테고리별 스티커 ('' = 그 밖) · gif 주소 넣어도 돼요
+  CAL_DAYS:{                                // 매년 같은 날 (월-일): [스티커, 말풍선 내용]
+    '2-3':['👹','節分'], '2-14':['🍫','발렌타인'], '2-22':['🐱','猫の日'],
+    '3-3':['🎎','ひな祭り'], '3-14':['🍬','화이트데이'], '12-25':['🎄','크리스마스']
+  },
+    // 🔢 방문자 카운터 숫자 gif (0~9 순서)
+  CNT_DIGITS:['https://i.postimg.cc/XqMhGNk3/image.gif','https://i.postimg.cc/NF1n1hdG/1.gif','https://i.postimg.cc/7P7jv7wV/2.gif','https://i.postimg.cc/DfsRVsn9/3.gif','https://i.postimg.cc/HsgRTxLL/4.gif',
+              'https://i.postimg.cc/HsgRTxLw/5.gif','https://i.postimg.cc/xT3782ky/6.gif','https://i.postimg.cc/dVQfTxdz/7.gif','https://i.postimg.cc/W1pyJHgb/8.gif','https://i.postimg.cc/cLDb7BBr/9.gif'],
+  // 동글 버전:
+  // CNT_DIGITS:['https://i.postimg.cc/zv57Yykr/image.gif','https://i.postimg.cc/rscj2D9K/1.gif','https://i.postimg.cc/wMVVq9Ws/2.gif','https://i.postimg.cc/J7cKcQRS/3.gif','https://i.postimg.cc/jqQvQhsN/4.gif',
+  //             'https://i.postimg.cc/X7s8t7Gx/5.gif','https://i.postimg.cc/L6xTG6gS/6.gif','https://i.postimg.cc/zG3jNZTX/7.gif','https://i.postimg.cc/hthrnWV0/8.gif','https://i.postimg.cc/y85TYQTy/9.gif'],
 
   /* 패밀리 사이트 */
   FAMILY: [ ['🏪 쿄냐통신 분점 (러브로그)','https://luvlog.me/kyohei'], ['🧺 로그 공방','https://miruxoz.github.io/workshop/'] ],
@@ -115,7 +122,7 @@ var KY = {
   VOTE:{
     id:'v1',
     q:'최강의 동물은?',
-    ops:[['강아지','p'],['고양이','y'],['토끼','s'],['공룡','']]
+    ops:[['<img class="text-emoji" src="https://i.postimg.cc/Bbnq0TxL/43.gif" /> 강아지','p'],['<img class="text-emoji" src="https://64.media.tumblr.com/7ee29b40fe742c08d0dad0d849ccf9c1/tumblr_inline_mjpodfeM7v1qz4rgp.gif" /> 고양이','y'],['<img class="text-emoji" src="https://i.postimg.cc/ryPJ2h97/57.gif" /> 토끼','s'],['<img class="text-emoji" src="https://i.postimg.cc/2634VHLk/5.gif"/> 공룡','']]
   },
   
 };
