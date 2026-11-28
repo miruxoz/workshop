@@ -1065,10 +1065,11 @@ body.in-frame .gb-page .tt_ico_lock:after{content:"🔒";font-size:10px}
 /* 로그인 이름 뒤에 숨어 있는 「댓글」 라벨은 계속 숨기기 */
 .gb-page .tt-inner-g>.screen_out{display:none!important}
 
-/* 🍈 작은 창 목록: 이름 · 내용 말고는 전부 숨기기 */
-body.in-frame .gb-page .tt-item-reply>:not(.tt-wrap-cmt):not(.tt-list-reply-comment),
-body.in-frame .gb-page .tt-wrap-cmt>:not(.tt-box-content),
-body.in-frame .gb-page .tt-box-content>:not(.tt-box-meta):not(.tt-wrap-desc){display:none!important}
+
+/* 티스토리 답글 화살표 장식 숨기기 (작은 창 · 큰 화면 둘 다) */
+.gb-page .tt-item-reply:before,.gb-page .tt-item-reply:after,
+.gb-page .tt-list-reply-comment:before,.gb-page .tt-list-reply-comment:after,
+body.in-frame .gb-page .tt-wrap-cmt:before,body.in-frame .gb-page .tt-wrap-cmt:after{content:none!important;display:none!important;background:none!important}
 
 /* =========================================================
    13. 화면이 좁을 때

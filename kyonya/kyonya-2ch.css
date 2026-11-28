@@ -5,6 +5,9 @@
 @font-face{font-family:Mona12;src:url(https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2) format("woff2")}
 @font-face{font-family:entergal;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf) format("truetype");font-display:swap}
 .text-emoji{display:inline-block!important;float:none!important;clear:none!important;height:1.2em;width:auto;vertical-align:middle;margin:0 2px}
+/* 아스키아트 안 한글만 엔터갈로 (한글 글자 범위만 이 글꼴을 써요) */
+@font-face{font-family:c2ko;src:url(https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf) format("truetype");
+  unicode-range:U+1100-11FF,U+3130-318F,U+AC00-D7A3;font-display:swap}
 
 .c2{--c2-bg:#efefef;--c2-title:#ff0000;--c2-name:#008000;--c2-hot:#e5004f;--c2-anc:#0033cc;
   font:13px/1.7 entergal,Mona12,sans-serif;color:#000;text-align:left}
@@ -26,7 +29,7 @@
 .c2-anc{color:var(--c2-anc);text-decoration:underline;cursor:pointer}
 
 /* 아스키아트 (줄·칸 그대로) */
-.c2-aa{margin:0;padding:2px 0;font:12px/1.15 "Saitamaar","MS PGothic","ＭＳ Ｐゴシック","IPAMonaPGothic","Osaka",sans-serif;
+.c2-aa{margin:0;padding:2px 0;font:12px/1.15 c2ko,"Saitamaar","MS PGothic","ＭＳ Ｐゴシック","IPAMonaPGothic","Osaka",sans-serif;
   white-space:pre;overflow-x:auto;background:none;border:0;color:#000}
 
 /* 한줄 요약 (작업대 미리보기에만 나와요) */
