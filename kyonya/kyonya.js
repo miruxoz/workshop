@@ -22,6 +22,15 @@
   /* ---------- 3단 방명록 작은 창: 여기서 주소를 넣어요 (창 안에서는 위에서 끝나서 창 속 창이 안 생김) ---------- */
   document.querySelectorAll('iframe.gbframe[data-src]').forEach(function(f){ f.src=f.dataset.src; });
 
+  /* ---------- 🩷 스티커 붙이기 (kyonya-data.js 의 STICKERS) ---------- */
+  (KY.STICKERS||[]).forEach(function(s){
+    var p=document.querySelector(s.at); if(!p||!s.src) return;
+    var u=function(v){ return typeof v==='number'? v+'px' : String(v); };
+    var im=document.createElement('img'); im.src=s.src; im.alt=''; im.className='ky-stk';
+    im.style.cssText='position:absolute;margin:0;z-index:'+(s.z||50)+';left:'+u(s.left||0)+';top:'+u(s.top||0)+(s.w?';width:'+u(s.w):'');
+    p.appendChild(im);
+  });
+
   /* ---------- 팝업 (뒤 화면 안 덮음) ---------- */
   var bg=$('popBg'), ok=$('popOk');
   // design: 'dA'(기본·회색 땡땡이) / 'd14 st'(초코+초콜릿바+줄무늬) / 'd2'(하늘 초코칩)

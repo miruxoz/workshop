@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>♡ ろぐ こうぼう ♡ 작업대</title>
-  <link rel="stylesheet" href="css/site.css?v=1121c">
+  <link rel="stylesheet" href="css/site.css?v=1128a">
 </head>
 <body>
 
@@ -36,6 +36,7 @@
       <button class="step" data-step="2">② 편집</button>
       <button class="step" data-step="3">③ 미리보기</button>
       <button class="step" data-step="4">④ 복사</button>
+      <button class="step" data-step="5">📸 발췌하기</button>
     </div>
 
     <!-- ===== ②③④ 공통: 작업할 글 고르기 ===== -->
@@ -194,6 +195,19 @@
       </section>
     </div>
 
+    <!-- ===== 📸 발췌하기 (서랍 없이 바로) ===== -->
+    <div class="step-pane" id="step5" hidden>
+      <section class="win">
+        <div class="win-t pink"><span>📸 발췌하기 <small>서랍에 안 담아도 돼요</small></span><button class="btn mini white" id="qxClear">🧹 비우기</button></div>
+        <div class="win-b">
+          <label class="lb" for="qxIn">발췌할 글 <small>생 로그·HTML 로그 그대로 붙여 넣어도 돼요 · 「대사」 다음 줄의 (번역)은 한 문단으로 붙어요</small></label>
+          <textarea class="tx big" id="qxIn" rows="12" placeholder="여기에 글을 붙여 넣거나 바로 써 주세요 ♪&#10;&#10;예)&#10;조그만 손에 쥐인 은색 포크 끝이 내 코앞을 향해 반짝 빛났다.&#10;이쿠토｜「おい恭平、お前マジで昨日あの部屋で何したんだよ！」&#10;(야 쿄헤이, 너 진짜 어제 그 방에서 뭐 한 거야!)"></textarea>
+          <button class="btn big pink" id="qxGo">📸 발췌 이미지 만들기</button>
+          <small class="ed-help">스튜디오 안에서도 글을 고치고 형광펜·줄 종류(대사/지문/속마음)를 바꿀 수 있어요</small>
+        </div>
+      </section>
+    </div>
+
   </main>
 
   <footer class="foot">작업 중인 로그는 이 브라우저에만 저장돼요 · 💾 보관함은 내 비공개 깃허브 저장소에만 올라가요 ♡</footer>
@@ -211,9 +225,19 @@
 <script src="js/classify.js?v=1121c"></script>
 <script src="js/workbench.js"></script>
 <script src="js/drawer.js"></script>
-<script src="js/editor.js?v=1121c"></script>
+<script src="js/editor.js?v=1128a"></script>
 <script src="js/fonts.js"></script>
-<script src="js/excerpt.js"></script>
+<script src="js/excerpt.js?v=1128a"></script>
+<script>
+  /* 📸 발췌하기 탭 */
+  (() => {
+    const box = document.getElementById('qxIn');
+    box.value = store.get('qx.text', '');
+    box.addEventListener('input', () => store.set('qx.text', box.value));
+    document.getElementById('qxGo').onclick = () => { if (!box.value.trim()) return toast('발췌할 글을 넣어 주세요'); Excerpt.quick(box.value); };
+    document.getElementById('qxClear').onclick = () => { box.value = ''; store.set('qx.text', ''); box.focus(); };
+  })();
+</script>
 <script src="js/widget.js"></script>
 </body>
 </html>

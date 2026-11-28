@@ -508,10 +508,10 @@ body[contenteditable]{outline:none}`;
     const isFloat = el => !!el && el.style.position === 'absolute';
     const num = v => { const m = String(v || '').match(/^(-?[\d.]+)(px|%)?$/); return m ? { n: +(+m[1]).toFixed(2), u: m[2] || 'px' } : null; };
     // 넣기
-    function insert(given) {
+    function insert(given, force) {
       const code = (typeof given === 'string' ? given : $('insCode').value).trim(); if (!code) { toast('넣을 코드를 붙여 넣어 주세요'); return; }
       const d = doc(); if (!d) return;
-      let where = $('insWhere').value, base = sel;
+      let where = force || $('insWhere').value, base = sel;
       if (!base || base === d.body) { base = d.body; if (where === 'beforebegin') where = 'afterbegin'; if (where === 'afterend') where = 'beforeend'; }
       // 이미지 주소만 붙여 넣으면 <img> 로
       const html = /^https?:\/\/\S+$/i.test(code) && !/[<>"]/.test(code) ? `<img src="${code}" alt="">` : code;
@@ -583,9 +583,15 @@ body[contenteditable]{outline:none}`;
       const ps = par === d.body ? 'body' : Diff.selFor(par);
       const needRel = par !== d.body && par.style.position === 'relative';
       const css = needRel ? `${ps}{position:relative}` : '';
-      const blocks = [code, css];
-      const html = `<p class="md-msg">📍 <b>${esc(ps)}</b> 안 · <b>맨 뒤</b>에 붙여 넣으세요 (preview.html)</p>
-        <div class="chg-sec"><div class="chg-h">🌟 스티커 코드 <small>위치값 포함</small><button class="btn mini pink" data-pc="0">📋 복사</button></div><textarea class="tx chg-code" readonly rows="4">${esc(code)}</textarea></div>
+      // 🩷 쿄냐통신 kyonya-data.js 의 STICKERS 한 줄
+      const im = el.tagName === 'IMG' ? el : el.querySelector('img');
+      const px = v => { const m = String(v || '').match(/^(-?[\d.]+)px$/); return m ? Math.round(+m[1]) : null; };
+      const wv = px(el.style.width), zv = parseInt(el.style.zIndex, 10);
+      const line = im ? `    { at:'${ps.replace(/'/g, "\\'")}', src:'${im.getAttribute('src').replace(/'/g, "\\'")}', left:${px(el.style.left) ?? 0}, top:${px(el.style.top) ?? 0}${wv ? `, w:${wv}` : ''}${zv && zv !== 50 ? `, z:${zv}` : ''} },` : '';
+      const blocks = [code, css, line];
+      const html = `${line ? `<div class="chg-sec"><div class="chg-h">🩷 쿄냐통신용 한 줄 <small>→ kyonya-data.js 의 STICKERS:[ ] 안에 붙여 넣기</small><button class="btn mini pink" data-pc="2">📋 복사</button></div><textarea class="tx chg-code" readonly rows="2">${esc(line)}</textarea></div>` : ''}
+        <p class="md-msg">📍 HTML로 넣을 땐 <b>${esc(ps)}</b> 안 · <b>맨 뒤</b>에 붙여 넣으세요 (preview.html)</p>
+        <div class="chg-sec"><div class="chg-h">🌟 스티커 코드 <small>위치값 포함</small><button class="btn mini white" data-pc="0">📋 복사</button></div><textarea class="tx chg-code" readonly rows="4">${esc(code)}</textarea></div>
         ${css ? `<div class="chg-sec"><div class="chg-h">🎨 이것도 <small>→ kyonya.css 맨 아래 (스티커 자리의 기준이 돼요)</small><button class="btn mini white" data-pc="1">📋 복사</button></div><textarea class="tx chg-code" readonly rows="2">${esc(css)}</textarea></div>` : ''}
         <p class="lab-help">옮긴 뒤 🧹 초기화(✨ 바뀐 것만 창)를 누르면 실험실도 파일이랑 똑같아져요</p>`;
       Modal.open({ title: '📌 스티커 위치 확정', html, buttons: [{ label: '닫기 ♡', value: true, cls: 'pink', primary: true }] });
@@ -943,7 +949,7 @@ body[contenteditable]{outline:none}`;
       const cp = e.target.closest('[data-stcp]'); if (cp) { toast(await copyText(code(get(cp.dataset.stcp))) ? '📋 코드 복사!' : '⚠️ 복사 실패'); return; }
       const dl = e.target.closest('[data-stdel]'); if (dl) { if (await Modal.confirm('이 스티커를 뺄까요?')) { list = list.filter(x => x.id !== dl.dataset.stdel); save(); draw(); } return; }
       const it = e.target.closest('.st-th'); if (!it) return;
-      Pos.insert(code(get(it.parentElement.dataset.id)));
+      Pos.insert(code(get(it.parentElement.dataset.id)), 'sticker');   // 누르면 바로 🌟 스티커로 둥실
     };
     // 처음 한 번 기본 스티커 넣기 (같은 주소는 건너뛰어요)
     function seed(items) {

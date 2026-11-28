@@ -177,10 +177,50 @@ const Excerpt = (() => {
       }
     });
     flush();
-    return paras.filter(Boolean).map(p => {
+    return mergeTrans(paras.filter(Boolean).map(p => {
       while (p.runs.length && p.runs[p.runs.length - 1].br) p.runs.pop();     // 끝의 빈 줄
       return p;
-    }).filter(p => p.k === 'sep' || p.runs.some(r => r.t && r.t.trim()));
+    }).filter(p => p.k === 'sep' || p.runs.some(r => r.t && r.t.trim())));
+  }
+
+  /* 🇯🇵→🇰🇷 일본어 대사 바로 다음 줄의 (번역) 은 엔터로 나눠도 한 문단처럼 딱 붙여요 */
+  const paraText = p => p.runs.map(r => r.t || '').join('');
+  const isTrans = p => /^[\s　]*[(（]/.test(paraText(p));
+  const isTalkish = p => p.k === 'talk' || /[「『」』]/.test(paraText(p));
+  function mergeTrans(paras) {
+    const out = [];
+    paras.forEach(p => {
+      const prev = out[out.length - 1];
+      if (prev && p.k !== 'sep' && p.k !== 'h' && prev.k !== 'sep' && prev.k !== 'h' && isTrans(p) && isTalkish(prev) && !isTrans(prev)) {
+        prev.runs.push({ br: 1 }, ...p.runs);
+      } else out.push(p);
+    });
+    return out;
+  }
+
+  /* 📋 생 로그 → 문단  (HTML 로그든 그냥 글자든)
+     · 빈 줄은 무시 · 「」 / ｜ 가 있으면 대사, 아니면 지문 · (번역) 줄은 위 대사에 붙여요 */
+  function rawToParas(text) {
+    text = String(text || '').replace(/\r\n?/g, '\n');
+    if (/class\s*=\s*["']cl-(talk|narr|thought)/.test(text)) {
+      const d = document.createElement('div'); d.innerHTML = text;
+      d.querySelectorAll('style, script, .np-st, .cs-wrap, .cl-img').forEach(n => n.remove());
+      const paras = [];
+      d.querySelectorAll('.cl-talk, .cl-narr, .cl-thought-line, .cl-memo').forEach(b => {
+        const k = b.classList.contains('cl-talk') ? 'talk' : b.classList.contains('cl-thought-line') ? 'thought' : 'narr';
+        const p = { k, runs: [] };
+        const walk = n => n.childNodes.forEach(c => {
+          if (c.nodeType === 3) { const t = c.nodeValue.replace(/\s+/g, ' '); if (t.trim()) p.runs.push({ t, hl: '' }); }
+          else if (c.tagName === 'BR') p.runs.push({ br: 1 });
+          else if (!(c.classList && c.classList.contains('hl-popup'))) walk(c);
+        });
+        walk(b);
+        if (p.runs.some(r => r.t && r.t.trim())) paras.push(p);
+      });
+      return mergeTrans(paras);
+    }
+    return mergeTrans(text.split('\n').map(s => s.trim()).filter(Boolean).map(s =>
+      ({ k: /[「『」』]|｜/.test(s) || /^["“]/.test(s) ? 'talk' : 'narr', runs: [{ t: s, hl: '' }] })));
   }
 
   /* =========================================================
@@ -621,10 +661,11 @@ const Excerpt = (() => {
     /* --- 편집기 --- */
     try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
     ed.addEventListener('input', () => { keepDraft(); soon(); });
-    ed.addEventListener('paste', e => {          // 붙여넣기는 글자만
+    ed.addEventListener('paste', e => {          // 붙여넣기는 글자만 · 여러 줄이면 대사/지문 나눠서 (번역 줄은 대사에 붙여요)
       e.preventDefault();
       const t = (e.clipboardData || window.clipboardData).getData('text/plain');
-      document.execCommand('insertText', false, t);
+      if (!/\n/.test(t) && !/class\s*=\s*["']cl-/.test(t)) { document.execCommand('insertText', false, t); return; }
+      document.execCommand('insertHTML', false, toHtml(rawToParas(t)));
     });
     ed.addEventListener('keydown', e => {
       if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); document.execCommand('insertLineBreak'); }
@@ -743,7 +784,7 @@ const Excerpt = (() => {
     ov.querySelector('[data-act=close]').onclick = close;
     ov.querySelector('[data-act=reload]').onclick = async () => {
       if (!await Modal.confirm('지금 탭의 글을 처음 상태로 되돌릴까요?<br><small>고친 글·형광펜이 사라져요</small>', { ok: '되돌리기' })) return;
-      ed.innerHTML = mode === 'body' ? groupsHtml(collect(it)) : (stList.length ? toHtml(statusParas(stList[stIdx], secOn)) : '');
+      ed.innerHTML = mode === 'body' ? (it.quickSrc != null ? toHtml(rawToParas(it.quickSrc)) : groupsHtml(collect(it))) : (stList.length ? toHtml(statusParas(stList[stIdx], secOn)) : '');
       keepDraft(); redraw();
     };
     ov.querySelector('[data-act=save]').onclick = async () => {
@@ -771,5 +812,11 @@ const Excerpt = (() => {
     setTimeout(() => ed.focus(), 30);
   }
 
-  return { open, collect };
+  /* 📸 서랍 없이 바로 발췌 (작업대 ⑤ 발췌하기) */
+  function quick(text) {
+    const it = { id: 'quick', base: '발췌', no: 1, text: '', edited: '', quickSrc: text, xpDraft: { body: toHtml(rawToParas(text)), status: '' } };
+    return open(it, { mode: 'body' });
+  }
+
+  return { open, collect, quick, rawToParas };
 })();

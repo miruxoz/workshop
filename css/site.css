@@ -4,6 +4,7 @@
    ========================================================= */
 @font-face { font-family: "Mona12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font@main/web/Mona12.woff2") format("woff2"); font-weight: normal; font-style: normal; }
 @font-face { font-family: "ThinMulmaru"; src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161321@thinmulmaru/thinmulmaru/ThinMulmaru.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: "entergal"; src: url("https://cdn.jsdelivr.net/gh/miruxoz/workshop@main/fonts/entergal.ttf") format("truetype"); font-display: swap; }
 @font-face { font-family: "Umdot12"; src: url("https://cdn.jsdelivr.net/gh/MonadABXY/umdot-font@main/woff2/Umdot12.woff2") format("woff2"); font-weight: normal; font-style: normal; }
 
 :root {
@@ -13,7 +14,7 @@
   --pink: #e07fa3;  --pink-bg: #fbeef5;  --pink-pale: #fff6fa;
   --blue: #5b9bd0;  --blue-bg: #d9e9f5;  --blue-pale: #f3f8fc;
   --title-font: 'Mona12', sans-serif;
-  --body-font: 'ThinMulmaru', 'Mona12', sans-serif;
+  --body-font: 'entergal', 'Mona12', sans-serif;
   --outline: 1px 0 #fff,-1px 0 #fff,0 1px #fff,0 -1px #fff,1px 1px #fff,-1px -1px #fff,1px -1px #fff,-1px 1px #fff;
 }
 

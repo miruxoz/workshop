@@ -22,8 +22,8 @@ const Steps = (() => {
     if (id) { curId = id; store.set('wb.pick', id); }
     step = n;
     document.querySelectorAll('#steps .step').forEach(b => b.classList.toggle('on', +b.dataset.step === n));
-    [1, 2, 3, 4].forEach(i => $('step' + i).hidden = i !== n);
-    $('pickBar').hidden = n === 1;
+    [1, 2, 3, 4, 5].forEach(i => { if ($('step' + i)) $('step' + i).hidden = i !== n; });
+    $('pickBar').hidden = n === 1 || n === 5;
     renderPick();
     if (n === 2) loadEditor();
     if (n === 3) renderPreview();

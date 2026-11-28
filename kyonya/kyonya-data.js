@@ -110,6 +110,22 @@ var KY = {
   // CNT_DIGITS:['https://i.postimg.cc/zv57Yykr/image.gif','https://i.postimg.cc/rscj2D9K/1.gif','https://i.postimg.cc/wMVVq9Ws/2.gif','https://i.postimg.cc/J7cKcQRS/3.gif','https://i.postimg.cc/jqQvQhsN/4.gif',
   //             'https://i.postimg.cc/X7s8t7Gx/5.gif','https://i.postimg.cc/L6xTG6gS/6.gif','https://i.postimg.cc/zG3jNZTX/7.gif','https://i.postimg.cc/hthrnWV0/8.gif','https://i.postimg.cc/y85TYQTy/9.gif'],
 
+  /* 🩷 스티커 — 여기만 고치고 푸시하면 사이트·미리보기에 같이 붙어요
+       at: 어느 칸에 붙일지 (.hd 헤더 / .omj 오미쿠지 / .m-log 업데이트 로그 / .mbk 한마디 / .wrap 사이트 전체 …)
+       left·top: 그 칸 왼쪽 위에서 얼마나 떨어질지 (숫자 = px, '37.6%' 처럼 따옴표 안에 % 도 돼요)
+       w: 너비 (안 쓰면 원래 크기) · z: 겹침 순서 (안 쓰면 50) */
+  STICKERS:[
+    { at:'.hd', src:'https://mocha.crd.co/assets/images/gallery25/474b6282.gif?v=667e73fe', left:'37.6%', top:8 },   // 헤더
+    { at:'.hd', src:'https://64.media.tumblr.com/tumblr_lkqyv3y43J1qi6qow.gif', left:'9.68%', top:9 },   // 헤더
+    { at:'.hd', src:'https://mocha.crd.co/assets/images/gallery25/bd380592.gif?v=667e73fe', left:738, top:61 },   // 헤더: 작은 고양이
+    { at:'.omj', src:'https://64.media.tumblr.com/516ee80490eaa51d4121e6441f349315/76d201764927590b-f3/s75x75_c1/ade88cffd523a69b398bc112ec7e767c875d2ca2.gifv', left:165, top:6 },   // 오미쿠지: 마네키네코
+    { at:'.m-log', src:'https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj', left:21, top:14, w:190 },   // 업데이트 로그: 위 장식
+    { at:'.m-log', src:'https://64.media.tumblr.com/7c6fdc813780d4ae6900a4af1f782f55/b35f0b146e0351a5-34/s250x400/8d679d9508fe4acd3e82dedf579d8a602aadad96.pnj', left:19, top:195, w:190 },   // 업데이트 로그: 아래 장식
+    { at:'.m-log', src:'https://i.pinimg.com/originals/50/91/ec/5091ec6ae637f38943047898531fc5d3.gif', left:-18, top:177, w:120 },   // 업데이트 로그: 자는 고양이
+    { at:'.wrap', src:'https://64.media.tumblr.com/5c13a5c5b1f6387f0e1917e43f791159/tumblr_mq9q46aqY31r6m856o1_500.gifv', left:910, top:307, w:80 },   // 사이트 전체 기준
+    { at:'.mbk', src:'https://64.media.tumblr.com/dabb628bbc0ab825d79391ba8b2fa45f/7c7c65348bf23477-55/s400x600/46750e267dbb5dd3c2fcd2c9620f9cbe119dcc23.gifv', left:-3, top:-6, w:350 },   // 세이의 한마디
+  ],
+
   /* 패밀리 사이트 */
   FAMILY: [ ['🏪 쿄냐통신 분점 (러브로그)','https://luvlog.me/kyohei'], ['🧺 로그 공방','https://miruxoz.github.io/workshop/'] ],
 
