@@ -19,6 +19,9 @@
     return;
   }
 
+  /* ---------- 3단 방명록 작은 창: 여기서 주소를 넣어요 (창 안에서는 위에서 끝나서 창 속 창이 안 생김) ---------- */
+  document.querySelectorAll('iframe.gbframe[data-src]').forEach(function(f){ f.src=f.dataset.src; });
+
   /* ---------- 팝업 (뒤 화면 안 덮음) ---------- */
   var bg=$('popBg'), ok=$('popOk');
   // design: 'dA'(기본·회색 땡땡이) / 'd14 st'(초코+초콜릿바+줄무늬) / 'd2'(하늘 초코칩)
@@ -256,24 +259,6 @@
           :'<dd style="color:#888;margin-left:0">아직 한마디가 없어요</dd>';
       };
       KY.MICRO_SET();
-
-      /* 쿄냐뉴스 */
-      var news=all.filter(function(p){return p.cat.indexOf(C.news)===0});
-      var EMO=['🏐','🐱','💸','📰','🌤'];
-      function setNews(k){
-        document.querySelectorAll('#nTabs b').forEach(function(b){ b.classList.toggle('on',b.dataset.c===k); });
-        var sub=k==='all'?null:(C.sub||{})[k];
-        var list=news.filter(function(p){ return !sub || p.cat.indexOf('/'+sub)>-1; });
-        if(!list.length){ $('nCards').innerHTML=''; $('nList').innerHTML='<li style="color:#888">아직 기사가 없어요</li>'; return; }
-        var cards=list.slice(0,2), rest=list.slice(2,8);
-        $('nCards').innerHTML=cards.map(function(p,i){ var x=prefix(p.title), a=ago(Date.now()-p.date);
-          return '<a class="nc" href="'+p.link+'"><div class="th t'+(i+1)+'">'+(p.img?'<img src="'+p.img+'" alt="" style="width:100%;height:100%;object-fit:cover">':EMO[i%EMO.length])+(i===0&&a.indexOf('분')>-1?'<span>LIVE</span>':'')+'</div><div class="tx"><p>'+esc(x.t)+'</p><small>'+esc(x.p||'쿄냐뉴스')+(a?' · '+a:' · '+md(p.date))+'</small></div></a>'; }).join('');
-        $('nList').innerHTML=rest.map(function(p){ var x=prefix(p.title);
-          return '<li><a href="'+p.link+'">'+esc(x.t)+'</a><span>'+esc(x.p||'쿄냐뉴스')+'</span></li>'; }).join('');
-      }
-      on('nTabs','click',function(e){ var b=e.target.closest('b'); if(b) setNews(b.dataset.c); });
-      setNews('all');
-      var more=$('newsMore'); if(more) more.href='/category/'+encodeURIComponent(C.news);
 
             /* 새 소식 (푸딩) — 최근 글 7개 · 이틀 안에 쓴 글은 NEW */
       var pl=$('pudList');
