@@ -1062,6 +1062,10 @@ body.in-frame .gb-page .tt_ico_lock{display:inline-block;width:auto!important;he
 body.in-frame .gb-page .tt_ico_lock:after{content:"🔒";font-size:10px}
 /* 최신 글이 맨 위로 (티스토리는 오래된 글부터 줘서 순서만 뒤집기) */
 .gb-page .tt-list-reply{display:flex!important;flex-direction:column-reverse}
+/* 로그인 이름 칸: 티스토리 기본 장식(흰 세모) 숨기기 */
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):before,
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt):after{content:none!important;display:none!important}
+body:not(.in-frame) .gb-page .tt-inner-g>:not(.tt-cmt){background-image:none!important}
 
 /* =========================================================
    13. 화면이 좁을 때
