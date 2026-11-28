@@ -21,6 +21,11 @@
 
   /* ---------- 3단 방명록 작은 창: 여기서 주소를 넣어요 (창 안에서는 위에서 끝나서 창 속 창이 안 생김) ---------- */
   document.querySelectorAll('iframe.gbframe[data-src]').forEach(function(f){ f.src=f.dataset.src; });
+    /* ---------- 🔗 메뉴 주소 (kyonya-data.js 의 LINKS · 비어 있으면 준비 중) ---------- */
+  document.querySelectorAll('[data-link]').forEach(function(a){
+    var u=(KY.LINKS||{})[a.dataset.link];
+    a.setAttribute('href', u || '#soon');
+  });
 
   /* ---------- 🩷 스티커 붙이기 (kyonya-data.js 의 STICKERS) ---------- */
   (KY.STICKERS||[]).forEach(function(s){

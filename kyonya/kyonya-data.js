@@ -111,6 +111,14 @@ var KY = {
     ]
   },
 
+    // 🔗 메뉴 주소 ('' 로 비워 두면 「준비 중」 팝업) · 카테고리는 '/category/카테고리이름'
+  LINKS:{
+    players:'', archive:'', blog:'', note:'',
+    ch401:'/category/401채널', wiki:'', news:'/category/にゃにゃニュース',
+    hot:'', play:'', members:'', cs:'/guestbook',
+    memo:'', seiDiary:'', diag:'', budget:'', sched:'', game:'', album:''
+  },
+
     // 📺 401채널 (이 카테고리에 들어가면 화면 전체가 2ch로 바뀌어요)
   CH2:{
     cat:'401채널'      // 티스토리 카테고리 이름과 똑같이
