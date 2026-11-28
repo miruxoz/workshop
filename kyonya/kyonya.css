@@ -479,7 +479,7 @@ input.f:focus{border-color:var(--hot)}
 .pud-more:hover{text-decoration:underline}
 
 /* ---------- 오른쪽 칸: 새 소식 푸딩 + 투표 자리 ---------- */
-.duo-r{display:flex;flex-direction:column;gap:10px;height:0;min-height:100%}   /* 높이는 쇼트케이크가 정하고, 오른쪽은 따라가기 */
+.duo-r{display:flex;flex-direction:column;gap:10px;height:0;min-height:max(100%,430px)}   /* 쇼트케이크를 따라가되, 최소 430px (푸딩+투표 자리) */
 /* ---------- 오늘의 앙케이트 — 당고 가판대 (접시 네 개) ---------- */
 .vote-area{position:relative;flex:1;min-height:0px;margin-top:4px;overflow:hidden;display:flex;flex-direction:column;padding:0 12px 8px;
   font-family:entergal;color:#000;border:1px solid #c9a77c;border-radius:6px;
@@ -557,7 +557,7 @@ input.f:focus{border-color:var(--hot)}
 .gbx-ft{position:relative;z-index:2;margin-top:6px;padding:2px 0;text-align:center;font:10px Mona12;color:var(--g);background:#fffdf3;border:1px dashed var(--g)}
 
 /* 방명록 안 글 */
-.gbframe{display:block;width:100%;height:340px;border:0;background:#fff}
+.gbframe{display:block;width:100%;height:220px;border:0;background:#fff}   /* 220px: 방명록 창 높이 */
 .gb textarea{width:100%;height:50px;resize:none;margin:3px 0;padding:3px 5px;font:12px ThinMulmaru;border:1px solid #c9b3a8;box-shadow:inset 2px 2px 0 #eadfd9}
 .gb .msg{padding:3px 0;border-top:1px dotted #cfe9d7;font-size:12px}
 .gb .msg b{font:11px Mona12;color:#1f7a3e}           /* 이름: 진한 초록 */
