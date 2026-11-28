@@ -272,5 +272,7 @@
     document.body.classList.add('ch-mode');
     scrollTo(0, 0);
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', board); else board();
+  // 화면 가리개(skin.html 머리의 ch-wait)는 2ch든 아니든 다 그린 뒤에 벗겨요
+  function run() { try { board(); } finally { document.documentElement.classList.remove('ch-wait'); } }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();

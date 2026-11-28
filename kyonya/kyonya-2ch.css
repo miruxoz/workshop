@@ -102,10 +102,11 @@ body.ch-mode>:not(#chScreen):not(.pop-bg):not(.ch-lr-bg):not(.c2-pop):not(script
 #chScreen .ch-sl li.lock a{color:#999}
 .ch-none{padding:16px;text-align:center;color:#888}
 .ch-pg .paging{margin:8px 0 0}
-.ch-new{margin:0 0 12px;padding:8px 12px;font-size:11px;background:#fff;border:1px solid #bbb}
-.ch-new input,.ch-new textarea{font-size:12px;border:1px solid #999;padding:1px 4px}
-.ch-new textarea{display:block;width:100%;height:44px;margin-top:4px;resize:none;box-sizing:border-box}
-.ch-new button{font-size:11px;padding:1px 10px}
+.ch-new{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:0 0 12px;padding:8px 12px;font-size:11px;background:#fff;border:1px solid #bbb}
+.ch-new input,.ch-new textarea{font-size:12px;border:1px solid #999;padding:1px 4px;box-sizing:border-box}
+.ch-new input{flex:1 1 140px;min-width:0;max-width:260px}
+.ch-new textarea{display:block;flex-basis:100%;width:100%;height:44px;margin-top:2px;resize:none}
+.ch-new button{flex:none;font-size:11px;padding:1px 10px}
 
 /* 스레 화면 */
 .ch-vbar{display:flex;flex-wrap:wrap;gap:4px 10px;margin:0 0 8px;font-size:11px}
@@ -120,4 +121,9 @@ body.ch-mode>:not(#chScreen):not(.pop-bg):not(.ch-lr-bg):not(.c2-pop):not(script
 .ch-lr-b h4{margin:0 0 6px;font-size:14px;font-weight:normal;color:#c00}
 .ch-lr-b ol{margin:0;padding-left:20px}
 .ch-lr-b .ps{margin-top:8px;font-size:11px;color:#666}
-@media (max-width:640px){.ch-screen{display:block}.ch-bm{width:auto;border-right:0;border-bottom:1px solid #999}}
+@media (max-width:640px){
+  .ch-screen{flex-direction:column}
+  .ch-main{order:1;padding:8px 8px 20px}
+  .ch-bm{order:2;width:auto;border-right:0;border-top:1px solid #999}    /* 폰: 게시판이 맨 위, 게시판 메뉴는 맨 아래 */
+  .ch-ad,.ch-ads .ch-ad{width:100%}
+}
